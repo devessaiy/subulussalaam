@@ -66,17 +66,19 @@
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-emerald-100 absolute w-full left-0 top-20 shadow-xl">
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-emerald-100 absolute w-full left-0 top-20 shadow-xl overflow-hidden transition-all duration-300">
             <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="#" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Home</a>
-                <a href="#about" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">About</a>
-                <a href="#programs" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Programs</a>
-                <a href="#news" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Academy Feed</a>
-                <a href="#contact" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Contact</a>
+                <a href="#" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Home</a>
+                <a href="#about" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">About</a>
+                <a href="#programs" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Programs</a>
+                <a href="#news" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Academy Feed</a>
+                <a href="#contact" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Contact</a>
+                
                 <div class="border-t border-slate-100 pt-4 mt-2">
                     <p class="px-3 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Access Portals</p>
-                    <a href="admin-portal.html" class="block px-3 py-2 text-sm text-emerald-700 font-bold">Admin Login</a>
-                    <a href="student-login.html" class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Student Login</a>
+                    <a href="admin-portal.html" onclick="toggleMobileMenu()" class="block px-3 py-2 text-sm text-emerald-700 font-bold">Admin Login</a>
+                    <a href="teacher-login.html" onclick="toggleMobileMenu()" class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Teacher Login</a>
+                    <a href="student-login.html" onclick="toggleMobileMenu()" class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Student Login</a>
                 </div>
             </div>
         </div>
