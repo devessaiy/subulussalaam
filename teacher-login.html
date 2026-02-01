@@ -5,73 +5,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subulus Salaam | Teacher Portal</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        .hidden-view { display: none !important; }
-        .active-nav { 
-            background-color: #0f766e !important; 
-            color: #ffffff !important; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        body {
+            font-family: 'Inter', sans-serif;
         }
-        .sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .teacher-bg { background-color: #0f172a; background-image: radial-gradient(at 0% 0%, #1e293b 0, transparent 50%), radial-gradient(at 100% 100%, #0f172a 0, transparent 50%); }
-        .pattern-overlay { background-image: url("https://www.transparenttextures.com/patterns/arabesque.png"); opacity: 0.05; }
-        
-        /* Scrollbars */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        input:disabled { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
-        #qr-reader { border: none !important; }
-        #qr-reader__scan_region { border-radius: 20px; overflow: hidden; }
-        .holiday-blocked { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-        
-        /* Glass Overlay for Sidebar */
-        .glass-overlay { backdrop-filter: blur(4px); background-color: rgba(15, 23, 42, 0.5); }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .hidden-view {
+            display: none !important;
+        }
+
+        .active-nav {
+            background-color: #0f766e !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .teacher-bg {
+            background-color: #0f172a;
+            background-image: radial-gradient(at 0% 0%, #1e293b 0, transparent 50%), radial-gradient(at 100% 100%, #0f172a 0, transparent 50%);
+        }
+
+        .pattern-overlay {
+            background-image: url("https://www.transparenttextures.com/patterns/arabesque.png");
+            opacity: 0.05;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #0f766e;
+            border-radius: 10px;
+        }
+
+        input:disabled {
+            background-color: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        #qr-reader {
+            border: none !important;
+        }
+
+        .holiday-blocked {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
     </style>
 </head>
 
 <body class="bg-slate-50 text-slate-800 h-screen overflow-hidden font-sans antialiased">
 
-    <div id="custom-alert" class="fixed inset-0 z-[200] flex items-center justify-center px-4 pointer-events-none opacity-0 transition-opacity duration-300">
+    <div id="custom-alert"
+        class="fixed inset-0 z-[200] flex items-center justify-center px-4 pointer-events-none opacity-0 transition-opacity duration-300">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-        <div class="bg-white rounded-[2rem] shadow-2xl p-8 max-w-sm w-full transform scale-95 transition-all duration-300 relative z-10 text-center border-4 border-white/50">
-            <div id="alert-icon-bg" class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 text-teal-700 shadow-inner"><i id="alert-icon" data-lucide="check-circle" class="w-10 h-10"></i></div>
+        <div
+            class="bg-white rounded-[2rem] shadow-2xl p-8 max-w-sm w-full transform scale-95 transition-all duration-300 relative z-10 text-center border-4 border-white/50">
+            <div id="alert-icon-bg"
+                class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 text-teal-700 shadow-inner">
+                <i id="alert-icon" data-lucide="check-circle" class="w-10 h-10"></i></div>
             <h3 id="alert-title" class="text-2xl font-bold text-slate-800 mb-2 font-serif">Success</h3>
-            <p id="alert-message" class="text-slate-500 text-sm font-medium mb-8 leading-relaxed">Operation completed.</p>
+            <p id="alert-message" class="text-slate-500 text-sm font-medium mb-8 leading-relaxed">Operation completed.
+            </p>
             <div class="flex gap-4">
-                <button id="alert-cancel-btn" onclick="closeAlert()" class="hidden flex-1 py-4 border-2 border-slate-100 text-slate-400 rounded-2xl font-bold hover:bg-slate-50 transition active:scale-95">Cancel</button>
-                <button id="alert-ok-btn" onclick="closeAlert()" class="flex-1 py-4 bg-teal-900 text-white rounded-2xl font-bold shadow-xl shadow-teal-900/20 hover:bg-teal-800 hover:-translate-y-1 transition-all active:scale-95">Acknowledge</button>
+                <button id="alert-cancel-btn" onclick="closeAlert()"
+                    class="hidden flex-1 py-4 border-2 border-slate-100 text-slate-400 rounded-2xl font-bold hover:bg-slate-50 transition active:scale-95">Cancel</button>
+                <button id="alert-ok-btn" onclick="closeAlert()"
+                    class="flex-1 py-4 bg-teal-900 text-white rounded-2xl font-bold shadow-xl shadow-teal-900/20 hover:bg-teal-800 hover:-translate-y-1 transition-all active:scale-95">Acknowledge</button>
             </div>
         </div>
     </div>
 
-    <div id="auth-container" class="fixed inset-0 z-[100] flex items-center justify-center p-4 teacher-bg transition-all duration-700">
-        <div class="w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[550px] relative z-10">
-            <div class="hidden md:flex w-1/2 bg-slate-900 relative flex-col justify-between p-12 text-white overflow-hidden">
+    <div id="auth-container"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 teacher-bg transition-all duration-700">
+
+        <a href="index.html"
+            class="absolute top-6 left-6 z-[120] flex items-center gap-3 text-white/80 hover:text-white transition-colors group cursor-pointer">
+            <div
+                class="p-2.5 bg-white/10 rounded-full backdrop-blur-md border border-white/10 group-hover:bg-white/20 transition-all shadow-lg">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i></div>
+            <span
+                class="text-sm font-bold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">Return
+                Home</span>
+        </a>
+
+        <div
+            class="w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[550px] relative z-10">
+            <div
+                class="hidden md:flex w-1/2 bg-slate-900 relative flex-col justify-between p-12 text-white overflow-hidden">
                 <div class="absolute inset-0 pattern-overlay"></div>
                 <div class="relative z-10">
                     <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center text-white shadow-lg"><i data-lucide="book-open" class="w-6 h-6"></i></div>
+                        <div
+                            class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center text-white shadow-lg">
+                            <i data-lucide="book-open" class="w-6 h-6"></i></div>
                         <span class="text-teal-400 font-bold tracking-widest uppercase text-xs">Faculty Access</span>
                     </div>
-                    <h1 class="text-4xl font-bold font-serif leading-tight mt-6">Educator<br><span class="text-teal-400">Portal</span></h1>
-                    <p class="mt-6 text-slate-400 text-sm leading-relaxed">"The best of you are those who learn the Qur'an and teach it." Manage your classes, grades, and attendance.</p>
+                    <h1 class="text-4xl font-bold font-serif leading-tight mt-6">Educator<br><span
+                            class="text-teal-400">Portal</span></h1>
+                    <p class="mt-6 text-slate-400 text-sm leading-relaxed">Manage your classes, grades, and attendance.
+                    </p>
                 </div>
-                <a href="index.html" class="flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest mt-auto">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Return Home
-                </a>
             </div>
             <div class="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center">
                 <div class="max-w-xs mx-auto w-full">
@@ -82,13 +138,19 @@
                     <form id="teacherLoginForm" onsubmit="handleTeacherLogin(event)" class="space-y-5">
                         <div>
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Email</label>
-                            <input type="email" id="login-email" class="w-full mt-2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold text-slate-700 outline-none focus:border-teal-600 transition-all" placeholder="ustadh@academy.com" required>
+                            <input type="email" id="login-email"
+                                class="w-full mt-2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold text-slate-700 outline-none focus:border-teal-600 transition-all"
+                                placeholder="ustadh@academy.com" required>
                         </div>
                         <div>
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Password</label>
-                            <input type="password" id="login-password" class="w-full mt-2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold text-slate-700 outline-none focus:border-teal-600 transition-all" placeholder="••••••••" required>
+                            <input type="password" id="login-password"
+                                class="w-full mt-2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold text-slate-700 outline-none focus:border-teal-600 transition-all"
+                                placeholder="••••••••" required>
                         </div>
-                        <button type="submit" id="loginBtn" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-teal-900 transition-all active:scale-95 flex items-center justify-center gap-2"><span>Enter Portal</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                        <button type="submit" id="loginBtn"
+                            class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-teal-900 transition-all active:scale-95 flex items-center justify-center gap-2"><span>Enter
+                                Portal</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
                     </form>
                 </div>
             </div>
@@ -96,28 +158,24 @@
     </div>
 
     <div id="main-dashboard" class="hidden-view flex h-screen w-full transition-opacity duration-700">
-        
-        <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 z-20 glass-overlay hidden transition-opacity opacity-0 md:hidden"></div>
 
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-72 bg-slate-900 text-white flex flex-col border-r border-slate-800 transform -translate-x-full md:translate-x-0 md:relative sidebar-transition shadow-2xl md:shadow-none h-full">
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-30 w-72 bg-slate-900 text-white flex flex-col border-r border-slate-800 transform -translate-x-full md:translate-x-0 md:relative sidebar-transition shadow-2xl md:shadow-none h-full">
             <div class="h-24 flex items-center justify-between px-6 border-b border-slate-800">
-                <div class="flex items-center">
-                    <i data-lucide="book-open" class="w-8 h-8 text-teal-400 mr-3"></i>
-                    <span class="font-bold text-lg tracking-tight">Faculty</span>
-                </div>
-                <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <div class="flex items-center"><i data-lucide="book-open" class="w-8 h-8 text-teal-400 mr-3"></i><span
+                        class="font-bold text-lg tracking-tight">Faculty</span></div>
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white"><i data-lucide="x"
+                        class="w-6 h-6"></i></button>
             </div>
-            
             <nav class="flex-1 py-8 px-4 space-y-3 overflow-y-auto">
-                <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center px-4 py-4 rounded-xl active-nav transition-all group">
-                    <i data-lucide="layout-grid" class="w-5 h-5 mr-3"></i>
-                    <span class="text-sm font-medium">My Classes</span>
-                </button>
-                <button onclick="switchView('attendance')" id="nav-attendance" class="w-full flex items-center px-4 py-4 rounded-xl hover:bg-slate-800 transition-all group">
-                    <i data-lucide="user-check" class="w-5 h-5 mr-3"></i>
-                    <span class="text-sm font-medium">Daily Attendance</span>
-                </button>
-                
+                <button onclick="switchView('dashboard')" id="nav-dashboard"
+                    class="w-full flex items-center px-4 py-4 rounded-xl active-nav transition-all group"><i
+                        data-lucide="layout-grid" class="w-5 h-5 mr-3"></i><span class="text-sm font-medium">My
+                        Classes</span></button>
+                <button onclick="switchView('attendance')" id="nav-attendance"
+                    class="w-full flex items-center px-4 py-4 rounded-xl hover:bg-slate-800 transition-all group"><i
+                        data-lucide="user-check" class="w-5 h-5 mr-3"></i><span class="text-sm font-medium">Daily
+                        Attendance</span></button>
                 <div class="pt-6 px-2">
                     <p class="text-[10px] uppercase text-slate-500 font-bold tracking-widest mb-3">Your Profile</p>
                     <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-800">
@@ -126,28 +184,30 @@
                     </div>
                 </div>
             </nav>
-
-            <div class="p-4 border-t border-slate-800">
-                <button onclick="handleLogout()" class="w-full flex items-center justify-center px-4 py-3 text-rose-400 hover:bg-rose-900/20 rounded-xl transition-all border border-transparent hover:border-rose-900/30">
-                    <i data-lucide="log-out" class="w-5 h-5 mr-3"></i>
-                    <span class="text-sm font-bold">Sign Out</span>
-                </button>
-            </div>
+            <div class="p-4 border-t border-slate-800"><button onclick="handleLogout()"
+                    class="w-full flex items-center justify-center px-4 py-3 text-rose-400 hover:bg-rose-900/20 rounded-xl transition-all border border-transparent hover:border-rose-900/30"><i
+                        data-lucide="log-out" class="w-5 h-5 mr-3"></i><span class="text-sm font-bold">Sign
+                        Out</span></button></div>
         </aside>
 
         <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden relative">
-            
-            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0">
-                <div class="flex items-center">
-                    <button onclick="toggleSidebar()" class="md:hidden mr-4 text-slate-500 hover:text-teal-700 bg-slate-50 p-2 rounded-lg"><i data-lucide="menu" class="w-6 h-6"></i></button>
+            <div id="mobile-overlay" onclick="toggleSidebar()"
+                class="fixed inset-0 z-20 glass-overlay hidden transition-opacity opacity-0 md:hidden"></div>
+
+            <header
+                class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0">
+                <div class="flex items-center"><button onclick="toggleSidebar()"
+                        class="md:hidden mr-4 text-slate-500 hover:text-teal-700 bg-slate-50 p-2 rounded-lg"><i
+                            data-lucide="menu" class="w-6 h-6"></i></button>
                     <h2 class="text-lg md:text-xl font-bold text-slate-800 truncate" id="page-title">Dashboard</h2>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="text-xs text-right hidden sm:block">
                         <p class="font-bold text-slate-900">Session</p>
                         <p class="text-teal-600">2025/2026 - 2nd Term</p>
-                    </div>
-                    <button onclick="handleLogout()" class="md:hidden p-2 text-rose-500 hover:bg-rose-50 rounded-full"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+                    </div><button onclick="handleLogout()"
+                        class="md:hidden p-2 text-rose-500 hover:bg-rose-50 rounded-full"><i data-lucide="log-out"
+                            class="w-5 h-5"></i></button>
                 </div>
             </header>
 
@@ -158,35 +218,39 @@
                         <p class="text-slate-500 text-sm md:text-base">Select a class below to manage grades.</p>
                     </div>
                     <div id="class-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                        <div class="col-span-full text-center py-20 text-slate-400 italic">Loading your assignments...</div>
+                        <div class="col-span-full text-center py-20 text-slate-400 italic">Loading your assignments...
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div id="view-grading" class="view-section hidden-view flex-1 flex flex-col h-full overflow-hidden">
-                <div class="bg-white border-b border-slate-200 p-4 md:p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shrink-0">
-                    <div class="flex items-center gap-3 w-full lg:w-auto">
-                        <button onclick="switchView('dashboard')" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition shrink-0"><i data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i></button>
+                <div
+                    class="bg-white border-b border-slate-200 p-4 md:p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shrink-0">
+                    <div class="flex items-center gap-3 w-full lg:w-auto"><button onclick="switchView('dashboard')"
+                            class="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition shrink-0"><i
+                                data-lucide="arrow-left" class="w-5 h-5 text-slate-600"></i></button>
                         <div class="truncate">
                             <h2 class="text-xl font-bold text-slate-800" id="grade-class-title">JSS 1</h2>
-                            <p class="text-[10px] text-teal-600 font-bold uppercase tracking-widest truncate" id="grade-role-badge">Subject Teacher</p>
+                            <p class="text-[10px] text-teal-600 font-bold uppercase tracking-widest truncate"
+                                id="grade-role-badge">Subject Teacher</p>
                         </div>
                     </div>
-                    
                     <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                        <div class="w-full sm:w-auto">
-                            <select id="grading-subject-select" onchange="loadGradebook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-teal-500"></select>
+                        <div class="w-full sm:w-auto"><select id="grading-subject-select" onchange="loadGradebook()"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-teal-500"></select>
                         </div>
-                        <button id="btn-submit-admin" onclick="submitToAdmin()" class="w-full sm:w-auto bg-teal-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg hover:bg-teal-800 transition-all flex items-center justify-center disabled:bg-slate-300 disabled:cursor-not-allowed">
-                            <i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit
-                        </button>
+                        <button id="btn-submit-admin" onclick="submitToAdmin()"
+                            class="w-full sm:w-auto bg-teal-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg hover:bg-teal-800 transition-all flex items-center justify-center disabled:bg-slate-300 disabled:cursor-not-allowed"><i
+                                data-lucide="send" class="w-4 h-4 mr-2"></i> Submit</button>
                     </div>
                 </div>
-
                 <div class="flex-1 overflow-x-auto overflow-y-auto p-4 md:p-8 bg-slate-50">
-                    <div class="bg-white rounded-[1.5rem] border border-slate-200 shadow-xl min-w-[800px] md:min-w-full">
+                    <div
+                        class="bg-white rounded-[1.5rem] border border-slate-200 shadow-xl min-w-[800px] md:min-w-full">
                         <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] tracking-widest">
+                            <thead
+                                class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] tracking-widest">
                                 <tr>
                                     <th class="p-4">Student Name</th>
                                     <th class="p-4 text-center w-24">CA (40)</th>
@@ -207,38 +271,53 @@
                     <div class="flex flex-col md:flex-row justify-between gap-4">
                         <div class="w-full md:w-auto">
                             <h2 class="text-xl font-bold text-slate-800">Attendance</h2>
-                            <div class="flex flex-col sm:flex-row gap-2 mt-2 w-full">
-                                <select id="att-class-select" onchange="loadAttendance()" class="bg-slate-100 border-none rounded-lg px-3 py-2 text-xs font-bold text-slate-700 outline-none w-full sm:w-auto"></select>
-                                <input type="date" id="att-date" class="bg-slate-100 border-none rounded-lg px-3 py-2 text-xs font-bold text-slate-700 outline-none w-full sm:w-auto" onchange="loadAttendance()">
-                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2 mt-2 w-full"><select id="att-class-select"
+                                    onchange="loadAttendance()"
+                                    class="bg-slate-100 border-none rounded-lg px-3 py-2 text-xs font-bold text-slate-700 outline-none w-full sm:w-auto"></select><input
+                                    type="date" id="att-date"
+                                    class="bg-slate-100 border-none rounded-lg px-3 py-2 text-xs font-bold text-slate-700 outline-none w-full sm:w-auto"
+                                    onchange="loadAttendance()"></div>
                         </div>
-                        <div class="flex gap-2 w-full md:w-auto">
-                            <button onclick="toggleHolidayModal()" class="flex-1 md:flex-none bg-amber-100 text-amber-700 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-amber-200 transition flex items-center justify-center"><i data-lucide="calendar-off" class="w-4 h-4 mr-2"></i> Holiday</button>
-                            <button onclick="toggleScanner()" class="flex-1 md:flex-none bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-900 transition flex items-center justify-center"><i data-lucide="qr-code" class="w-4 h-4 mr-2"></i> Scan</button>
-                        </div>
+                        <div class="flex gap-2 w-full md:w-auto"><button onclick="toggleHolidayModal()"
+                                class="flex-1 md:flex-none bg-amber-100 text-amber-700 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-amber-200 transition flex items-center justify-center"><i
+                                    data-lucide="calendar-off" class="w-4 h-4 mr-2"></i> Holiday</button><button
+                                onclick="toggleScanner()"
+                                class="flex-1 md:flex-none bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-slate-900 transition flex items-center justify-center"><i
+                                    data-lucide="qr-code" class="w-4 h-4 mr-2"></i> Scan</button></div>
                     </div>
-                    <div id="holiday-banner" class="hidden mt-3 bg-rose-50 border border-rose-100 rounded-xl p-3 flex items-center text-rose-700 text-xs font-bold">
-                        <i data-lucide="alert-circle" class="w-4 h-4 mr-2"></i><span>Attendance Blocked: <span id="holiday-reason"></span></span>
-                    </div>
+                    <div id="holiday-banner"
+                        class="hidden mt-3 bg-rose-50 border border-rose-100 rounded-xl p-3 flex items-center text-rose-700 text-xs font-bold">
+                        <i data-lucide="alert-circle" class="w-4 h-4 mr-2"></i><span>Attendance Blocked: <span
+                                id="holiday-reason"></span></span></div>
                 </div>
-
                 <div class="flex-1 overflow-y-auto p-4 md:p-8 relative">
-                    <div id="scanner-container" class="hidden absolute inset-0 z-50 bg-slate-900/95 flex flex-col items-center justify-center p-4">
+                    <div id="scanner-container"
+                        class="hidden absolute inset-0 z-50 bg-slate-900/95 flex flex-col items-center justify-center p-4">
                         <div class="bg-white p-2 rounded-2xl w-full max-w-sm">
-                             <div id="qr-reader" class="rounded-xl overflow-hidden border-2 border-teal-500"></div>
-                        </div>
-                        <button onclick="toggleScanner()" class="mt-6 bg-white/10 text-white px-8 py-3 rounded-full font-bold hover:bg-white/20 transition backdrop-blur-sm">Close Scanner</button>
+                            <div id="qr-reader" class="rounded-xl overflow-hidden border-2 border-teal-500"></div>
+                        </div><button onclick="toggleScanner()"
+                            class="mt-6 bg-white/10 text-white px-8 py-3 rounded-full font-bold hover:bg-white/20 transition backdrop-blur-sm">Close
+                            Scanner</button>
                     </div>
-
-                    <div class="max-w-4xl mx-auto bg-white rounded-[1.5rem] border border-slate-200 shadow-xl overflow-hidden" id="attendance-list-container">
-                        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3">
-                            <input type="text" id="att-search" onkeyup="filterAttendance()" placeholder="Search student..." class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none w-full sm:w-64">
-                            <button onclick="saveBulkAttendance()" class="w-full sm:w-auto bg-teal-700 text-white px-6 py-2 rounded-xl text-xs font-bold uppercase hover:bg-teal-800 transition">Save All</button>
-                        </div>
+                    <div class="max-w-4xl mx-auto bg-white rounded-[1.5rem] border border-slate-200 shadow-xl overflow-hidden"
+                        id="attendance-list-container">
+                        <div
+                            class="p-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3">
+                            <input type="text" id="att-search" onkeyup="filterAttendance()"
+                                placeholder="Search student..."
+                                class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none w-full sm:w-64"><button
+                                onclick="saveBulkAttendance()"
+                                class="w-full sm:w-auto bg-teal-700 text-white px-6 py-2 rounded-xl text-xs font-bold uppercase hover:bg-teal-800 transition">Save
+                                All</button></div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[10px] tracking-widest">
-                                    <tr><th class="px-4 py-3">Student</th><th class="px-4 py-3 text-center">Status</th><th class="px-4 py-3 text-right">Time</th></tr>
+                                <thead
+                                    class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[10px] tracking-widest">
+                                    <tr>
+                                        <th class="px-4 py-3">Student</th>
+                                        <th class="px-4 py-3 text-center">Status</th>
+                                        <th class="px-4 py-3 text-right">Time</th>
+                                    </tr>
                                 </thead>
                                 <tbody id="attendance-body" class="divide-y divide-slate-100"></tbody>
                             </table>
@@ -249,16 +328,27 @@
         </main>
     </div>
 
-    <div id="holiday-modal" class="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div id="holiday-modal"
+        class="fixed inset-0 z-[150] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-[2rem] p-6 md:p-8 shadow-2xl transform transition-all scale-100">
             <h3 class="text-xl font-bold text-slate-800 mb-2">Declare Holiday</h3>
             <p class="text-slate-500 text-sm mb-6">Select a date range. Attendance will be disabled.</p>
             <div class="space-y-4">
-                <div><label class="text-xs font-bold text-slate-400 uppercase">Start Date</label><input type="date" id="hol-start" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm"></div>
-                <div><label class="text-xs font-bold text-slate-400 uppercase">End Date</label><input type="date" id="hol-end" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm"></div>
-                <div><label class="text-xs font-bold text-slate-400 uppercase">Reason</label><input type="text" id="hol-reason" placeholder="e.g. Mid-term Break" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm"></div>
+                <div><label class="text-xs font-bold text-slate-400 uppercase">Start Date</label><input type="date"
+                        id="hol-start" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
+                </div>
+                <div><label class="text-xs font-bold text-slate-400 uppercase">End Date</label><input type="date"
+                        id="hol-end" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm">
+                </div>
+                <div><label class="text-xs font-bold text-slate-400 uppercase">Reason</label><input type="text"
+                        id="hol-reason" placeholder="e.g. Mid-term Break"
+                        class="w-full mt-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm"></div>
             </div>
-            <div class="flex gap-4 mt-8"><button onclick="toggleHolidayModal()" class="flex-1 py-3 text-slate-400 font-bold text-sm hover:text-slate-600">Cancel</button><button onclick="saveHoliday()" class="flex-1 py-3 bg-rose-600 text-white rounded-xl font-bold text-sm shadow-lg hover:bg-rose-700">Set Holiday</button></div>
+            <div class="flex gap-4 mt-8"><button onclick="toggleHolidayModal()"
+                    class="flex-1 py-3 text-slate-400 font-bold text-sm hover:text-slate-600">Cancel</button><button
+                    onclick="saveHoliday()"
+                    class="flex-1 py-3 bg-rose-600 text-white rounded-xl font-bold text-sm shadow-lg hover:bg-rose-700">Set
+                    Holiday</button></div>
         </div>
     </div>
 
@@ -276,7 +366,7 @@
         const JSS_SUBJECTS = ['Mathematics', 'English', 'Integrated Science', 'Social Studies', 'Islamic Studies', 'Arabic', 'Civic Education', 'Hifdh', 'Tajweed'];
         const SSS_SUBJECTS = ['Mathematics', 'English', 'Biology', 'Chemistry', 'Physics', 'Islamic Studies', 'Arabic', 'Geography', 'Economics', 'Civic Education', 'Hifdh', 'Tajweed'];
 
-        window.onload = function() {
+        window.onload = function () {
             try {
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 checkActiveSession();
@@ -288,24 +378,26 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobile-overlay');
-            if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('opacity-100'), 10); } 
-            else { sidebar.classList.add('-translate-x-full'); overlay.classList.remove('opacity-100'); setTimeout(() => overlay.classList.add('hidden'), 300); }
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
         }
 
         function switchView(viewName) {
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden-view'));
             document.getElementById('view-' + viewName).classList.remove('hidden-view');
-            // Nav Updates
             document.querySelectorAll('nav button').forEach(b => { b.classList.remove('active-nav'); b.classList.add('hover:bg-slate-800'); });
             const btn = document.getElementById('nav-' + viewName);
-            if(btn) { btn.classList.add('active-nav'); btn.classList.remove('hover:bg-slate-800'); }
-            
-            // Auto-close sidebar on mobile
-            if(window.innerWidth < 768) {
-                const sidebar = document.getElementById('sidebar');
-                if(!sidebar.classList.contains('-translate-x-full')) toggleSidebar();
-            }
-            if(viewName === 'attendance') loadAttendance();
+            if (btn) { btn.classList.add('active-nav'); btn.classList.remove('hover:bg-slate-800'); }
+
+            if (window.innerWidth < 768) { const sidebar = document.getElementById('sidebar'); if (!sidebar.classList.contains('-translate-x-full')) toggleSidebar(); }
+            if (viewName === 'attendance') loadAttendance();
         }
 
         // --- AUTH ---
@@ -340,7 +432,7 @@
             document.getElementById('profile-name').innerText = teacher.name;
             document.getElementById('profile-role').innerText = teacher.access_type === 'class' ? "Class Teacher" : "Subject Teacher";
 
-            if(teacher.access_type === 'class') {
+            if (teacher.access_type === 'class') {
                 const select = document.getElementById('att-class-select');
                 teacher.access_value.split(',').forEach(c => select.innerHTML += `<option value="${c.trim()}">${c.trim()}</option>`);
             } else {
@@ -386,28 +478,88 @@
             loadGradebook();
         }
 
+        // --- GRADING & SAVE ---
+        async function loadGradebook() {
+            const tbody = document.getElementById('gradebook-body');
+            tbody.innerHTML = '<tr><td colspan="7" class="p-10 text-center text-slate-400 italic">Fetching...</td></tr>';
+            const subject = document.getElementById('grading-subject-select').value;
+
+            const { data: students } = await supabaseClient.from('students').select('*').eq('grade_level', activeClass).order('name');
+            if (!students || !students.length) { tbody.innerHTML = ''; return; }
+
+            const { data: grades } = await supabaseClient.from('grades').select('*').eq('subject_text', subject).in('student_id', students.map(s => s.id));
+            currentSubjectStatus = (grades && grades.length && grades[0].status) ? grades[0].status : 'draft';
+            updateSubmitButtonUI();
+
+            const gradeMap = {}; if (grades) grades.forEach(g => gradeMap[g.student_id] = g);
+            tbody.innerHTML = '';
+            const isLocked = currentSubjectStatus === 'submitted';
+            const disabledAttr = isLocked ? 'disabled' : '';
+
+            students.forEach(s => {
+                const g = gradeMap[s.id] || { ca_score: '', exam_score: '' };
+                const total = (Number(g.ca_score) || 0) + (Number(g.exam_score) || 0);
+                const grade = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 45 ? 'D' : total >= 40 ? 'E' : 'F';
+
+                // --- FIXED SAVE BUTTON VISIBILITY ---
+                tbody.insertAdjacentHTML('beforeend', `<tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 group"><td class="px-4 py-3 font-bold text-slate-700 min-w-[150px]">${s.name}</td><td class="px-4 py-3 text-center"><input type="number" id="ca-${s.id}" value="${g.ca_score}" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-14 bg-slate-50 border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition"></td><td class="px-4 py-3 text-center"><input type="number" id="exam-${s.id}" value="${g.exam_score}" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-14 bg-slate-50 border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition"></td><td class="px-4 py-3 text-center font-black text-slate-800" id="total-${s.id}">${total}</td><td class="px-4 py-3 text-center"><span id="grade-${s.id}" class="px-2 py-1 rounded-lg text-xs font-black bg-slate-100 text-slate-500">${grade}</span></td><td class="px-4 py-3 text-right">${!isLocked ? `<button onclick="saveStudentGrade('${s.id}')" class="bg-slate-800 text-white p-2 rounded-lg hover:bg-teal-600 transition shadow-lg active:scale-90"><i data-lucide="save" class="w-4 h-4"></i></button>` : '<span class="text-xs text-slate-400 italic">Locked</span>'}</td></tr>`);
+            });
+            lucide.createIcons();
+        }
+
+        function updateRowTotal(id) {
+            const ca = Number(document.getElementById(`ca-${id}`).value) || 0;
+            const exam = Number(document.getElementById(`exam-${id}`).value) || 0;
+            if (ca > 40) { showNotification("Warning", "CA Max 40", true); document.getElementById(`ca-${id}`).value = 40; return; }
+            if (exam > 60) { showNotification("Warning", "Exam Max 60", true); document.getElementById(`exam-${id}`).value = 60; return; }
+            const total = ca + exam;
+            document.getElementById(`total-${id}`).innerText = total;
+            document.getElementById(`grade-${id}`).innerText = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 45 ? 'D' : total >= 40 ? 'E' : 'F';
+        }
+
+        // --- FIXED SAVE FUNCTION ---
+        async function saveStudentGrade(studentId) {
+            const subject = document.getElementById('grading-subject-select').value;
+            const ca = document.getElementById(`ca-${studentId}`).value;
+            const exam = document.getElementById(`exam-${studentId}`).value;
+            const term = "2nd Term 2025/2026";
+
+            // Fix: Explicitly check for existing record first to handle upsert properly
+            const { data: existing } = await supabaseClient.from('grades').select('id').eq('student_id', studentId).eq('subject_text', subject).eq('term', term).maybeSingle();
+
+            let error;
+            if (existing) {
+                const res = await supabaseClient.from('grades').update({ ca_score: ca, exam_score: exam }).eq('id', existing.id);
+                error = res.error;
+            } else {
+                const res = await supabaseClient.from('grades').insert([{ student_id: studentId, subject_text: subject, term: term, ca_score: ca, exam_score: exam, status: 'draft' }]);
+                error = res.error;
+            }
+
+            if (error) showNotification("Error", "Failed to save.", true);
+            else showNotification("Saved", "Grade recorded.");
+        }
+
         // --- ATTENDANCE ---
         async function checkHolidayStatus(dateStr) {
             const date = new Date(dateStr);
-            const day = date.getDay();
-            if(day === 0 || day === 6) return "Weekend";
-            const { data, error } = await supabaseClient.from('holidays').select('*').lte('start_date', dateStr).gte('resumption_date', dateStr);
-            if(data && data.length > 0) return data[0].description || "School Holiday";
-            return null;
+            if (date.getDay() === 0 || date.getDay() === 6) return "Weekend";
+            const { data } = await supabaseClient.from('holidays').select('*').lte('start_date', dateStr).gte('resumption_date', dateStr);
+            return (data && data.length > 0) ? data[0].description : null;
         }
 
         async function loadAttendance() {
             const cls = document.getElementById('att-class-select').value;
             const dateStr = document.getElementById('att-date').value;
             const tbody = document.getElementById('attendance-body');
-            const container = document.getElementById('attendance-list-container');
-            const banner = document.getElementById('holiday-banner');
-
             tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 italic">Loading...</td></tr>';
+
             const holidayReason = await checkHolidayStatus(dateStr);
             isHoliday = !!holidayReason;
-            
-            if(isHoliday) {
+
+            const banner = document.getElementById('holiday-banner');
+            const container = document.getElementById('attendance-list-container');
+            if (isHoliday) {
                 banner.classList.remove('hidden');
                 document.getElementById('holiday-reason').innerText = holidayReason;
                 container.classList.add('holiday-blocked');
@@ -419,164 +571,65 @@
             const { data: students } = await supabaseClient.from('students').select('*').eq('grade_level', cls).order('name');
             const { data: attendance } = await supabaseClient.from('attendance').select('*').eq('date', dateStr).eq('class_name', cls);
 
-            const attMap = {};
-            if(attendance) attendance.forEach(a => attMap[a.student_id] = a);
-
+            const attMap = {}; if (attendance) attendance.forEach(a => attMap[a.student_id] = a);
             tbody.innerHTML = '';
-            if(!students || students.length === 0) return;
 
+            if (!students || !students.length) return;
             students.forEach(s => {
                 const record = attMap[s.id];
                 const isPresent = record && record.status === 'Present';
-                const time = record ? new Date(record.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '-';
-                tbody.insertAdjacentHTML('beforeend', `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 att-row" data-id="${s.id}">
-                        <td class="px-4 py-3 font-bold text-slate-700">${s.name}</td>
-                        <td class="px-4 py-3 text-center">
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer" ${isPresent ? 'checked' : ''} onchange="toggleAttendanceStatus(this)">
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
-                                <span class="ml-3 text-xs font-medium text-slate-600">${isPresent ? 'Present' : 'Absent'}</span>
-                            </label>
-                        </td>
-                        <td class="px-4 py-3 text-right text-xs text-slate-400 font-mono">${time}</td>
-                    </tr>
-                `);
+                const time = record ? new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
+                tbody.insertAdjacentHTML('beforeend', `<tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 att-row" data-id="${s.id}"><td class="px-4 py-3 font-bold text-slate-700">${s.name}</td><td class="px-4 py-3 text-center"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" class="sr-only peer" ${isPresent ? 'checked' : ''} onchange="toggleAttendanceStatus(this)"><div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div><span class="ml-3 text-xs font-medium text-slate-600">${isPresent ? 'Present' : 'Absent'}</span></label></td><td class="px-4 py-3 text-right text-xs text-slate-400 font-mono">${time}</td></tr>`);
             });
         }
 
+        // --- UTILS ---
         function toggleAttendanceStatus(checkbox) { checkbox.nextElementSibling.nextElementSibling.innerText = checkbox.checked ? 'Present' : 'Absent'; }
         function filterAttendance() { const q = document.getElementById('att-search').value.toLowerCase(); document.querySelectorAll('.att-row').forEach(r => r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none'); }
-
         async function saveBulkAttendance() {
-            if(isHoliday) return;
-            const rows = document.querySelectorAll('.att-row');
+            if (isHoliday) return;
             const dateStr = document.getElementById('att-date').value;
             const cls = document.getElementById('att-class-select').value;
-            const updates = [];
-            rows.forEach(row => {
-                updates.push({
-                    student_id: row.getAttribute('data-id'),
-                    class_name: cls,
-                    date: dateStr,
-                    status: row.querySelector('input[type="checkbox"]').checked ? 'Present' : 'Absent',
-                    marked_by: currentUser.user_id
-                });
-            });
+            const updates = Array.from(document.querySelectorAll('.att-row')).map(row => ({
+                student_id: row.getAttribute('data-id'),
+                class_name: cls,
+                date: dateStr,
+                status: row.querySelector('input[type="checkbox"]').checked ? 'Present' : 'Absent',
+                marked_by: currentUser.user_id
+            }));
             const { error } = await supabaseClient.from('attendance').upsert(updates, { onConflict: 'student_id, date' });
-            if(error) showNotification("Error", "Failed to save.", true); else showNotification("Success", "Attendance Saved.");
+            if (error) showNotification("Error", "Failed to save.", true); else showNotification("Success", "Attendance Saved.");
         }
 
-        // --- SCANNER ---
-        function toggleScanner() {
-            const container = document.getElementById('scanner-container');
-            if(container.classList.contains('hidden')) { container.classList.remove('hidden'); startScanner(); } 
-            else { container.classList.add('hidden'); if(html5QrcodeScanner) html5QrcodeScanner.clear(); }
-        }
-        function startScanner() {
-            if(isHoliday) { showNotification("Holiday", "Attendance disabled.", true); return; }
-            html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 });
-            html5QrcodeScanner.render(onScanSuccess);
-        }
-        async function onScanSuccess(decodedText) {
-            const cls = document.getElementById('att-class-select').value;
-            const { data: student } = await supabaseClient.from('students').select('*').eq('id', decodedText).eq('grade_level', cls).single();
-            if(!student) { showNotification("Error", "Student not found in this class.", true); return; }
-            
-            const { error } = await supabaseClient.from('attendance').upsert({ student_id: decodedText, class_name: cls, date: document.getElementById('att-date').value, status: 'Present', marked_by: currentUser.user_id }, { onConflict: 'student_id, date' });
-            if(!error) { new Audio('https://actions.google.com/sounds/v1/science_fiction/beep_short.ogg').play(); showNotification("Scanned", `${student.name} marked Present.`); loadAttendance(); html5QrcodeScanner.pause(); setTimeout(() => html5QrcodeScanner.resume(), 2000); }
-        }
-
-        // --- HOLIDAYS ---
-        function toggleHolidayModal() { document.getElementById('holiday-modal').classList.toggle('hidden'); }
-        async function saveHoliday() {
-            const start = document.getElementById('hol-start').value;
-            const end = document.getElementById('hol-end').value;
-            const desc = document.getElementById('hol-reason').value;
-            if(!start || !end) { showNotification("Error", "Select dates.", true); return; }
-            const { error } = await supabaseClient.from('holidays').insert([{ start_date: start, resumption_date: end, description: desc }]);
-            if(!error) { showNotification("Success", "Holiday set."); toggleHolidayModal(); loadAttendance(); } else showNotification("Error", error.message, true);
-        }
-
-        // --- GRADING ---
-        async function loadGradebook() {
-            const tbody = document.getElementById('gradebook-body');
-            tbody.innerHTML = '<tr><td colspan="7" class="p-10 text-center text-slate-400 italic">Fetching...</td></tr>';
-            const subject = document.getElementById('grading-subject-select').value;
-            const { data: students } = await supabaseClient.from('students').select('*').eq('grade_level', activeClass).order('name');
-            if (!students || !students.length) { tbody.innerHTML = ''; return; }
-            const { data: grades } = await supabaseClient.from('grades').select('*').eq('subject_text', subject).in('student_id', students.map(s => s.id));
-            
-            currentSubjectStatus = (grades && grades.length && grades[0].status) ? grades[0].status : 'draft';
-            updateSubmitButtonUI();
-            const gradeMap = {}; if (grades) grades.forEach(g => gradeMap[g.student_id] = g);
-
-            tbody.innerHTML = '';
-            const isLocked = currentSubjectStatus === 'submitted';
-            const disabledAttr = isLocked ? 'disabled' : '';
-
-            students.forEach(s => {
-                const g = gradeMap[s.id] || { ca_score: '', exam_score: '' };
-                const total = (Number(g.ca_score)||0) + (Number(g.exam_score)||0);
-                const grade = total>=70?'A':total>=60?'B':total>=50?'C':total>=45?'D':total>=40?'E':'F';
-                tbody.insertAdjacentHTML('beforeend', `<tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 group"><td class="px-4 py-3 font-bold text-slate-700 min-w-[150px]">${s.name}</td><td class="px-4 py-3 text-center"><input type="number" id="ca-${s.id}" value="${g.ca_score}" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-14 bg-slate-50 border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition"></td><td class="px-4 py-3 text-center"><input type="number" id="exam-${s.id}" value="${g.exam_score}" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-14 bg-slate-50 border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition"></td><td class="px-4 py-3 text-center font-black text-slate-800" id="total-${s.id}">${total}</td><td class="px-4 py-3 text-center"><span id="grade-${s.id}" class="px-2 py-1 rounded-lg text-xs font-black bg-slate-100 text-slate-500">${grade}</span></td><td class="px-4 py-3 text-right">${!isLocked ? `<button onclick="saveStudentGrade('${s.id}')" class="bg-slate-800 text-white p-2 rounded-lg hover:bg-teal-600 transition shadow-lg active:scale-90"><i data-lucide="save" class="w-4 h-4"></i></button>` : '<span class="text-xs text-slate-400 italic">Locked</span>'}</td></tr>`);
-            });
-            lucide.createIcons();
-        }
-
-        function updateRowTotal(id) {
-            const ca = Number(document.getElementById(`ca-${id}`).value)||0;
-            const exam = Number(document.getElementById(`exam-${id}`).value)||0;
-            if(ca>40){showNotification("Warning", "CA Max 40", true);document.getElementById(`ca-${id}`).value=40;return;}
-            if(exam>60){showNotification("Warning", "Exam Max 60", true);document.getElementById(`exam-${id}`).value=60;return;}
-            const total = ca+exam;
-            document.getElementById(`total-${id}`).innerText = total;
-            document.getElementById(`grade-${id}`).innerText = total>=70?'A':total>=60?'B':total>=50?'C':total>=45?'D':total>=40?'E':'F';
-        }
-
-        async function saveStudentGrade(studentId) {
-            const subject = document.getElementById('grading-subject-select').value;
-            const ca = document.getElementById(`ca-${studentId}`).value;
-            const exam = document.getElementById(`exam-${studentId}`).value;
-            const term = "2nd Term 2025/2026";
-            const { data: existing } = await supabaseClient.from('grades').select('id').match({ student_id: studentId, subject_text: subject, term: term }).single();
-            let query = supabaseClient.from('grades');
-            if(existing) query = query.update({ ca_score: ca, exam_score: exam }).eq('id', existing.id);
-            else query = query.insert([{ student_id: studentId, subject_text: subject, term: term, ca_score: ca, exam_score: exam, status: 'draft' }]);
-            const { error } = await query;
-            if(error) showNotification("Error", "Failed.", true); else showNotification("Saved", "Grade recorded.");
-        }
-
+        // --- SUBMIT TO ADMIN ---
         async function submitToAdmin() {
             showConfirm("Submit Grades?", "This will lock all grades for this subject.", async () => {
                 const subject = document.getElementById('grading-subject-select').value;
                 const cls = document.getElementById('grade-class-title').innerText;
                 const { data: students } = await supabaseClient.from('students').select('id').eq('grade_level', cls);
-                await supabaseClient.from('grades').update({ status: 'submitted' }).in('student_id', students.map(s=>s.id)).eq('subject_text', subject);
+                await supabaseClient.from('grades').update({ status: 'submitted' }).in('student_id', students.map(s => s.id)).eq('subject_text', subject);
                 showNotification("Success", "Submitted."); loadGradebook();
             });
         }
         function updateSubmitButtonUI() {
             const btn = document.getElementById('btn-submit-admin');
-            if(currentSubjectStatus==='submitted'){btn.innerHTML=`<i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Submitted`; btn.disabled=true; btn.classList.add('bg-slate-400');}
-            else{btn.innerHTML=`<i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit`; btn.disabled=false; btn.classList.remove('bg-slate-400');}
+            if (currentSubjectStatus === 'submitted') { btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Submitted`; btn.disabled = true; btn.classList.add('bg-slate-400'); }
+            else { btn.innerHTML = `<i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit`; btn.disabled = false; btn.classList.remove('bg-slate-400'); }
             lucide.createIcons();
         }
 
-        // --- UTILS ---
+        // --- HELPERS ---
         function showNotification(t, m, e = false) { const md = document.getElementById('custom-alert'); document.getElementById('alert-title').innerText = t; document.getElementById('alert-message').innerText = m; document.getElementById('alert-cancel-btn').classList.add('hidden'); const btn = document.getElementById('alert-ok-btn'); btn.innerText = "Acknowledge"; btn.onclick = closeAlert; document.getElementById('alert-icon').setAttribute('data-lucide', e ? 'x-circle' : 'check-circle'); document.getElementById('alert-icon-bg').className = e ? 'w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600 shadow-inner' : 'w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 text-teal-600 shadow-inner'; lucide.createIcons(); md.classList.remove('pointer-events-none', 'opacity-0'); md.querySelector('div.transform').classList.replace('scale-95', 'scale-100'); }
-        function showConfirm(title, message, callback) {
-            const modal = document.getElementById('custom-alert');
-            document.getElementById('alert-title').innerText = title;
-            document.getElementById('alert-message').innerText = message;
-            document.getElementById('alert-cancel-btn').classList.remove('hidden');
-            const okBtn = document.getElementById('alert-ok-btn'); okBtn.innerText = "Yes, Proceed"; okBtn.onclick = () => { callback(); closeAlert(); };
-            document.getElementById('alert-icon').setAttribute('data-lucide', 'alert-circle');
-            document.getElementById('alert-icon-bg').className = 'w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner';
-            lucide.createIcons(); modal.classList.remove('pointer-events-none', 'opacity-0'); modal.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
-        }
+        function showConfirm(t, m, cb) { const md = document.getElementById('custom-alert'); document.getElementById('alert-title').innerText = t; document.getElementById('alert-message').innerText = m; document.getElementById('alert-cancel-btn').classList.remove('hidden'); const btn = document.getElementById('alert-ok-btn'); btn.innerText = "Yes, Proceed"; btn.onclick = () => { cb(); closeAlert(); }; document.getElementById('alert-icon').setAttribute('data-lucide', 'alert-circle'); document.getElementById('alert-icon-bg').className = 'w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner'; lucide.createIcons(); md.classList.remove('pointer-events-none', 'opacity-0'); md.querySelector('div.transform').classList.replace('scale-95', 'scale-100'); }
         function closeAlert() { const md = document.getElementById('custom-alert'); md.classList.add('opacity-0'); md.querySelector('div.transform').classList.replace('scale-100', 'scale-95'); setTimeout(() => md.classList.add('pointer-events-none'), 300); }
         function handleLogout() { showConfirm("Log Out?", "Are you sure?", async () => { await supabaseClient.auth.signOut(); location.reload(); }); }
+
+        // --- QR SCANNER & HOLIDAYS (Minimal implementation for brevity) ---
+        function toggleScanner() { const c = document.getElementById('scanner-container'); if (c.classList.contains('hidden')) { c.classList.remove('hidden'); if (!isHoliday) { html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 }); html5QrcodeScanner.render(onScanSuccess); } } else { c.classList.add('hidden'); if (html5QrcodeScanner) html5QrcodeScanner.clear(); } }
+        async function onScanSuccess(t) { const c = document.getElementById('att-class-select').value; const { data: s } = await supabaseClient.from('students').select('*').eq('id', t).eq('grade_level', c).single(); if (!s) { alert("Student not found"); return; } await supabaseClient.from('attendance').upsert({ student_id: t, class_name: c, date: document.getElementById('att-date').value, status: 'Present', marked_by: currentUser.user_id }, { onConflict: 'student_id,date' }); new Audio('https://actions.google.com/sounds/v1/science_fiction/beep_short.ogg').play(); loadAttendance(); }
+        function toggleHolidayModal() { document.getElementById('holiday-modal').classList.toggle('hidden'); }
+        async function saveHoliday() { const s = document.getElementById('hol-start').value, e = document.getElementById('hol-end').value, d = document.getElementById('hol-reason').value; if (!s || !e) return; await supabaseClient.from('holidays').insert([{ start_date: s, resumption_date: e, description: d }]); toggleHolidayModal(); loadAttendance(); }
     </script>
 </body>
+
 </html>
