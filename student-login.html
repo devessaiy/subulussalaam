@@ -15,12 +15,24 @@
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
         .hidden-view { display: none !important; }
-        .active-nav { background-color: #047857 !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.1); }
+        .active-nav { 
+            background-color: #047857 !important; 
+            color: #ffffff !important; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .student-bg { background-color: #064e3b; background-image: radial-gradient(at 0% 0%, #065f46 0, transparent 50%), radial-gradient(at 100% 100%, #064e3b 0, transparent 50%); }
         .pattern-overlay { background-image: url("https://www.transparenttextures.com/patterns/arabesque.png"); opacity: 0.1; }
-        ::-webkit-scrollbar { width: 6px; }
+        
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+        
+        /* Glass Overlay */
+        .glass-overlay { backdrop-filter: blur(4px); background-color: rgba(6, 78, 59, 0.5); }
     </style>
 </head>
 
@@ -40,11 +52,6 @@
     </div>
 
     <div id="auth-container" class="fixed inset-0 z-[100] flex items-center justify-center p-4 student-bg transition-all duration-700">
-        <a href="index.html" class="absolute top-6 left-6 z-[120] flex items-center gap-3 text-white/80 hover:text-white transition-colors group">
-            <div class="p-2.5 bg-white/10 rounded-full backdrop-blur-md border border-white/10 group-hover:bg-white/20 transition-all shadow-lg"><i data-lucide="arrow-left" class="w-5 h-5"></i></div>
-            <span class="text-sm font-bold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">Return Home</span>
-        </a>
-
         <div class="w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[550px] relative z-10">
             <div class="hidden md:flex w-1/2 bg-emerald-900 relative flex-col justify-between p-12 text-white overflow-hidden">
                 <div class="absolute inset-0 pattern-overlay"></div>
@@ -56,8 +63,10 @@
                     <h1 class="text-4xl font-bold font-serif leading-tight mt-6">My Learning<br><span class="text-emerald-300">Journey</span></h1>
                     <p class="mt-6 text-emerald-100/70 text-sm leading-relaxed">Access your academic records, check results, and stay updated with school announcements.</p>
                 </div>
+                <a href="index.html" class="flex items-center gap-2 text-emerald-300 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest mt-auto">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Return Home
+                </a>
             </div>
-
             <div class="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center">
                 <div class="max-w-xs mx-auto w-full">
                     <div class="mb-8">
@@ -73,7 +82,6 @@
                                 <input type="radio" name="login-type" value="email" class="hidden" onchange="toggleLoginInput('email')"> Email
                             </label>
                         </div>
-
                         <div>
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wide" id="input-label">WhatsApp Number</label>
                             <input type="text" id="login-input" class="w-full mt-2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold text-slate-700 outline-none focus:border-emerald-600 transition-all" placeholder="e.g. 23480..." required>
@@ -91,59 +99,73 @@
 
     <div id="main-dashboard" class="hidden-view flex h-screen w-full transition-opacity duration-700">
         
-        <aside class="w-20 md:w-64 bg-emerald-900 text-white flex flex-col border-r border-emerald-800 transition-all duration-300">
-            <div class="h-24 flex items-center justify-center md:justify-start md:px-8 border-b border-emerald-800">
-                <i data-lucide="graduation-cap" class="w-8 h-8 text-emerald-300 md:mr-3"></i>
-                <span class="hidden md:block font-bold text-lg tracking-tight">Student</span>
+        <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 z-20 glass-overlay hidden transition-opacity opacity-0 md:hidden"></div>
+
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-72 bg-emerald-900 text-white flex flex-col border-r border-emerald-800 transform -translate-x-full md:translate-x-0 md:relative sidebar-transition shadow-2xl md:shadow-none h-full">
+            <div class="h-24 flex items-center justify-between px-6 border-b border-emerald-800">
+                <div class="flex items-center">
+                    <i data-lucide="graduation-cap" class="w-8 h-8 text-emerald-300 mr-3"></i>
+                    <span class="font-bold text-lg tracking-tight">Student</span>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-emerald-200 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             
-            <nav class="flex-1 py-8 px-2 md:px-4 space-y-2">
-                <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-center md:justify-start px-3 py-4 rounded-xl active-nav transition-all group">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 md:mr-3"></i>
-                    <span class="hidden md:block text-sm font-medium">Overview</span>
+            <nav class="flex-1 py-8 px-4 space-y-3 overflow-y-auto">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center px-4 py-4 rounded-xl active-nav transition-all group">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                    <span class="text-sm font-medium">Overview</span>
                 </button>
-                <button onclick="switchView('results')" id="nav-results" class="w-full flex items-center justify-center md:justify-start px-3 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
-                    <i data-lucide="file-text" class="w-5 h-5 md:mr-3"></i>
-                    <span class="hidden md:block text-sm font-medium">My Result</span>
+                <button onclick="switchView('results')" id="nav-results" class="w-full flex items-center px-4 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
+                    <i data-lucide="file-text" class="w-5 h-5 mr-3"></i>
+                    <span class="text-sm font-medium">My Result</span>
                 </button>
-                <button onclick="switchView('attendance')" id="nav-attendance" class="w-full flex items-center justify-center md:justify-start px-3 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
-                    <i data-lucide="calendar-check" class="w-5 h-5 md:mr-3"></i>
-                    <span class="hidden md:block text-sm font-medium">Attendance</span>
+                <button onclick="switchView('attendance')" id="nav-attendance" class="w-full flex items-center px-4 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
+                    <i data-lucide="calendar-check" class="w-5 h-5 mr-3"></i>
+                    <span class="text-sm font-medium">Attendance</span>
                 </button>
-                <button onclick="switchView('news')" id="nav-news" class="w-full flex items-center justify-center md:justify-start px-3 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
-                    <i data-lucide="bell" class="w-5 h-5 md:mr-3"></i>
-                    <span class="hidden md:block text-sm font-medium">News Feed</span>
+                <button onclick="switchView('news')" id="nav-news" class="w-full flex items-center px-4 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
+                    <i data-lucide="bell" class="w-5 h-5 mr-3"></i>
+                    <span class="text-sm font-medium">News Feed</span>
                 </button>
+
+                <div class="pt-6 px-2">
+                    <p class="text-[10px] uppercase text-emerald-400 font-bold tracking-widest mb-3">My Profile</p>
+                    <div class="bg-emerald-950/50 rounded-xl p-4 border border-emerald-800">
+                        <p id="profile-name" class="text-white font-bold text-sm mb-1 truncate">Loading...</p>
+                        <p id="profile-class" class="text-xs text-emerald-300 font-mono uppercase tracking-wide">...</p>
+                    </div>
+                </div>
             </nav>
 
-            <div class="p-4 border-t border-emerald-800 bg-emerald-950/50">
-                <div class="hidden md:block mb-4">
-                    <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold">Logged in as</p>
-                    <p id="profile-name" class="text-sm font-bold truncate">Loading...</p>
-                    <p id="profile-class" class="text-xs text-emerald-300">...</p>
-                </div>
-                <button onclick="handleLogout()" class="w-full flex items-center justify-center md:justify-start px-3 py-3 text-emerald-200 hover:text-white hover:bg-rose-900/40 rounded-xl transition-all">
-                    <i data-lucide="log-out" class="w-5 h-5 md:mr-3"></i>
-                    <span class="hidden md:block text-sm font-bold">Logout</span>
+            <div class="p-4 border-t border-emerald-800">
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center px-4 py-3 text-emerald-200 hover:text-white hover:bg-rose-900/40 rounded-xl transition-all">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-3"></i>
+                    <span class="text-sm font-bold">Sign Out</span>
                 </button>
             </div>
         </aside>
 
         <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden relative">
             
-            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
-                <h2 class="text-xl font-bold text-slate-800" id="page-title">My Dashboard</h2>
-                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold" id="header-initials">S</div>
+            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden mr-4 text-slate-500 hover:text-emerald-700 bg-slate-50 p-2 rounded-lg"><i data-lucide="menu" class="w-6 h-6"></i></button>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-800 truncate" id="page-title">Dashboard</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold text-sm" id="header-initials">S</div>
+                    <button onclick="handleLogout()" class="md:hidden p-2 text-rose-500 hover:bg-rose-50 rounded-full"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+                </div>
             </header>
 
-            <div id="view-dashboard" class="view-section flex-1 overflow-y-auto p-6 md:p-10">
+            <div id="view-dashboard" class="view-section flex-1 overflow-y-auto p-4 md:p-10">
                 <div class="max-w-4xl mx-auto">
-                    <div class="mb-10">
-                        <h1 class="text-3xl font-black text-slate-800 mb-2">Salaam, <span id="dash-name" class="text-emerald-700">Student</span>.</h1>
-                        <p class="text-slate-500">Here is your academic summary for the current session.</p>
+                    <div class="mb-8">
+                        <h1 class="text-2xl md:text-3xl font-black text-slate-800 mb-2">Salaam, <span id="dash-name" class="text-emerald-700">Student</span>.</h1>
+                        <p class="text-slate-500 text-sm md:text-base">Here is your academic summary for the current session.</p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
                         <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:-translate-y-1 transition-all">
                             <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4"><i data-lucide="book" class="w-6 h-6"></i></div>
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">My Class</p>
@@ -163,24 +185,25 @@
                 </div>
             </div>
 
-            <div id="view-results" class="view-section hidden-view flex-1 overflow-y-auto p-6 md:p-10">
+            <div id="view-results" class="view-section hidden-view flex-1 overflow-y-auto p-4 md:p-10">
                 <div class="max-w-4xl mx-auto">
                     <div id="result-locked" class="hidden flex flex-col items-center justify-center py-20 text-center">
                         <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-6"><i data-lucide="lock" class="w-10 h-10"></i></div>
                         <h3 class="text-2xl font-bold text-slate-800">Results Pending</h3>
-                        <p class="text-slate-500 mt-2 max-w-sm">The administration has not yet released the results for your class. Please check back later.</p>
+                        <p class="text-slate-500 mt-2 max-w-sm px-4">The administration has not yet released the results for your class.</p>
                     </div>
 
                     <div id="result-content" class="hidden bg-white rounded-[2rem] shadow-xl border border-slate-200 overflow-hidden">
-                        <div class="bg-emerald-900 p-8 text-white flex justify-between items-center">
+                        <div class="bg-emerald-900 p-6 md:p-8 text-white flex justify-between items-center">
                             <div>
-                                <h3 class="text-2xl font-bold">Academic Report</h3>
+                                <h3 class="text-xl md:text-2xl font-bold">Academic Report</h3>
                                 <p class="text-emerald-300 text-xs font-mono tracking-widest uppercase mt-1">Session 2025/2026</p>
                             </div>
-                            <i data-lucide="file-check" class="w-10 h-10 text-emerald-500/50"></i>
+                            <i data-lucide="file-check" class="w-8 h-8 md:w-10 md:h-10 text-emerald-500/50"></i>
                         </div>
-                        <div class="p-8">
-                            <table class="w-full text-left text-sm">
+                        
+                        <div class="p-0 md:p-8 overflow-x-auto">
+                            <table class="w-full text-left text-sm whitespace-nowrap min-w-[600px] md:min-w-full">
                                 <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[10px] tracking-widest">
                                     <tr>
                                         <th class="p-4">Subject</th>
@@ -193,46 +216,48 @@
                                 <tbody id="results-body" class="divide-y divide-slate-100 font-medium text-slate-700">
                                     </tbody>
                             </table>
+                        </div>
                             
-                            <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
-                                <div class="text-xs text-slate-400">
-                                    <p><strong>A</strong> = 70-100 (Excellent)</p>
-                                    <p><strong>C</strong> = 50-59 (Credit)</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Overall Decision</p>
-                                    <p id="result-decision" class="text-xl font-black text-emerald-700">PROMOTED</p>
-                                </div>
+                        <div class="p-6 md:p-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div class="text-xs text-slate-400">
+                                <p><strong>A</strong> = 70-100 (Excellent)</p>
+                                <p><strong>C</strong> = 50-59 (Credit)</p>
+                            </div>
+                            <div class="text-left sm:text-right w-full sm:w-auto bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-xl">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Overall Decision</p>
+                                <p id="result-decision" class="text-xl font-black text-emerald-700">PROMOTED</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="view-attendance" class="view-section hidden-view flex-1 overflow-y-auto p-6 md:p-10">
+            <div id="view-attendance" class="view-section hidden-view flex-1 overflow-y-auto p-4 md:p-10">
                 <div class="max-w-4xl mx-auto">
                     <h2 class="text-2xl font-bold text-slate-800 mb-6">Attendance History</h2>
                     <div class="bg-white rounded-[2rem] shadow-lg border border-slate-100 overflow-hidden">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 border-b text-slate-500 font-bold uppercase text-[10px] tracking-widest">
-                                <tr>
-                                    <th class="p-6">Date</th>
-                                    <th class="p-6 text-center">Status</th>
-                                    <th class="p-6 text-right">Time Recorded</th>
-                                </tr>
-                            </thead>
-                            <tbody id="attendance-list-body" class="divide-y divide-slate-100">
-                                <tr><td colspan="3" class="p-6 text-center text-slate-400">Loading history...</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm whitespace-nowrap min-w-[500px] md:min-w-full">
+                                <thead class="bg-slate-50 border-b text-slate-500 font-bold uppercase text-[10px] tracking-widest">
+                                    <tr>
+                                        <th class="p-5 md:p-6">Date</th>
+                                        <th class="p-5 md:p-6 text-center">Status</th>
+                                        <th class="p-5 md:p-6 text-right">Time Recorded</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendance-list-body" class="divide-y divide-slate-100">
+                                    <tr><td colspan="3" class="p-6 text-center text-slate-400">Loading history...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="view-news" class="view-section hidden-view flex-1 overflow-y-auto p-6 md:p-10">
+            <div id="view-news" class="view-section hidden-view flex-1 overflow-y-auto p-4 md:p-10">
                 <div class="max-w-4xl mx-auto">
                     <h2 class="text-2xl font-bold text-slate-800 mb-6">School Updates</h2>
-                    <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                         <div class="col-span-full text-center py-20 text-slate-400 italic">Loading announcements...</div>
                     </div>
                 </div>
@@ -246,7 +271,7 @@
         const SUPABASE_URL = 'https://yqzpfwkpnywkjhybhccb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxenBmd2twbnl3a2poeWJoY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4NTM0NDYsImV4cCI6MjA4NTQyOTQ0Nn0.xnTFS3cd1akIGQwXE_tOPz6cqtznzZP2eBB_dOZii7M';
         let supabaseClient;
-        let currentUser = null; // This is the STUDENT record from 'students' table
+        let currentUser = null; 
 
         window.onload = function() {
             try {
@@ -254,6 +279,36 @@
                 checkActiveSession();
             } catch (error) { showNotification("System Error", "Connection failed.", true); }
         };
+
+        // --- NAVIGATION & UI ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) { 
+                sidebar.classList.remove('-translate-x-full'); 
+                overlay.classList.remove('hidden'); 
+                setTimeout(() => overlay.classList.add('opacity-100'), 10); 
+            } else { 
+                sidebar.classList.add('-translate-x-full'); 
+                overlay.classList.remove('opacity-100'); 
+                setTimeout(() => overlay.classList.add('hidden'), 300); 
+            }
+        }
+
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden-view'));
+            document.getElementById('view-' + viewName).classList.remove('hidden-view');
+            // Nav Updates
+            document.querySelectorAll('nav button').forEach(b => { b.classList.remove('active-nav'); b.classList.add('hover:bg-emerald-800'); });
+            const btn = document.getElementById('nav-' + viewName);
+            if(btn) { btn.classList.add('active-nav'); btn.classList.remove('hover:bg-emerald-800'); }
+            
+            // Auto close on mobile
+            if(window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                if(!sidebar.classList.contains('-translate-x-full')) toggleSidebar();
+            }
+        }
 
         // --- AUTH ---
         async function checkActiveSession() {
@@ -291,7 +346,6 @@
             let loginId = document.getElementById('login-input').value;
             const type = document.querySelector('input[name="login-type"]:checked').value;
             
-            // Auto-append domain if whatsapp
             if(type === 'whatsapp') {
                 loginId = `${loginId.replace(/\D/g, '')}@annoor-academy.com`;
             }
@@ -307,27 +361,22 @@
         }
 
         async function initPortal(user) {
-            // Fetch Student Details
             const { data: student, error } = await supabaseClient.from('students').select('*').eq('user_id', user.id).single();
-            
             if (error || !student) { showNotification("Error", "Profile not found.", true); return; }
 
             currentUser = student;
             document.getElementById('auth-container').classList.add('hidden-view');
             document.getElementById('main-dashboard').classList.remove('hidden-view');
             
-            // Profile UI Updates
             document.getElementById('profile-name').innerText = student.name;
             document.getElementById('profile-class').innerText = student.grade_level;
             document.getElementById('header-initials').innerText = student.name.charAt(0);
             
-            // Dashboard Stats
             document.getElementById('dash-name').innerText = student.first_name;
             document.getElementById('dash-class').innerText = student.grade_level;
             document.getElementById('dash-attendance').innerText = (student.attendance_percentage || 100) + '%';
             document.getElementById('dash-hifdh').innerText = student.hifdh_status || 'Juz 1';
 
-            // Pre-load Tabs
             loadResults();
             loadAttendanceHistory();
             loadNews();
@@ -335,7 +384,6 @@
 
         // --- RESULTS ---
         async function loadResults() {
-            // Check Lock
             if (!currentUser.results_released) {
                 document.getElementById('result-locked').classList.remove('hidden');
                 document.getElementById('result-content').classList.add('hidden');
@@ -391,9 +439,9 @@
                 
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 last:border-0">
-                        <td class="p-6 font-bold text-slate-700">${new Date(rec.date).toLocaleDateString()}</td>
-                        <td class="p-6 text-center">${statusHtml}</td>
-                        <td class="p-6 text-right text-xs text-slate-400 font-mono">${new Date(rec.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+                        <td class="p-5 md:p-6 font-bold text-slate-700">${new Date(rec.date).toLocaleDateString()}</td>
+                        <td class="p-5 md:p-6 text-center">${statusHtml}</td>
+                        <td class="p-5 md:p-6 text-right text-xs text-slate-400 font-mono">${new Date(rec.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
                     </tr>
                 `);
             });
@@ -426,15 +474,6 @@
         }
 
         // --- UTILS ---
-        function switchView(viewName) {
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden-view'));
-            document.getElementById('view-' + viewName).classList.remove('hidden-view');
-            // Nav Active State
-            document.querySelectorAll('nav button').forEach(b => { b.classList.remove('bg-emerald-800'); b.classList.add('hover:bg-emerald-800'); });
-            const btn = document.getElementById('nav-' + viewName);
-            if(btn) { btn.classList.add('bg-emerald-800'); btn.classList.remove('hover:bg-emerald-800'); }
-        }
-
         function handleLogout() {
             showConfirm("Log Out", "Are you sure?", async () => {
                 await supabaseClient.auth.signOut();
