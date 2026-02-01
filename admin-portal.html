@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>An-Noor Academy | Unified Admin Portal</title>
+    <title>Subulus Salaam Academy | Unified Admin Portal</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
@@ -104,7 +104,7 @@
                         </div>
                         <span class="text-amber-400 font-bold tracking-widest uppercase text-xs">Secure Gateway</span>
                     </div>
-                    <h1 class="text-5xl font-bold font-serif leading-tight mt-6">An-Noor<br><span class="text-emerald-300">Academy</span></h1>
+                    <h1 class="text-5xl font-bold font-serif leading-tight mt-6">Subulus Salaam<br><span class="text-emerald-300">Academy</span></h1>
                     <p class="mt-6 text-emerald-100/80 text-lg leading-relaxed font-light">
                         Centralized administration system for teacher oversight, student enrollment, and academic progress tracking.
                     </p>
@@ -125,7 +125,7 @@
                     <div class="w-14 h-14 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="shield-check" class="w-8 h-8"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-slate-800 font-serif">An-Noor Admin</h2>
+                    <h2 class="text-2xl font-bold text-slate-800 font-serif">Subulus Salaam Admin</h2>
                 </div>
 
                 <div class="max-w-sm mx-auto w-full">
@@ -169,7 +169,7 @@
                     </form>
 
                     <div class="mt-10 text-center">
-                        <p class="text-[10px] text-slate-300 uppercase tracking-widest font-bold">System v2.0 &copy; 2026 An-Noor</p>
+                        <p class="text-[10px] text-slate-300 uppercase tracking-widest font-bold">System v1.0 &copy; 2026 Subulus Salaam</p>
                     </div>
                 </div>
             </div>
@@ -188,7 +188,7 @@
             
             <div class="h-28 flex items-center justify-between px-8 border-b border-emerald-900 bg-emerald-950">
                 <div class="flex flex-col">
-                    <span class="text-3xl font-bold tracking-tighter text-white uppercase leading-none">An-Noor</span>
+                    <span class="text-3xl font-bold tracking-tighter text-white uppercase leading-none">Subulus Salaam</span>
                     <div class="flex items-center gap-2 mt-2">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.3em]">Admin Portal</span>
@@ -272,7 +272,7 @@
                 <div id="view-dashboard" class="view-section">
                     <div class="mb-12">
                         <h2 class="text-4xl font-bold text-slate-900 tracking-tight">System Status</h2>
-                        <p class="text-slate-500 mt-2 text-lg font-medium">Live overview of An-Noor Academy operations.</p>
+                        <p class="text-slate-500 mt-2 text-lg font-medium">Live overview of Subulus Salaam Academy operations.</p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -367,28 +367,16 @@
                     <div class="flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
                         <div>
                             <h2 class="text-4xl font-bold text-slate-900 tracking-tight">News Feed Archive</h2>
-                            <p class="text-slate-500 mt-3 text-lg font-medium">Broadcast information to the community portals.</p>
+                            <p class="text-slate-500 mt-3 text-lg font-medium">Broadcast media and updates to the community.</p>
                         </div>
                         <button onclick="openModal('add-post-modal')" 
                                 class="bg-emerald-800 text-white px-10 py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest flex items-center shadow-2xl shadow-emerald-900/30 hover:bg-emerald-900 hover:-translate-y-1 transition-all">
                             <i data-lucide="plus-circle" class="w-5 h-5 mr-3"></i> Create Bulletin
                         </button>
                     </div>
-                    <div class="bg-white rounded-[3rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-800 font-black uppercase text-[10px] tracking-[0.25em]">
-                                    <tr>
-                                        <th class="px-10 py-8">Headline</th>
-                                        <th class="px-10 py-8">Type</th>
-                                        <th class="px-10 py-8">Date</th>
-                                        <th class="px-10 py-8 text-right">Engagement & Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="news-table-body" class="divide-y divide-slate-100 text-slate-600">
-                                    </tbody>
-                            </table>
-                        </div>
+                    
+                    <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        <div class="col-span-full text-center py-20 text-slate-400 italic">Loading Feed...</div>
                     </div>
                 </div>
 
@@ -532,41 +520,44 @@
         <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden transform transition-all duration-300 scale-100 border border-white/50">
             <div class="bg-emerald-900 p-10 text-white text-center">
                 <h3 class="font-bold text-2xl uppercase tracking-widest">Public Update</h3>
-                <p class="text-[10px] text-emerald-300 font-bold uppercase tracking-[0.2em] mt-2">Broadcast to Portal Feed</p>
+                <p class="text-[10px] text-emerald-300 font-bold uppercase tracking-[0.2em] mt-2">Create & Broadcast Content</p>
             </div>
-            <form id="add-post-form" class="p-12 space-y-8">
+            <form id="add-post-form" class="p-10 space-y-6">
                 <div>
-                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Bulletin Headline</label>
-                    <input type="text" id="post-title" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all" placeholder="News Topic..." required>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Subject (Title)</label>
+                    <input type="text" id="post-title" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-4 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all" placeholder="Enter post subject..." required>
                 </div>
-                <div class="flex gap-6">
-                    <label class="flex-1 text-center border-2 border-slate-100 p-5 rounded-2xl font-bold text-xs text-slate-400 cursor-pointer hover:bg-slate-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-700 transition-all">
-                        <input type="radio" name="post-type" value="image" checked class="hidden"> 
-                        <i data-lucide="image" class="w-6 h-6 mx-auto mb-2"></i>
-                        Image News
-                    </label>
-                    <label class="flex-1 text-center border-2 border-slate-100 p-5 rounded-2xl font-bold text-xs text-slate-400 cursor-pointer hover:bg-slate-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-700 transition-all">
-                        <input type="radio" name="post-type" value="video" class="hidden"> 
-                        <i data-lucide="video" class="w-6 h-6 mx-auto mb-2"></i>
-                        Video Clip
-                    </label>
-                </div>
-                <button type="submit" id="submit-news-btn" class="w-full py-5 bg-emerald-800 text-white rounded-2xl font-black shadow-2xl shadow-emerald-800/30 hover:bg-emerald-900 transition-all uppercase tracking-widest hover:-translate-y-1">Publish Announcement</button>
                 
-                <div class="flex justify-center">
-                    <button type="button" onclick="closeModal('add-post-modal')" class="text-xs font-bold text-slate-400 hover:text-rose-500 uppercase tracking-widest">Cancel</button>
+                <div>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Description (Content)</label>
+                    <textarea id="post-description" rows="3" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-4 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all resize-none" placeholder="Write the update details here..." required></textarea>
                 </div>
+
+                <div>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Attach Media (Max 50MB)</label>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <label class="text-center border-2 border-slate-100 p-3 rounded-2xl font-bold text-xs text-slate-400 cursor-pointer hover:bg-slate-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-700 transition-all">
+                            <input type="radio" name="post-type" value="image" checked class="hidden"> 
+                            <i data-lucide="image" class="w-5 h-5 mx-auto mb-1"></i> Picture
+                        </label>
+                        <label class="text-center border-2 border-slate-100 p-3 rounded-2xl font-bold text-xs text-slate-400 cursor-pointer hover:bg-slate-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-700 transition-all">
+                            <input type="radio" name="post-type" value="video" class="hidden"> 
+                            <i data-lucide="video" class="w-5 h-5 mx-auto mb-1"></i> Video
+                        </label>
+                    </div>
+                    <input type="file" id="post-file" class="block w-full text-xs text-slate-500 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all" accept="image/*,video/*" required>
+                </div>
+
+                <button type="submit" id="submit-news-btn" class="w-full py-5 bg-emerald-800 text-white rounded-2xl font-black shadow-2xl shadow-emerald-800/30 hover:bg-emerald-900 transition-all uppercase tracking-widest hover:-translate-y-1">Publish Now</button>
+                <div class="flex justify-center"><button type="button" onclick="closeModal('add-post-modal')" class="text-xs font-bold text-slate-400 hover:text-rose-500 uppercase tracking-widest">Cancel</button></div>
             </form>
         </div>
     </div>
 
-
     <script>
-        // --- 1. BOOTSTRAP INITIALIZATION ---
         lucide.createIcons();
         document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-        // --- 2. CONFIGURATION (Supabase) ---
         const SUPABASE_URL = 'https://yqzpfwkpnywkjhybhccb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxenBmd2twbnl3a2poeWJoY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4NTM0NDYsImV4cCI6MjA4NTQyOTQ0Nn0.xnTFS3cd1akIGQwXE_tOPz6cqtznzZP2eBB_dOZii7M';
         let supabaseClient;
@@ -575,9 +566,7 @@
             try {
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 checkActiveSession();
-            } catch (error) {
-                showNotification("System Failure", "Critical database connection error.", true);
-            }
+            } catch (error) { showNotification("System Failure", "Critical database connection error.", true); }
         };
 
         // --- 3. CUSTOM NOTIFICATION LOGIC ---
@@ -590,27 +579,17 @@
             const cancelBtn = document.getElementById('alert-cancel-btn');
             const okBtn = document.getElementById('alert-ok-btn');
 
-            titleEl.innerText = title;
-            msgEl.innerText = message;
-            cancelBtn.classList.add('hidden'); // Default hidden
-            okBtn.innerText = "Acknowledge";
-            okBtn.onclick = closeAlert;
+            titleEl.innerText = title; msgEl.innerText = message;
+            cancelBtn.classList.add('hidden'); okBtn.innerText = "Acknowledge"; okBtn.onclick = closeAlert;
 
-            if (isError) {
-                icon.setAttribute('data-lucide', 'x-circle');
-                iconBg.className = 'w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600 shadow-inner';
-                titleEl.className = 'text-2xl font-bold text-rose-900 mb-2 font-serif';
-            } else {
-                icon.setAttribute('data-lucide', 'check-circle');
-                iconBg.className = 'w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner';
-                titleEl.className = 'text-2xl font-bold text-emerald-900 mb-2 font-serif';
-            }
+            if (isError) { icon.setAttribute('data-lucide', 'x-circle'); iconBg.className = 'w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600 shadow-inner'; titleEl.className = 'text-2xl font-bold text-rose-900 mb-2 font-serif'; } 
+            else { icon.setAttribute('data-lucide', 'check-circle'); iconBg.className = 'w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner'; titleEl.className = 'text-2xl font-bold text-emerald-900 mb-2 font-serif'; }
+            
             lucide.createIcons();
             modal.classList.remove('pointer-events-none', 'opacity-0');
             modal.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
         }
 
-        // Dedicated Confirmation Modal Logic
         function showConfirm(title, message, callback) {
             const modal = document.getElementById('custom-alert');
             const icon = document.getElementById('alert-icon');
@@ -620,24 +599,10 @@
             const cancelBtn = document.getElementById('alert-cancel-btn');
             const okBtn = document.getElementById('alert-ok-btn');
 
-            titleEl.innerText = title;
-            msgEl.innerText = message;
-            titleEl.className = 'text-2xl font-bold text-slate-800 mb-2 font-serif';
-            
-            // Icon Style for Warning/Confirm
-            icon.setAttribute('data-lucide', 'alert-circle');
-            iconBg.className = 'w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner';
-
-            // Show Two Buttons
-            cancelBtn.classList.remove('hidden');
-            okBtn.innerText = "Yes, Proceed";
-            
-            // Handle Click
-            okBtn.onclick = () => {
-                callback();
-                closeAlert();
-            };
-
+            titleEl.innerText = title; msgEl.innerText = message; titleEl.className = 'text-2xl font-bold text-slate-800 mb-2 font-serif';
+            icon.setAttribute('data-lucide', 'alert-circle'); iconBg.className = 'w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner';
+            cancelBtn.classList.remove('hidden'); okBtn.innerText = "Yes, Proceed";
+            okBtn.onclick = () => { callback(); closeAlert(); };
             lucide.createIcons();
             modal.classList.remove('pointer-events-none', 'opacity-0');
             modal.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
@@ -653,134 +618,130 @@
         // --- 4. SECURITY & AUTHENTICATION LOGIC ---
         async function checkActiveSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session && session.user.user_metadata.role === 'admin') {
-                unlockSystem();
-            }
+            if (session && session.user.user_metadata.role === 'admin') unlockSystem();
         }
 
         async function handleAdminLogin(e) {
             e.preventDefault();
             const btn = document.getElementById('loginBtn');
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-
             const originalText = btn.innerHTML;
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline mr-2"></i> Verifying...`;
-            btn.disabled = true;
-            lucide.createIcons();
-
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline mr-2"></i> Verifying...`; btn.disabled = true; lucide.createIcons();
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('login-email').value, password: document.getElementById('login-password').value });
                 if (error) throw error;
-                if (data.user.user_metadata.role !== 'admin') {
-                    await supabaseClient.auth.signOut();
-                    throw new Error("Access Denied: Not an Admin Account.");
-                }
+                if (data.user.user_metadata.role !== 'admin') { await supabaseClient.auth.signOut(); throw new Error("Access Denied: Not an Admin Account."); }
                 unlockSystem();
-            } catch (err) {
-                showNotification("Login Failed", err.message, true);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
+            } catch (err) { showNotification("Login Failed", err.message, true); btn.innerHTML = originalText; btn.disabled = false; }
         }
 
         function unlockSystem() {
             const authContainer = document.getElementById('auth-container');
             const dashboard = document.getElementById('main-dashboard');
             authContainer.style.opacity = '0';
-            setTimeout(() => {
-                authContainer.classList.add('hidden-view');
-                dashboard.classList.remove('hidden-view');
-                refreshAllData();
-            }, 500);
+            setTimeout(() => { authContainer.classList.add('hidden-view'); dashboard.classList.remove('hidden-view'); refreshAllData(); }, 500);
         }
 
         async function handleLogout() {
-            showConfirm("Terminate Session?", "Are you sure you want to log out securely?", async () => {
-                await supabaseClient.auth.signOut();
-                location.reload();
-            });
+            showConfirm("Terminate Session?", "Are you sure you want to log out securely?", async () => { await supabaseClient.auth.signOut(); location.reload(); });
         }
 
         // --- 5. NAVIGATION & INTERFACE LOGIC ---
         function switchView(viewName) {
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden-view'));
             const target = document.getElementById('view-' + viewName);
-            if(target) {
-                target.classList.remove('hidden-view');
-                document.querySelector('main').scrollTop = 0;
-            }
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active-nav');
-                btn.classList.add('text-emerald-100', 'hover:bg-emerald-900/50');
-            });
+            if(target) { target.classList.remove('hidden-view'); document.querySelector('main').scrollTop = 0; }
+            document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('active-nav'); btn.classList.add('text-emerald-100', 'hover:bg-emerald-900/50'); });
             const activeBtn = document.getElementById('nav-' + viewName);
-            if(activeBtn) {
-                activeBtn.classList.add('active-nav');
-                activeBtn.classList.remove('text-emerald-100', 'hover:bg-emerald-900/50');
-            }
+            if(activeBtn) { activeBtn.classList.add('active-nav'); activeBtn.classList.remove('text-emerald-100', 'hover:bg-emerald-900/50'); }
             if (window.innerWidth < 768) toggleSidebar();
         }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobile-overlay');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.add('opacity-100'), 10);
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.remove('opacity-100');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
+            if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('opacity-100'), 10); } 
+            else { sidebar.classList.add('-translate-x-full'); overlay.classList.remove('opacity-100'); setTimeout(() => overlay.classList.add('hidden'), 300); }
         }
 
-        function openModal(id) { 
-            const modal = document.getElementById(id);
-            modal.classList.remove('hidden'); 
-            lucide.createIcons();
-        }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); lucide.createIcons(); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        function toggleContactInput(type) {
-            const input = document.getElementById('student-contact');
-            input.placeholder = (type === 'whatsapp') ? "WhatsApp No (e.g. 234...)" : "Secure Email Address";
-            input.focus();
-        }
-
-        function toggleAccessType(type) {
-            const sel = document.getElementById('teacher-access-value');
-            sel.innerHTML = '';
-            const opts = type === 'subject' ? ['Hifdh Section', 'Tajweed Rules', 'Arabic Language', 'Fiqh'] : ['Level 1 (Foundation)', 'Level 2 (Discovery)', 'Level 3 (Advanced)', 'Hifdh Intensive'];
-            opts.forEach(o => sel.innerHTML += `<option value="${o}">${o}</option>`);
-        }
+        function toggleContactInput(type) { const input = document.getElementById('student-contact'); input.placeholder = (type === 'whatsapp') ? "WhatsApp No (e.g. 234...)" : "Secure Email Address"; input.focus(); }
+        function toggleAccessType(type) { const sel = document.getElementById('teacher-access-value'); sel.innerHTML = ''; const opts = type === 'subject' ? ['Hifdh Section', 'Tajweed Rules', 'Arabic Language', 'Fiqh'] : ['Level 1 (Foundation)', 'Level 2 (Discovery)', 'Level 3 (Advanced)', 'Hifdh Intensive']; opts.forEach(o => sel.innerHTML += `<option value="${o}">${o}</option>`); }
 
         // --- 6. DATA OPS ---
         async function refreshAllData() {
+            // Auto Cleanup Old Posts (Older than 7 days)
+            await cleanupOldPosts();
+            
             await Promise.all([
-                fetchAndRenderTable('news_posts', 'news-table-body', renderNewsRow),
+                fetchNewsGrid(),
                 fetchAndRenderTable('teachers', 'teachers-table-body', renderTeacherRow),
                 fetchAndRenderTable('students', 'students-table-body', renderStudentRow),
                 calculateDashboardStats()
             ]);
         }
 
+        // AUTO CLEANUP FUNCTION
+        async function cleanupOldPosts() {
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const { data, error } = await supabaseClient.from('news_posts').select('*').lt('created_at', oneWeekAgo.toISOString());
+            if (data && data.length > 0) {
+                // Delete files first
+                const filesToRemove = data.map(post => post.media_path).filter(p => p);
+                if(filesToRemove.length > 0) await supabaseClient.storage.from('news-media').remove(filesToRemove);
+                // Then delete records
+                const idsToRemove = data.map(post => post.id);
+                await supabaseClient.from('news_posts').delete().in('id', idsToRemove);
+                console.log("Auto-Cleanup: Removed " + data.length + " expired posts.");
+            }
+        }
+
         async function fetchAndRenderTable(table, tbodyId, rowFn) {
-            const tbody = document.getElementById(tbodyId);
-            if(!tbody) return;
+            const tbody = document.getElementById(tbodyId); if(!tbody) return;
             const { data, error } = await supabaseClient.from(table).select('*').order('created_at', { ascending: false });
-            if (error) return;
-            tbody.innerHTML = '';
+            if (error) return; tbody.innerHTML = '';
             if (!data || data.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="px-10 py-10 text-center font-bold text-slate-300 italic uppercase tracking-widest">Null Record Set</td></tr>`; return; }
-            data.forEach(item => tbody.insertAdjacentHTML('beforeend', rowFn(item)));
+            data.forEach(item => tbody.insertAdjacentHTML('beforeend', rowFn(item))); lucide.createIcons();
+        }
+
+        // --- NEWS GRID RENDERER ---
+        async function fetchNewsGrid() {
+            const grid = document.getElementById('news-grid');
+            const { data, error } = await supabaseClient.from('news_posts').select('*').order('created_at', { ascending: false });
+            if(error) return; grid.innerHTML = '';
+            if(!data || data.length === 0) { grid.innerHTML = '<div class="col-span-full text-center py-20 text-slate-400 italic">No posts available.</div>'; return; }
+            
+            data.forEach(item => {
+                let mediaHtml = '';
+                if(item.post_type === 'video') {
+                    mediaHtml = `<video src="${item.media_url}" controls class="w-full h-48 object-cover bg-black" playsinline preload="metadata"></video>`;
+                } else {
+                    mediaHtml = `<img src="${item.media_url || 'https://via.placeholder.com/400x300?text=No+Image'}" class="w-full h-48 object-cover">`;
+                }
+
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden hover:-translate-y-1 transition-all group w-full">
+                        ${mediaHtml}
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-emerald-50 text-emerald-800 text-[10px] font-black uppercase px-2 py-1 rounded-full tracking-widest">${item.post_type}</span>
+                                <span class="text-[10px] text-slate-400 font-bold">${new Date(item.created_at).toLocaleDateString()}</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-slate-800 mb-2 leading-tight">${item.title}</h3>
+                            <p class="text-slate-500 text-sm mb-6 line-clamp-3">${item.description || 'No description provided.'}</p>
+                            <div class="flex gap-2">
+                                <button onclick="sharePost('${item.title}', '${item.description}', '${item.media_url}')" class="flex-1 py-3 border-2 border-emerald-50 text-emerald-600 rounded-xl font-bold text-xs uppercase hover:bg-emerald-50 transition-colors flex items-center justify-center gap-2"><i data-lucide="share-2" class="w-4 h-4"></i> Share</button>
+                                <button onclick="deletePostWithMedia(${item.id}, '${item.media_path}')" class="p-3 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            });
             lucide.createIcons();
         }
 
-        function renderNewsRow(item) {
-            return `<tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0 group"><td class="px-10 py-8 font-black text-slate-800 text-sm">${item.title}</td><td class="px-10 py-8"><span class="uppercase font-black text-[9px] text-emerald-800 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full tracking-widest">${item.post_type}</span></td><td class="px-10 py-8 text-xs font-bold text-slate-400 tracking-tighter">${new Date(item.created_at).toDateString()}</td><td class="px-10 py-8 text-right"><button onclick="handleDelete('news_posts', ${item.id})" class="text-rose-400 hover:text-rose-600 font-black text-[10px] uppercase tracking-widest border border-transparent hover:border-rose-100 px-3 py-1 rounded-lg transition-all">Purge</button></td></tr>`;
-        }
-
+        // --- ROW RENDERERS ---
         function renderTeacherRow(item) {
             const badge = item.access_type === 'class' ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-blue-100 text-blue-800 border-blue-200';
             return `<tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0"><td class="px-10 py-8"><div class="font-black text-slate-800 text-sm">${item.name}</div><div class="text-[10px] text-slate-400 font-bold mt-1 font-mono">${item.email || '-'}</div></td><td class="px-10 py-8"><span class="${badge} px-4 py-1.5 rounded-full text-[9px] uppercase font-black tracking-widest border opacity-90">${item.access_type || 'System'}</span></td><td class="px-10 py-8 text-sm font-black text-slate-600">${item.access_value || item.subject || '-'}</td><td class="px-10 py-8 text-right"><button onclick="handleDelete('teachers', ${item.id})" class="bg-white border-2 border-slate-100 text-slate-400 px-5 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all shadow-sm">Revoke</button></td></tr>`;
@@ -793,8 +754,7 @@
 
         document.getElementById('add-teacher-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submit-teacher-btn');
-            const originalText = btn.innerText; btn.innerText = "Provisioning..."; btn.disabled = true;
+            const btn = document.getElementById('submit-teacher-btn'); const originalText = btn.innerText; btn.innerText = "Provisioning..."; btn.disabled = true;
             try {
                 const temp = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
                 const { data: auth, error: aErr } = await temp.auth.signUp({ email: document.getElementById('teacher-email').value, password: document.getElementById('teacher-password').value, options: { data: { role: 'teacher', full_name: document.getElementById('teacher-name').value } } });
@@ -806,8 +766,7 @@
 
         document.getElementById('add-student-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submit-student-btn');
-            const originalText = btn.innerText; btn.innerText = "Syncing..."; btn.disabled = true;
+            const btn = document.getElementById('submit-student-btn'); const originalText = btn.innerText; btn.innerText = "Syncing..."; btn.disabled = true;
             try {
                 const contact = document.getElementById('student-contact').value;
                 const idType = document.querySelector('input[name="identifier_type"]:checked').value;
@@ -820,14 +779,68 @@
             } catch (err) { showNotification("Error", err.message, true); } finally { btn.innerText = originalText; btn.disabled = false; }
         });
 
+        // ADD POST (WITH LIMITS & UPLOAD)
         document.getElementById('add-post-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submit-news-btn'); btn.innerText = "Broadcasting..."; btn.disabled = true;
-            const { error } = await supabaseClient.from('news_posts').insert([{ title: document.getElementById('post-title').value, post_type: document.querySelector('input[name="post-type"]:checked').value }]);
-            if(!error) { showNotification("Success", "Bulletin Published."); closeModal('add-post-modal'); refreshAllData(); e.target.reset(); } 
-            else { showNotification("Error", error.message, true); }
-            btn.innerText = "Publish Announcement"; btn.disabled = false;
+            const btn = document.getElementById('submit-news-btn'); btn.innerText = "Uploading Media..."; btn.disabled = true;
+            
+            try {
+                const title = document.getElementById('post-title').value;
+                const desc = document.getElementById('post-description').value;
+                const type = document.querySelector('input[name="post-type"]:checked').value;
+                const fileInput = document.getElementById('post-file');
+                const file = fileInput.files[0];
+
+                if (!file) throw new Error("Please select a media file to upload.");
+
+                // 1. FILE SIZE CHECK (50MB)
+                const MAX_SIZE = 50 * 1024 * 1024;
+                if (file.size > MAX_SIZE) throw new Error("File too large. Max size is 50MB.");
+
+                // 2. VIDEO QUANTITY CHECK (Max 2)
+                if (type === 'video') {
+                    const { count } = await supabaseClient.from('news_posts').select('*', { count: 'exact', head: true }).eq('post_type', 'video');
+                    if (count >= 2) throw new Error("Limit Reached: Maximum 2 videos allowed in feed.");
+                }
+
+                // 3. Upload to Storage
+                const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+                const { error: uploadError } = await supabaseClient.storage.from('news-media').upload(fileName, file);
+                if (uploadError) throw uploadError;
+
+                // 4. Get Public URL
+                const { data: { publicUrl } } = supabaseClient.storage.from('news-media').getPublicUrl(fileName);
+
+                // 5. Insert DB Record
+                const { error: dbError } = await supabaseClient.from('news_posts').insert([{
+                    title: title,
+                    description: desc,
+                    post_type: type,
+                    media_url: publicUrl,
+                    media_path: fileName
+                }]);
+
+                if (dbError) throw dbError;
+
+                showNotification("Success", "Post Published Successfully."); 
+                closeModal('add-post-modal'); refreshAllData(); e.target.reset();
+
+            } catch (error) {
+                showNotification("Upload Failed", error.message, true);
+            } finally {
+                btn.innerText = "Publish Announcement"; btn.disabled = false;
+            }
         });
+
+        // --- UTILS ---
+        function sharePost(title, text, url) {
+            if (navigator.share) {
+                navigator.share({ title: title, text: text, url: url }).catch(err => console.log('Share canceled'));
+            } else {
+                navigator.clipboard.writeText(url);
+                showNotification("Link Copied", "Media URL copied to clipboard.");
+            }
+        }
 
         async function manageProgress(id, current) {
             const action = prompt(`Modify Progress for ${current}:\nType 'PROMOTE' for next level\nType 'REPEAT' for same level`);
@@ -839,6 +852,18 @@
             } else if (action.toUpperCase() === 'REPEAT') { update = { status: 'Repeat' }; } else { return; }
             const { error } = await supabaseClient.from('students').update(update).eq('id', id);
             if(!error) { refreshAllData(); showNotification("Success", "Academic Record Updated."); }
+        }
+
+        // Enhanced Delete for Media
+        async function deletePostWithMedia(id, path) {
+            showConfirm("Confirm Deletion", "Permanently delete post and file?", async () => {
+                // Delete file from storage
+                if(path) await supabaseClient.storage.from('news-media').remove([path]);
+                // Delete record
+                await supabaseClient.from('news_posts').delete().eq('id', id);
+                refreshAllData();
+                showNotification("Deleted", "Post and media removed.");
+            });
         }
 
         async function handleDelete(table, id) {
