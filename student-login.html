@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subulus Salaam | Student Portal</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .hidden-view { display: none !important; }
+        .active-nav { background-color: #047857 !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.1); }
+        .student-bg { background-color: #064e3b; background-image: radial-gradient(at 0% 0%, #065f46 0, transparent 50%), radial-gradient(at 100% 100%, #064e3b 0, transparent 50%); }
+        .pattern-overlay { background-image: url("https://www.transparenttextures.com/patterns/arabesque.png"); opacity: 0.1; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden font-sans antialiased">
+
+    <div id="custom-alert" class="fixed inset-0 z-[200] flex items-center justify-center px-4 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div class="bg-white rounded-[2rem] shadow-2xl p-8 max-w-sm w-full transform scale-95 transition-all duration-300 relative z-10 text-center border-4 border-white/50">
+            <div id="alert-icon-bg" class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-700 shadow-inner"><i id="alert-icon" data-lucide="check-circle" class="w-10 h-10"></i></div>
+            <h3 id="alert-title" class="text-2xl font-bold text-slate-800 mb-2 font-serif">Success</h3>
+            <p id="alert-message" class="text-slate-500 text-sm font-medium mb-8 leading-relaxed">Operation completed.</p>
+            <div class="flex gap-4">
+                <button id="alert-cancel-btn" onclick="closeAlert()" class="hidden flex-1 py-4 border-2 border-slate-100 text-slate-400 rounded-2xl font-bold hover:bg-slate-50 transition active:scale-95">Cancel</button>
+                <button id="alert-ok-btn" onclick="closeAlert()" class="flex-1 py-4 bg-emerald-900 text-white rounded-2xl font-bold shadow-xl shadow-emerald-900/20 hover:bg-emerald-800 hover:-translate-y-1 transition-all active:scale-95">Okay</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-container" class="fixed inset-0 z-[100] flex items-center justify-center p-4 student-bg transition-all duration-700">
+        <a href="index.html" class="absolute top-6 left-6 z-[120] flex items-center gap-3 text-white/80 hover:text-white transition-colors group">
+            <div class="p-2.5 bg-white/10 rounded-full backdrop-blur-md border border-white/10 group-hover:bg-white/20 transition-all shadow-lg"><i data-lucide="arrow-left" class="w-5 h-5"></i></div>
+            <span class="text-sm font-bold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">Return Home</span>
+        </a>
+
+        <div class="w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[550px] relative z-10">
+            <div class="hidden md:flex w-1/2 bg-emerald-900 relative flex-col justify-between p-12 text-white overflow-hidden">
+                <div class="absolute inset-0 pattern-overlay"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 bg-emerald-400 rounded-lg flex items-center justify-center text-emerald-900 shadow-lg"><i data-lucide="graduation-cap" class="w-6 h-6"></i></div>
+                        <span class="text-emerald-300 font-bold tracking-widest uppercase text-xs">Student Portal</span>
+                    </div>
+                    <h1 class="text-4xl font-bold font-serif leading-tight mt-6">My Learning<br><span class="text-emerald-300">Journey</span></h1>
+                    <p class="mt-6 text-emerald-100/70 text-sm leading-relaxed">Access your academic records, check results, and stay updated with school announcements.</p>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center">
+                <div class="max-w-xs mx-auto w-full">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-slate-800">Student Login</h2>
+                        <p class="text-slate-400 mt-2 text-xs">Use your Admission ID or WhatsApp Number.</p>
+                    </div>
+                    <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-5">
+                        <div class="flex bg-slate-100 p-1 rounded-xl mb-4">
+                            <label class="flex-1 text-center py-2 text-[10px] font-bold uppercase rounded-lg cursor-pointer bg-white shadow-sm text-emerald-700 transition" id="lbl-whatsapp">
+                                <input type="radio" name="login-type" value="whatsapp" class="hidden" checked onchange="toggleLoginInput('whatsapp')"> WhatsApp
+                            </label>
+                            <label class="flex-1 text-center py-2 text-[10px] font-bold uppercase rounded-lg cursor-pointer text-slate-400 hover:text-slate-600 transition" id="lbl-email">
+                                <input type="radio" name="login-type" value="email" class="hidden" onchange="toggleLoginInput('email')"> Email
+                            </label>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide" id="input-label">WhatsApp Number</label>
+                            <input type="text" id="login-input" class="w-full mt-2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold text-slate-700 outline-none focus:border-emerald-600 transition-all" placeholder="e.g. 23480..." required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Password</label>
+                            <input type="password" id="login-password" class="w-full mt-2 bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold text-slate-700 outline-none focus:border-emerald-600 transition-all" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" id="loginBtn" class="w-full bg-emerald-900 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-emerald-800 transition-all active:scale-95 flex items-center justify-center gap-2"><span>Log In</span><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-dashboard" class="hidden-view flex h-screen w-full transition-opacity duration-700">
+        
+        <aside class="w-20 md:w-64 bg-emerald-900 text-white flex flex-col border-r border-emerald-800 transition-all duration-300">
+            <div class="h-24 flex items-center justify-center md:justify-start md:px-8 border-b border-emerald-800">
+                <i data-lucide="graduation-cap" class="w-8 h-8 text-emerald-300 md:mr-3"></i>
+                <span class="hidden md:block font-bold text-lg tracking-tight">Student</span>
+            </div>
+            
+            <nav class="flex-1 py-8 px-2 md:px-4 space-y-2">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-center md:justify-start px-3 py-4 rounded-xl active-nav transition-all group">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 md:mr-3"></i>
+                    <span class="hidden md:block text-sm font-medium">Overview</span>
+                </button>
+                <button onclick="switchView('results')" id="nav-results" class="w-full flex items-center justify-center md:justify-start px-3 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
+                    <i data-lucide="file-text" class="w-5 h-5 md:mr-3"></i>
+                    <span class="hidden md:block text-sm font-medium">My Result</span>
+                </button>
+                <button onclick="switchView('attendance')" id="nav-attendance" class="w-full flex items-center justify-center md:justify-start px-3 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
+                    <i data-lucide="calendar-check" class="w-5 h-5 md:mr-3"></i>
+                    <span class="hidden md:block text-sm font-medium">Attendance</span>
+                </button>
+                <button onclick="switchView('news')" id="nav-news" class="w-full flex items-center justify-center md:justify-start px-3 py-4 rounded-xl hover:bg-emerald-800 transition-all group">
+                    <i data-lucide="bell" class="w-5 h-5 md:mr-3"></i>
+                    <span class="hidden md:block text-sm font-medium">News Feed</span>
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-emerald-800 bg-emerald-950/50">
+                <div class="hidden md:block mb-4">
+                    <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold">Logged in as</p>
+                    <p id="profile-name" class="text-sm font-bold truncate">Loading...</p>
+                    <p id="profile-class" class="text-xs text-emerald-300">...</p>
+                </div>
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center md:justify-start px-3 py-3 text-emerald-200 hover:text-white hover:bg-rose-900/40 rounded-xl transition-all">
+                    <i data-lucide="log-out" class="w-5 h-5 md:mr-3"></i>
+                    <span class="hidden md:block text-sm font-bold">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden relative">
+            
+            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
+                <h2 class="text-xl font-bold text-slate-800" id="page-title">My Dashboard</h2>
+                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold" id="header-initials">S</div>
+            </header>
+
+            <div id="view-dashboard" class="view-section flex-1 overflow-y-auto p-6 md:p-10">
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-10">
+                        <h1 class="text-3xl font-black text-slate-800 mb-2">Salaam, <span id="dash-name" class="text-emerald-700">Student</span>.</h1>
+                        <p class="text-slate-500">Here is your academic summary for the current session.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:-translate-y-1 transition-all">
+                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4"><i data-lucide="book" class="w-6 h-6"></i></div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">My Class</p>
+                            <h3 id="dash-class" class="text-2xl font-black text-slate-800 mt-1">--</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:-translate-y-1 transition-all">
+                            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4"><i data-lucide="percent" class="w-6 h-6"></i></div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Attendance</p>
+                            <h3 id="dash-attendance" class="text-2xl font-black text-slate-800 mt-1">--%</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:-translate-y-1 transition-all">
+                            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-4"><i data-lucide="award" class="w-6 h-6"></i></div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Hifdh Level</p>
+                            <h3 id="dash-hifdh" class="text-2xl font-black text-slate-800 mt-1">--</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-results" class="view-section hidden-view flex-1 overflow-y-auto p-6 md:p-10">
+                <div class="max-w-4xl mx-auto">
+                    <div id="result-locked" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                        <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-6"><i data-lucide="lock" class="w-10 h-10"></i></div>
+                        <h3 class="text-2xl font-bold text-slate-800">Results Pending</h3>
+                        <p class="text-slate-500 mt-2 max-w-sm">The administration has not yet released the results for your class. Please check back later.</p>
+                    </div>
+
+                    <div id="result-content" class="hidden bg-white rounded-[2rem] shadow-xl border border-slate-200 overflow-hidden">
+                        <div class="bg-emerald-900 p-8 text-white flex justify-between items-center">
+                            <div>
+                                <h3 class="text-2xl font-bold">Academic Report</h3>
+                                <p class="text-emerald-300 text-xs font-mono tracking-widest uppercase mt-1">Session 2025/2026</p>
+                            </div>
+                            <i data-lucide="file-check" class="w-10 h-10 text-emerald-500/50"></i>
+                        </div>
+                        <div class="p-8">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[10px] tracking-widest">
+                                    <tr>
+                                        <th class="p-4">Subject</th>
+                                        <th class="p-4 text-center">CA (40)</th>
+                                        <th class="p-4 text-center">Exam (60)</th>
+                                        <th class="p-4 text-center">Total</th>
+                                        <th class="p-4 text-center">Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-body" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                    </tbody>
+                            </table>
+                            
+                            <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
+                                <div class="text-xs text-slate-400">
+                                    <p><strong>A</strong> = 70-100 (Excellent)</p>
+                                    <p><strong>C</strong> = 50-59 (Credit)</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Overall Decision</p>
+                                    <p id="result-decision" class="text-xl font-black text-emerald-700">PROMOTED</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-attendance" class="view-section hidden-view flex-1 overflow-y-auto p-6 md:p-10">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Attendance History</h2>
+                    <div class="bg-white rounded-[2rem] shadow-lg border border-slate-100 overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b text-slate-500 font-bold uppercase text-[10px] tracking-widest">
+                                <tr>
+                                    <th class="p-6">Date</th>
+                                    <th class="p-6 text-center">Status</th>
+                                    <th class="p-6 text-right">Time Recorded</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-list-body" class="divide-y divide-slate-100">
+                                <tr><td colspan="3" class="p-6 text-center text-slate-400">Loading history...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-news" class="view-section hidden-view flex-1 overflow-y-auto p-6 md:p-10">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">School Updates</h2>
+                    <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="col-span-full text-center py-20 text-slate-400 italic">Loading announcements...</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const SUPABASE_URL = 'https://yqzpfwkpnywkjhybhccb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxenBmd2twbnl3a2poeWJoY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4NTM0NDYsImV4cCI6MjA4NTQyOTQ0Nn0.xnTFS3cd1akIGQwXE_tOPz6cqtznzZP2eBB_dOZii7M';
+        let supabaseClient;
+        let currentUser = null; // This is the STUDENT record from 'students' table
+
+        window.onload = function() {
+            try {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                checkActiveSession();
+            } catch (error) { showNotification("System Error", "Connection failed.", true); }
+        };
+
+        // --- AUTH ---
+        async function checkActiveSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session && session.user.user_metadata.role === 'student') initPortal(session.user);
+        }
+
+        function toggleLoginInput(type) {
+            const input = document.getElementById('login-input');
+            const label = document.getElementById('input-label');
+            const lblWa = document.getElementById('lbl-whatsapp');
+            const lblEm = document.getElementById('lbl-email');
+
+            if(type === 'whatsapp') {
+                label.innerText = 'WhatsApp Number';
+                input.type = 'text';
+                input.placeholder = 'e.g. 23480...';
+                lblWa.classList.replace('text-slate-400', 'bg-white'); lblWa.classList.add('shadow-sm', 'text-emerald-700');
+                lblEm.classList.remove('bg-white', 'shadow-sm', 'text-emerald-700'); lblEm.classList.add('text-slate-400');
+            } else {
+                label.innerText = 'Email Address';
+                input.type = 'email';
+                input.placeholder = 'student@example.com';
+                lblEm.classList.replace('text-slate-400', 'bg-white'); lblEm.classList.add('shadow-sm', 'text-emerald-700');
+                lblWa.classList.remove('bg-white', 'shadow-sm', 'text-emerald-700'); lblWa.classList.add('text-slate-400');
+            }
+        }
+
+        async function handleStudentLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>`;
+            
+            let loginId = document.getElementById('login-input').value;
+            const type = document.querySelector('input[name="login-type"]:checked').value;
+            
+            // Auto-append domain if whatsapp
+            if(type === 'whatsapp') {
+                loginId = `${loginId.replace(/\D/g, '')}@annoor-academy.com`;
+            }
+
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email: loginId, password });
+                if (error) throw error;
+                if (data.user.user_metadata.role !== 'student') { await supabaseClient.auth.signOut(); throw new Error("Unauthorized"); }
+                initPortal(data.user);
+            } catch (err) { showNotification("Login Failed", err.message, true); btn.innerHTML = originalText; }
+        }
+
+        async function initPortal(user) {
+            // Fetch Student Details
+            const { data: student, error } = await supabaseClient.from('students').select('*').eq('user_id', user.id).single();
+            
+            if (error || !student) { showNotification("Error", "Profile not found.", true); return; }
+
+            currentUser = student;
+            document.getElementById('auth-container').classList.add('hidden-view');
+            document.getElementById('main-dashboard').classList.remove('hidden-view');
+            
+            // Profile UI Updates
+            document.getElementById('profile-name').innerText = student.name;
+            document.getElementById('profile-class').innerText = student.grade_level;
+            document.getElementById('header-initials').innerText = student.name.charAt(0);
+            
+            // Dashboard Stats
+            document.getElementById('dash-name').innerText = student.first_name;
+            document.getElementById('dash-class').innerText = student.grade_level;
+            document.getElementById('dash-attendance').innerText = (student.attendance_percentage || 100) + '%';
+            document.getElementById('dash-hifdh').innerText = student.hifdh_status || 'Juz 1';
+
+            // Pre-load Tabs
+            loadResults();
+            loadAttendanceHistory();
+            loadNews();
+        }
+
+        // --- RESULTS ---
+        async function loadResults() {
+            // Check Lock
+            if (!currentUser.results_released) {
+                document.getElementById('result-locked').classList.remove('hidden');
+                document.getElementById('result-content').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('result-locked').classList.add('hidden');
+            document.getElementById('result-content').classList.remove('hidden');
+
+            const { data: grades } = await supabaseClient.from('grades').select('*').eq('student_id', currentUser.id);
+            const tbody = document.getElementById('results-body');
+            tbody.innerHTML = '';
+
+            if(!grades || grades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">No grades recorded.</td></tr>';
+            } else {
+                grades.forEach(g => {
+                    const total = (Number(g.ca_score)||0) + (Number(g.exam_score)||0);
+                    let l = total>=70?'A':total>=60?'B':total>=50?'C':total>=45?'D':total>=40?'E':'F';
+                    const color = l==='F'?'text-rose-600 bg-rose-50':'text-emerald-700 bg-emerald-50';
+                    tbody.insertAdjacentHTML('beforeend', `
+                        <tr class="hover:bg-slate-50 last:border-0">
+                            <td class="p-4 font-bold text-slate-700">${g.subject_text}</td>
+                            <td class="p-4 text-center text-slate-500">${g.ca_score||'-'}</td>
+                            <td class="p-4 text-center text-slate-500">${g.exam_score||'-'}</td>
+                            <td class="p-4 text-center font-black text-slate-800">${total}</td>
+                            <td class="p-4 text-center"><span class="${color} px-3 py-1 rounded-lg text-xs font-bold">${l}</span></td>
+                        </tr>
+                    `);
+                });
+            }
+        }
+
+        // --- ATTENDANCE ---
+        async function loadAttendanceHistory() {
+            const tbody = document.getElementById('attendance-list-body');
+            const { data: history } = await supabaseClient.from('attendance')
+                .select('*')
+                .eq('student_id', currentUser.id)
+                .order('date', { ascending: false });
+
+            tbody.innerHTML = '';
+            if(!history || history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 italic">No records found.</td></tr>';
+                return;
+            }
+
+            history.forEach(rec => {
+                const isPresent = rec.status === 'Present';
+                const statusHtml = isPresent 
+                    ? `<span class="bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-xs font-bold">Present</span>` 
+                    : `<span class="bg-rose-50 text-rose-700 px-3 py-1 rounded-full text-xs font-bold">Absent</span>`;
+                
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 last:border-0">
+                        <td class="p-6 font-bold text-slate-700">${new Date(rec.date).toLocaleDateString()}</td>
+                        <td class="p-6 text-center">${statusHtml}</td>
+                        <td class="p-6 text-right text-xs text-slate-400 font-mono">${new Date(rec.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+                    </tr>
+                `);
+            });
+        }
+
+        // --- NEWS ---
+        async function loadNews() {
+            const grid = document.getElementById('news-grid');
+            const { data: posts } = await supabaseClient.from('news_posts').select('*').order('created_at', { ascending: false });
+            
+            grid.innerHTML = '';
+            if(!posts || posts.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-slate-400 italic">No news updates.</div>';
+                return;
+            }
+
+            posts.forEach(i => {
+                const media = i.post_type === 'video' ? `<video src="${i.media_url}" controls class="w-full h-48 object-cover bg-black rounded-xl mb-4"></video>` : `<img src="${i.media_url}" class="w-full h-48 object-cover rounded-xl mb-4">`;
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg">
+                        ${media}
+                        <div class="flex items-center text-xs text-emerald-600 font-bold uppercase tracking-widest mb-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>${i.post_type}
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-800 leading-tight mb-2">${i.title}</h3>
+                        <p class="text-sm text-slate-500 line-clamp-3">${i.description}</p>
+                    </div>
+                `);
+            });
+        }
+
+        // --- UTILS ---
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden-view'));
+            document.getElementById('view-' + viewName).classList.remove('hidden-view');
+            // Nav Active State
+            document.querySelectorAll('nav button').forEach(b => { b.classList.remove('bg-emerald-800'); b.classList.add('hover:bg-emerald-800'); });
+            const btn = document.getElementById('nav-' + viewName);
+            if(btn) { btn.classList.add('bg-emerald-800'); btn.classList.remove('hover:bg-emerald-800'); }
+        }
+
+        function handleLogout() {
+            showConfirm("Log Out", "Are you sure?", async () => {
+                await supabaseClient.auth.signOut();
+                location.reload();
+            });
+        }
+
+        function showNotification(title, message, isError = false) {
+            const modal = document.getElementById('custom-alert');
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            document.getElementById('alert-cancel-btn').classList.add('hidden');
+            const okBtn = document.getElementById('alert-ok-btn');
+            okBtn.innerText = "Okay"; okBtn.onclick = closeAlert;
+            
+            const iconBg = document.getElementById('alert-icon-bg');
+            const icon = document.getElementById('alert-icon');
+            if (isError) { iconBg.className = "w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600 shadow-inner"; icon.setAttribute('data-lucide', 'x-circle'); } 
+            else { iconBg.className = "w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner"; icon.setAttribute('data-lucide', 'check-circle'); }
+            
+            lucide.createIcons();
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
+        }
+
+        function showConfirm(title, message, callback) {
+            const modal = document.getElementById('custom-alert');
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            document.getElementById('alert-cancel-btn').classList.remove('hidden');
+            const okBtn = document.getElementById('alert-ok-btn');
+            okBtn.innerText = "Yes"; okBtn.onclick = () => { callback(); closeAlert(); };
+            
+            const iconBg = document.getElementById('alert-icon-bg');
+            const icon = document.getElementById('alert-icon');
+            iconBg.className = "w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner";
+            icon.setAttribute('data-lucide', 'alert-circle');
+
+            lucide.createIcons();
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
+        }
+
+        function closeAlert() {
+            const modal = document.getElementById('custom-alert');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div.transform').classList.replace('scale-100', 'scale-95');
+            setTimeout(() => modal.classList.add('pointer-events-none'), 300);
+        }
+    </script>
+</body>
+</html>
