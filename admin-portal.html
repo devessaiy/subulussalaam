@@ -355,7 +355,8 @@
                             </div>
                             <div
                                 class="p-6 bg-emerald-50 text-emerald-600 rounded-3xl transition-transform group-hover:rotate-12 group-hover:scale-110">
-                                <i data-lucide="users" class="w-10 h-10"></i></div>
+                                <i data-lucide="users" class="w-10 h-10"></i>
+                            </div>
                         </div>
 
                         <div
@@ -368,7 +369,8 @@
                             </div>
                             <div
                                 class="p-6 bg-blue-50 text-blue-600 rounded-3xl transition-transform group-hover:rotate-12 group-hover:scale-110">
-                                <i data-lucide="shield-check" class="w-10 h-10"></i></div>
+                                <i data-lucide="shield-check" class="w-10 h-10"></i>
+                            </div>
                         </div>
 
                         <div
@@ -381,7 +383,8 @@
                             </div>
                             <div
                                 class="p-6 bg-purple-50 text-purple-600 rounded-3xl transition-transform group-hover:rotate-12 group-hover:scale-110">
-                                <i data-lucide="megaphone" class="w-10 h-10"></i></div>
+                                <i data-lucide="megaphone" class="w-10 h-10"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1008,26 +1011,80 @@
         }
 
         // --- FORM SUBMITS ---
+        // --- FORM SUBMITS ---
         document.getElementById('add-teacher-form').addEventListener('submit', async (e) => {
-            e.preventDefault(); const btn = document.getElementById('submit-teacher-btn'); const orig = btn.innerText; btn.innerText = "Provisioning..."; btn.disabled = true;
+            e.preventDefault();
+            const btn = document.getElementById('submit-teacher-btn');
+            const orig = btn.innerText;
+            btn.innerText = "Provisioning...";
+            btn.disabled = true;
+
             try {
-                const name = document.getElementById('teacher-name').value, email = document.getElementById('teacher-email').value, pass = document.getElementById('teacher-password').value, type = document.querySelector('input[name="access_type"]:checked').value;
-                let val = '', sub = '';
-                if (type === 'class') val = document.getElementById('teacher-class-select').value;
-                else { sub = document.getElementById('teacher-subject-select').value; const chks = document.querySelectorAll('input[name="teacher-classes"]:checked'); if (!chks.length) throw new Error("Select classes"); val = Array.from(chks).map(c => c.value).join(', '); }
+                const name = document.getElementById('teacher-name').value;
+                const email = document.getElementById('teacher-email').value;
+                const pass = document.getElementById('teacher-password').value;
+                const type = document.querySelector('input[name="access_type"]:checked').value;
 
-                const { data: auth, error: aErr } = await supabaseClient.auth.signUp({ email, password: pass, options: { data: { role: 'teacher', full_name: name } } }); if (aErr) throw aErr;
-                await supabaseClient.from('teachers').insert([{ user_id: auth.user.id, name, email, access_type: type, access_value: val, subject: sub || null, phone: 'FACULTY' }]);
-                showNotification("Success", "Teacher Created."); closeModal('add-teacher-modal'); refreshAllData(); e.target.reset();
-            } catch (err) { showNotification("Error", err.message, true); } finally { btn.innerText = orig; btn.disabled = false; }
+                let val = '';
+                let sub = ''; // Initialize subject
+
+                if (type === 'class') {
+                    // Class Teacher Logic
+                    val = document.getElementById('teacher-class-select').value;
+                    sub = 'Class Oversight'; // FIX: Satisfy NOT NULL constraint
+                } else {
+                    // Subject Teacher Logic
+                    sub = document.getElementById('teacher-subject-select').value;
+                    const chks = document.querySelectorAll('input[name="teacher-classes"]:checked');
+                    if (!chks.length) throw new Error("Select at least one class.");
+                    val = Array.from(chks).map(c => c.value).join(', ');
+                }
+
+                // 1. Create Auth User
+                const { data: auth, error: aErr } = await supabaseClient.auth.signUp({
+                    email,
+                    password: pass,
+                    options: { data: { role: 'teacher', full_name: name } }
+                });
+
+                if (aErr) throw aErr;
+                if (!auth.user) throw new Error("Auth creation failed.");
+
+                // 2. Create Database Record
+                const { data: dbData, error: dbError } = await supabaseClient.from('teachers').insert([{
+                    user_id: auth.user.id,
+                    name,
+                    email,
+                    access_type: type,
+                    access_value: val,
+                    subject: sub, // Now guarantees a string, never null
+                    phone: 'FACULTY'
+                }]);
+
+                if (dbError) throw dbError;
+
+                showNotification("Success", "Teacher Account Created.");
+                closeModal('add-teacher-modal');
+                refreshAllData();
+                e.target.reset();
+
+            } catch (err) {
+                console.error(err); // Log for debugging
+                showNotification("Error", err.message, true);
+            } finally {
+                btn.innerText = orig;
+                btn.disabled = false;
+            }
         });
-
         document.getElementById('add-student-form').addEventListener('submit', async (e) => {
             e.preventDefault(); const btn = document.getElementById('submit-student-btn'); const orig = btn.innerText; btn.innerText = "Syncing..."; btn.disabled = true;
             try {
                 const contact = document.getElementById('student-contact').value, idType = document.querySelector('input[name="identifier_type"]:checked').value, loginId = idType === 'whatsapp' ? `${contact.replace(/\D/g, '')}@annoor-academy.com` : contact;
                 const { data: auth, error: aErr } = await supabaseClient.auth.signUp({ email: loginId, password: document.getElementById('student-password').value, options: { data: { role: 'student' } } }); if (aErr) throw aErr;
-                await supabaseClient.from('students').insert([{ user_id: auth.user.id, name: `${document.getElementById('student-surname').value}, ${document.getElementById('student-firstname').value}`, surname: document.getElementById('student-surname').value, first_name: document.getElementById('student-firstname').value, middle_name: document.getElementById('student-middlename').value, home_address: document.getElementById('student-address').value, identifier_type: idType, whatsapp_number: idType === 'whatsapp' ? contact : null, email: idType === 'email' ? contact : loginId, grade_level: document.getElementById('student-grade-level').value, hifdh_status: 'Juz 1', status: 'Active' }]);
+
+                const { error: dbError } = await supabaseClient.from('students').insert([{ user_id: auth.user.id, name: `${document.getElementById('student-surname').value}, ${document.getElementById('student-firstname').value}`, surname: document.getElementById('student-surname').value, first_name: document.getElementById('student-firstname').value, middle_name: document.getElementById('student-middlename').value, home_address: document.getElementById('student-address').value, identifier_type: idType, whatsapp_number: idType === 'whatsapp' ? contact : null, email: idType === 'email' ? contact : loginId, grade_level: document.getElementById('student-grade-level').value, hifdh_status: 'Juz 1', status: 'Active' }]);
+                if (dbError) throw dbError;
+
                 showNotification("Success", "Student Enrolled."); closeModal('add-student-modal'); refreshAllData(); e.target.reset();
             } catch (err) { showNotification("Error", err.message, true); } finally { btn.innerText = orig; btn.disabled = false; }
         });
@@ -1041,7 +1098,10 @@
                 const name = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
                 const { error: uErr } = await supabaseClient.storage.from('news-media').upload(name, file); if (uErr) throw uErr;
                 const { data: { publicUrl } } = supabaseClient.storage.from('news-media').getPublicUrl(name);
-                await supabaseClient.from('news_posts').insert([{ title, description: desc, post_type: type, media_url: publicUrl, media_path: name }]);
+
+                const { error: dbError } = await supabaseClient.from('news_posts').insert([{ title, description: desc, post_type: type, media_url: publicUrl, media_path: name }]);
+                if (dbError) throw dbError;
+
                 showNotification("Success", "Published."); closeModal('add-post-modal'); refreshAllData(); e.target.reset();
             } catch (err) { showNotification("Error", err.message, true); } finally { btn.innerText = "Publish Now"; btn.disabled = false; }
         });
