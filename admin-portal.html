@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An-Noor Academy | Unified Admin Portal</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* Global Typography & Reset */
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+        /* Animation & Transitions */
+        .sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hidden-view { display: none !important; }
+        
+        /* Sidebar Active States */
+        .active-nav { 
+            background-color: #064e3b !important; 
+            color: #ffffff !important; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Login Background - Deep Professional Tone */
+        .admin-bg {
+            background-color: #022c22;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(158, 82%, 15%, 1) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, hsla(158, 82%, 15%, 1) 0, transparent 50%);
+        }
+
+        /* Pattern Overlay */
+        .pattern-overlay {
+            background-image: url("https://www.transparenttextures.com/patterns/arabesque.png");
+            opacity: 0.1;
+        }
+
+        /* Professional Scrollbars */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { 
+            background: #059669; 
+            border-radius: 10px; 
+            border: 2px solid #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #047857; }
+
+        /* Glassmorphism for Overlay */
+        .glass-overlay {
+            backdrop-filter: blur(8px);
+            background-color: rgba(6, 78, 59, 0.4);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden font-sans antialiased">
+
+    <div id="custom-alert" class="fixed inset-0 z-[200] flex items-center justify-center px-4 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        
+        <div class="bg-white rounded-[2rem] shadow-2xl p-8 max-w-sm w-full transform scale-95 transition-all duration-300 relative z-10 text-center border-4 border-white/50">
+            <div id="alert-icon-bg" class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner">
+                <i id="alert-icon" data-lucide="check-circle" class="w-10 h-10"></i>
+            </div>
+            <h3 id="alert-title" class="text-2xl font-bold text-slate-800 mb-2 font-serif">Success</h3>
+            <p id="alert-message" class="text-slate-500 text-sm font-medium mb-8 leading-relaxed">Operation completed successfully.</p>
+            
+            <div class="flex gap-4">
+                <button id="alert-cancel-btn" onclick="closeAlert()" class="hidden flex-1 py-4 border-2 border-slate-100 text-slate-400 rounded-2xl font-bold hover:bg-slate-50 transition active:scale-95">Cancel</button>
+                <button id="alert-ok-btn" onclick="closeAlert()" class="flex-1 py-4 bg-emerald-900 text-white rounded-2xl font-bold shadow-xl shadow-emerald-900/20 hover:bg-emerald-800 hover:-translate-y-1 transition-all active:scale-95">
+                    Acknowledge
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-container" class="fixed inset-0 z-[100] flex items-center justify-center p-4 admin-bg transition-all duration-700">
+        
+        <a href="index.html" class="absolute top-6 left-6 z-[120] flex items-center gap-3 text-white/80 hover:text-white transition-colors group">
+            <div class="p-2.5 bg-white/10 rounded-full backdrop-blur-md border border-white/10 group-hover:bg-white/20 transition-all shadow-lg">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </div>
+            <span class="text-sm font-bold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">Return Home</span>
+        </a>
+
+        <div class="w-full max-w-5xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px] border border-white/10 relative z-10">
+            
+            <div class="hidden md:flex w-1/2 bg-emerald-900 relative flex-col justify-between p-12 text-white overflow-hidden">
+                <div class="absolute inset-0 pattern-overlay"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2"></div>
+
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 bg-amber-400 rounded-lg flex items-center justify-center text-emerald-900 shadow-lg shadow-amber-400/20">
+                            <i data-lucide="shield" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-amber-400 font-bold tracking-widest uppercase text-xs">Secure Gateway</span>
+                    </div>
+                    <h1 class="text-5xl font-bold font-serif leading-tight mt-6">An-Noor<br><span class="text-emerald-300">Academy</span></h1>
+                    <p class="mt-6 text-emerald-100/80 text-lg leading-relaxed font-light">
+                        Centralized administration system for teacher oversight, student enrollment, and academic progress tracking.
+                    </p>
+                </div>
+
+                <div class="relative z-10 mt-12">
+                    <div class="flex items-center gap-4 text-xs font-medium text-emerald-300/60 uppercase tracking-widest">
+                        <span>Restricted Access</span>
+                        <span class="w-12 h-px bg-emerald-300/30"></span>
+                        <span>256-bit Encryption</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center relative">
+                
+                <div class="md:hidden text-center mb-8">
+                    <div class="w-14 h-14 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="shield-check" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 font-serif">An-Noor Admin</h2>
+                </div>
+
+                <div class="max-w-sm mx-auto w-full">
+                    <div class="mb-10 hidden md:block">
+                        <h2 class="text-3xl font-bold text-slate-800">Admin Sign In</h2>
+                        <p class="text-slate-400 mt-2 text-sm">Enter your master credentials to access the dashboard.</p>
+                    </div>
+
+                    <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Email Identifier</label>
+                            <div class="relative group">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-300 group-focus-within:text-emerald-600 transition-colors">
+                                    <i data-lucide="mail" class="w-5 h-5"></i>
+                                </span>
+                                <input type="email" id="login-email" 
+                                       class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-4 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-all placeholder:text-slate-300" 
+                                       placeholder="admin1@hayi.com" required>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Passkey</label>
+                            </div>
+                            <div class="relative group">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-300 group-focus-within:text-emerald-600 transition-colors">
+                                    <i data-lucide="lock" class="w-5 h-5"></i>
+                                </span>
+                                <input type="password" id="login-password" 
+                                       class="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-4 text-sm font-semibold text-slate-700 outline-none focus:bg-white focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-all placeholder:text-slate-300" 
+                                       placeholder="••••••••" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="loginBtn" 
+                                class="w-full bg-emerald-900 text-white py-4 rounded-xl font-bold shadow-lg shadow-emerald-900/20 hover:bg-emerald-800 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-3 mt-4 group">
+                            <span>Authenticate</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </form>
+
+                    <div class="mt-10 text-center">
+                        <p class="text-[10px] text-slate-300 uppercase tracking-widest font-bold">System v2.0 &copy; 2026 An-Noor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="main-dashboard" class="hidden-view flex h-screen w-full transition-opacity duration-700">
+        
+        <div id="mobile-overlay" onclick="toggleSidebar()" 
+             class="fixed inset-0 z-20 glass-overlay hidden transition-opacity opacity-0 md:hidden">
+        </div>
+
+        <aside id="sidebar" 
+               class="fixed inset-y-0 left-0 z-30 w-80 bg-emerald-950 text-white transform -translate-x-full md:translate-x-0 md:relative sidebar-transition flex flex-col h-full shadow-2xl md:shadow-none border-r border-emerald-900">
+            
+            <div class="h-28 flex items-center justify-between px-8 border-b border-emerald-900 bg-emerald-950">
+                <div class="flex flex-col">
+                    <span class="text-3xl font-bold tracking-tighter text-white uppercase leading-none">An-Noor</span>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.3em]">Admin Portal</span>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-emerald-300 hover:text-white transition">
+                    <i data-lucide="x-circle" class="w-8 h-8"></i>
+                </button>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-10 px-6">
+                <p class="text-[10px] font-black text-emerald-700 uppercase tracking-widest mb-4 px-2">Main Menu</p>
+                <ul class="space-y-4">
+                    <li>
+                        <button onclick="switchView('dashboard')" id="nav-dashboard" 
+                                class="nav-btn w-full flex items-center px-6 py-5 active-nav rounded-2xl transition-all duration-300 group">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5 mr-4 group-hover:rotate-6 transition-transform"></i> 
+                            <span class="font-bold tracking-wide text-sm">System Overview</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('teachers')" id="nav-teachers" 
+                                class="nav-btn w-full flex items-center px-6 py-5 text-emerald-100 hover:bg-emerald-900/50 rounded-2xl transition-all duration-300 group border border-transparent hover:border-emerald-800">
+                            <i data-lucide="users" class="w-5 h-5 mr-4 group-hover:rotate-6 transition-transform"></i> 
+                            <span class="font-bold tracking-wide text-sm">Manage Teachers</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('students')" id="nav-students" 
+                                class="nav-btn w-full flex items-center px-6 py-5 text-emerald-100 hover:bg-emerald-900/50 rounded-2xl transition-all duration-300 group border border-transparent hover:border-emerald-800">
+                            <i data-lucide="graduation-cap" class="w-5 h-5 mr-4 group-hover:rotate-6 transition-transform"></i> 
+                            <span class="font-bold tracking-wide text-sm">Manage Students</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchView('news')" id="nav-news" 
+                                class="nav-btn w-full flex items-center px-6 py-5 text-emerald-100 hover:bg-emerald-900/50 rounded-2xl transition-all duration-300 group border border-transparent hover:border-emerald-800">
+                            <i data-lucide="newspaper" class="w-5 h-5 mr-4 group-hover:rotate-6 transition-transform"></i> 
+                            <span class="font-bold tracking-wide text-sm">News & Media</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="p-8 border-t border-emerald-900 bg-emerald-950">
+                <button onclick="handleLogout()" 
+                        class="flex items-center justify-center w-full py-4 bg-emerald-900/30 text-emerald-400 rounded-2xl hover:text-white hover:bg-rose-900/80 transition-all text-xs font-black border border-emerald-800/50 uppercase tracking-widest group">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-3 group-hover:-translate-x-1 transition-transform"></i> Terminate Session
+                </button>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col h-screen w-full relative overflow-hidden bg-slate-50">
+            
+            <header class="h-24 bg-white border-b border-slate-200 flex items-center justify-between px-8 sm:px-12 z-10 sticky top-0 shadow-sm/50">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-emerald-700 p-3 rounded-xl hover:bg-slate-100 transition mr-6">
+                        <i data-lucide="menu" class="w-7 h-7"></i>
+                    </button>
+                    <div class="hidden sm:block">
+                        <h2 class="text-slate-900 font-black text-xl uppercase tracking-tight">Management Console</h2>
+                        <div class="flex items-center text-[10px] text-emerald-600 font-bold uppercase tracking-widest mt-1">
+                            Current Session: <span id="current-date" class="ml-1 text-slate-500">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-black text-slate-800 leading-tight">Sheikh Principal</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter mt-0.5">Role: Superuser</p>
+                    </div>
+                    <div class="w-14 h-14 bg-emerald-50 border-2 border-emerald-100 rounded-2xl flex items-center justify-center text-emerald-700 font-black shadow-lg shadow-emerald-100 text-lg">
+                        AD
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 sm:p-12 scroll-smooth">
+
+                <div id="view-dashboard" class="view-section">
+                    <div class="mb-12">
+                        <h2 class="text-4xl font-bold text-slate-900 tracking-tight">System Status</h2>
+                        <p class="text-slate-500 mt-2 text-lg font-medium">Live overview of An-Noor Academy operations.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                        <div class="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-between group">
+                            <div>
+                                <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Students</p>
+                                <h3 id="stat-students" class="text-6xl font-bold text-emerald-900 mt-4 tracking-tighter">--</h3>
+                            </div>
+                            <div class="p-6 bg-emerald-50 text-emerald-600 rounded-3xl transition-transform group-hover:rotate-12 group-hover:scale-110"><i data-lucide="users" class="w-10 h-10"></i></div>
+                        </div>
+
+                        <div class="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-between group">
+                            <div>
+                                <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Active Teachers</p>
+                                <h3 id="stat-teachers" class="text-6xl font-bold text-emerald-900 mt-4 tracking-tighter">--</h3>
+                            </div>
+                            <div class="p-6 bg-blue-50 text-blue-600 rounded-3xl transition-transform group-hover:rotate-12 group-hover:scale-110"><i data-lucide="shield-check" class="w-10 h-10"></i></div>
+                        </div>
+
+                        <div class="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-between group">
+                            <div>
+                                <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Public Posts</p>
+                                <h3 id="stat-posts" class="text-6xl font-bold text-emerald-900 mt-4 tracking-tighter">--</h3>
+                            </div>
+                            <div class="p-6 bg-purple-50 text-purple-600 rounded-3xl transition-transform group-hover:rotate-12 group-hover:scale-110"><i data-lucide="megaphone" class="w-10 h-10"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-teachers" class="view-section hidden-view">
+                    <div class="flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
+                        <div>
+                            <h2 class="text-4xl font-bold text-slate-900 tracking-tight">Teachers Directory</h2>
+                            <p class="text-slate-500 mt-3 text-lg font-medium">Control teacher credentials and assignment visibility.</p>
+                        </div>
+                        <button onclick="openModal('add-teacher-modal')" 
+                                class="bg-emerald-800 text-white px-10 py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest flex items-center shadow-2xl shadow-emerald-900/30 hover:bg-emerald-900 hover:-translate-y-1 transition-all">
+                            <i data-lucide="plus" class="w-5 h-5 mr-3"></i> Add New Teacher
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-[3rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm whitespace-nowrap">
+                                <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-800 font-black uppercase text-[10px] tracking-[0.25em]">
+                                    <tr>
+                                        <th class="px-10 py-8">Teacher Name / Secure Email</th>
+                                        <th class="px-10 py-8">Access Level</th>
+                                        <th class="px-10 py-8">Assigned Area</th>
+                                        <th class="px-10 py-8 text-right">Security Control</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teachers-table-body" class="divide-y divide-slate-100 text-slate-600">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-students" class="view-section hidden-view">
+                    <div class="flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
+                        <div>
+                            <h2 class="text-4xl font-bold text-slate-900 tracking-tight">Active Enrollment</h2>
+                            <p class="text-slate-500 mt-3 text-lg font-medium">High-level student records and progress management.</p>
+                        </div>
+                        <button onclick="openModal('add-student-modal')" 
+                                class="bg-emerald-800 text-white px-10 py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest flex items-center shadow-2xl shadow-emerald-900/30 hover:bg-emerald-900 hover:-translate-y-1 transition-all">
+                            <i data-lucide="user-plus" class="w-5 h-5 mr-3"></i> Register New Student
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-[3rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm whitespace-nowrap">
+                                <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-800 font-black uppercase text-[10px] tracking-[0.25em]">
+                                    <tr>
+                                        <th class="px-10 py-8">Student & Identifier</th>
+                                        <th class="px-10 py-8">Residential Data</th>
+                                        <th class="px-10 py-8">Grade</th>
+                                        <th class="px-10 py-8">Academic Milestone</th>
+                                        <th class="px-10 py-8 text-right">Management</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table-body" class="divide-y divide-slate-100 text-slate-600">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-news" class="view-section hidden-view">
+                    <div class="flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
+                        <div>
+                            <h2 class="text-4xl font-bold text-slate-900 tracking-tight">News Feed Archive</h2>
+                            <p class="text-slate-500 mt-3 text-lg font-medium">Broadcast information to the community portals.</p>
+                        </div>
+                        <button onclick="openModal('add-post-modal')" 
+                                class="bg-emerald-800 text-white px-10 py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest flex items-center shadow-2xl shadow-emerald-900/30 hover:bg-emerald-900 hover:-translate-y-1 transition-all">
+                            <i data-lucide="plus-circle" class="w-5 h-5 mr-3"></i> Create Bulletin
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-[3rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm whitespace-nowrap">
+                                <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-800 font-black uppercase text-[10px] tracking-[0.25em]">
+                                    <tr>
+                                        <th class="px-10 py-8">Headline</th>
+                                        <th class="px-10 py-8">Type</th>
+                                        <th class="px-10 py-8">Date</th>
+                                        <th class="px-10 py-8 text-right">Engagement & Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="news-table-body" class="divide-y divide-slate-100 text-slate-600">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <div id="add-teacher-modal" class="fixed inset-0 z-[110] glass-overlay hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-xl rounded-[3rem] shadow-2xl overflow-hidden transform transition-all duration-300 scale-100 border border-white/50">
+            <div class="bg-emerald-900 p-10 flex justify-between items-center text-white">
+                <div>
+                    <h3 class="font-bold text-3xl">Add Teacher</h3>
+                    <p class="text-[10px] text-emerald-300 tracking-[0.4em] uppercase mt-2 font-black">Secure ID Provisioning</p>
+                </div>
+                <button onclick="closeModal('add-teacher-modal')" class="hover:rotate-90 transition-transform bg-white/10 p-3 rounded-full hover:bg-white/20">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="add-teacher-form" class="p-12 space-y-8">
+                <div>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Teacher Full Name</label>
+                    <input type="text" id="teacher-name" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 focus:bg-white transition-all placeholder:font-medium" placeholder="Enter Full Name" required>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">System Email</label>
+                        <input type="email" id="teacher-email" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 focus:bg-white transition-all placeholder:font-medium" placeholder=" teacher@academy.com" required>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Access Password</label>
+                        <input type="password" id="teacher-password" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 focus:bg-white transition-all placeholder:font-medium" placeholder="Min 6 chars" required>
+                    </div>
+                </div>
+                <div class="pt-6 border-t border-slate-100">
+                    <label class="block text-[11px] font-black text-emerald-800 uppercase tracking-[0.2em] mb-6 text-center">Grant Functional Authorization</label>
+                    <div class="flex bg-slate-100 p-2 rounded-[1.5rem] mb-6">
+                        <label class="flex-1 cursor-pointer group">
+                            <input type="radio" name="access_type" value="subject" class="peer sr-only" checked onchange="toggleAccessType('subject')">
+                            <div class="text-center py-4 text-xs font-black rounded-2xl text-slate-400 peer-checked:bg-white peer-checked:text-emerald-700 peer-checked:shadow-lg transition-all">Subject Specific</div>
+                        </label>
+                        <label class="flex-1 cursor-pointer group">
+                            <input type="radio" name="access_type" value="class" class="peer sr-only" onchange="toggleAccessType('class')">
+                            <div class="text-center py-4 text-xs font-black rounded-2xl text-slate-400 peer-checked:bg-white peer-checked:text-emerald-700 peer-checked:shadow-lg transition-all">Class Supervisor</div>
+                        </label>
+                    </div>
+                    <select id="teacher-access-value" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 appearance-none cursor-pointer">
+                        <option value="Hifdh">Hifdh Section</option>
+                        <option value="Tajweed">Tajweed Rules</option>
+                        <option value="Arabic">Arabic Language</option>
+                    </select>
+                </div>
+                <div class="flex gap-6 pt-6">
+                    <button type="button" onclick="closeModal('add-teacher-modal')" class="flex-1 py-5 border-2 border-slate-100 rounded-2xl font-bold text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition uppercase text-xs tracking-widest">Discard</button>
+                    <button type="submit" id="submit-teacher-btn" class="flex-1 py-5 bg-emerald-800 text-white rounded-2xl font-black shadow-2xl shadow-emerald-800/30 hover:bg-emerald-900 transition-all uppercase text-xs tracking-widest hover:-translate-y-1">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-student-modal" class="fixed inset-0 z-[110] glass-overlay hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-3xl rounded-[3rem] shadow-2xl overflow-hidden transform transition-all duration-300 scale-100 border border-white/50">
+            <div class="bg-emerald-900 p-10 flex justify-between items-center text-white">
+                <div>
+                    <h3 class="font-bold text-3xl">Academic Registration</h3>
+                    <p class="text-[10px] text-emerald-300 tracking-[0.4em] uppercase mt-2 font-black">Student Lifecycle Management</p>
+                </div>
+                <button onclick="closeModal('add-student-modal')" class="bg-white/10 p-3 rounded-full hover:rotate-90 transition-transform hover:bg-white/20">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="add-student-form" class="p-12 space-y-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Surname *</label>
+                        <input type="text" id="student-surname" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-4 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all" placeholder="Family Name" required>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">First Name *</label>
+                        <input type="text" id="student-firstname" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-4 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all" placeholder="Legal Name" required>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Middle Name</label>
+                        <input type="text" id="student-middlename" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-4 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all" placeholder="Optional">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Home Address (Residential) *</label>
+                    <textarea id="student-address" rows="2" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all resize-none" placeholder="Flat / House No / Area Name / State" required></textarea>
+                </div>
+
+                <div class="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-200/60">
+                    <label class="block text-[11px] font-black text-emerald-800 uppercase mb-6 text-center tracking-[0.2em]">Portal Login Credentials</label>
+                    
+                    <div class="flex gap-4 p-2 bg-white rounded-2xl mb-8 shadow-sm">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="identifier_type" value="whatsapp" class="peer sr-only" checked onchange="toggleContactInput('whatsapp')">
+                            <div class="text-center py-4 text-xs font-black rounded-xl text-slate-400 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all border border-transparent peer-checked:border-emerald-200">WhatsApp Method</div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="identifier_type" value="email" class="peer sr-only" onchange="toggleContactInput('email')">
+                            <div class="text-center py-4 text-xs font-black rounded-xl text-slate-400 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all border border-transparent peer-checked:border-emerald-200">Email Method</div>
+                        </label>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2 ml-2">Contact ID</label>
+                            <input type="text" id="student-contact" class="w-full border-2 border-slate-100 bg-white rounded-2xl p-5 text-sm font-bold text-slate-700 shadow-sm outline-none focus:border-emerald-500 transition-all" placeholder="WhatsApp No (e.g. 23480...)" required>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2 ml-2">Secure Password</label>
+                            <input type="password" id="student-password" class="w-full border-2 border-slate-100 bg-white rounded-2xl p-5 text-sm font-bold text-slate-700 shadow-sm outline-none focus:border-emerald-500 transition-all" placeholder="Min 6 characters *" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Academic Placement</label>
+                    <div class="relative">
+                        <select id="student-grade-level" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-slate-700 outline-none appearance-none focus:border-emerald-500 cursor-pointer">
+                            <option value="Level 1">Level 1 (Foundation Stage)</option>
+                            <option value="Level 2">Level 2 (Intermediate)</option>
+                            <option value="Level 3">Level 3 (Advanced)</option>
+                            <option value="Intensive">Hifdh Intensive Program</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="absolute right-6 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div class="flex gap-6 pt-6">
+                    <button type="button" onclick="closeModal('add-student-modal')" class="flex-1 py-5 border-2 border-slate-200 rounded-2xl font-bold text-slate-400 hover:bg-slate-50 uppercase text-xs tracking-widest">Discard Entry</button>
+                    <button type="submit" id="submit-student-btn" class="flex-1 py-5 bg-emerald-800 text-white rounded-2xl font-black uppercase text-xs shadow-2xl shadow-emerald-800/30 hover:bg-emerald-900 transition-all tracking-widest hover:-translate-y-1">Finalize Enrollment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-post-modal" class="fixed inset-0 z-[110] glass-overlay hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden transform transition-all duration-300 scale-100 border border-white/50">
+            <div class="bg-emerald-900 p-10 text-white text-center">
+                <h3 class="font-bold text-2xl uppercase tracking-widest">Public Update</h3>
+                <p class="text-[10px] text-emerald-300 font-bold uppercase tracking-[0.2em] mt-2">Broadcast to Portal Feed</p>
+            </div>
+            <form id="add-post-form" class="p-12 space-y-8">
+                <div>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Bulletin Headline</label>
+                    <input type="text" id="post-title" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl p-5 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all" placeholder="News Topic..." required>
+                </div>
+                <div class="flex gap-6">
+                    <label class="flex-1 text-center border-2 border-slate-100 p-5 rounded-2xl font-bold text-xs text-slate-400 cursor-pointer hover:bg-slate-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-700 transition-all">
+                        <input type="radio" name="post-type" value="image" checked class="hidden"> 
+                        <i data-lucide="image" class="w-6 h-6 mx-auto mb-2"></i>
+                        Image News
+                    </label>
+                    <label class="flex-1 text-center border-2 border-slate-100 p-5 rounded-2xl font-bold text-xs text-slate-400 cursor-pointer hover:bg-slate-50 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-700 transition-all">
+                        <input type="radio" name="post-type" value="video" class="hidden"> 
+                        <i data-lucide="video" class="w-6 h-6 mx-auto mb-2"></i>
+                        Video Clip
+                    </label>
+                </div>
+                <button type="submit" id="submit-news-btn" class="w-full py-5 bg-emerald-800 text-white rounded-2xl font-black shadow-2xl shadow-emerald-800/30 hover:bg-emerald-900 transition-all uppercase tracking-widest hover:-translate-y-1">Publish Announcement</button>
+                
+                <div class="flex justify-center">
+                    <button type="button" onclick="closeModal('add-post-modal')" class="text-xs font-bold text-slate-400 hover:text-rose-500 uppercase tracking-widest">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // --- 1. BOOTSTRAP INITIALIZATION ---
+        lucide.createIcons();
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        // --- 2. CONFIGURATION (Supabase) ---
+        const SUPABASE_URL = 'https://yqzpfwkpnywkjhybhccb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxenBmd2twbnl3a2poeWJoY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4NTM0NDYsImV4cCI6MjA4NTQyOTQ0Nn0.xnTFS3cd1akIGQwXE_tOPz6cqtznzZP2eBB_dOZii7M';
+        let supabaseClient;
+
+        window.onload = function() {
+            try {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                checkActiveSession();
+            } catch (error) {
+                showNotification("System Failure", "Critical database connection error.", true);
+            }
+        };
+
+        // --- 3. CUSTOM NOTIFICATION LOGIC ---
+        function showNotification(title, message, isError = false) {
+            const modal = document.getElementById('custom-alert');
+            const icon = document.getElementById('alert-icon');
+            const iconBg = document.getElementById('alert-icon-bg');
+            const titleEl = document.getElementById('alert-title');
+            const msgEl = document.getElementById('alert-message');
+            const cancelBtn = document.getElementById('alert-cancel-btn');
+            const okBtn = document.getElementById('alert-ok-btn');
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            cancelBtn.classList.add('hidden'); // Default hidden
+            okBtn.innerText = "Acknowledge";
+            okBtn.onclick = closeAlert;
+
+            if (isError) {
+                icon.setAttribute('data-lucide', 'x-circle');
+                iconBg.className = 'w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600 shadow-inner';
+                titleEl.className = 'text-2xl font-bold text-rose-900 mb-2 font-serif';
+            } else {
+                icon.setAttribute('data-lucide', 'check-circle');
+                iconBg.className = 'w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner';
+                titleEl.className = 'text-2xl font-bold text-emerald-900 mb-2 font-serif';
+            }
+            lucide.createIcons();
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
+        }
+
+        // Dedicated Confirmation Modal Logic
+        function showConfirm(title, message, callback) {
+            const modal = document.getElementById('custom-alert');
+            const icon = document.getElementById('alert-icon');
+            const iconBg = document.getElementById('alert-icon-bg');
+            const titleEl = document.getElementById('alert-title');
+            const msgEl = document.getElementById('alert-message');
+            const cancelBtn = document.getElementById('alert-cancel-btn');
+            const okBtn = document.getElementById('alert-ok-btn');
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            titleEl.className = 'text-2xl font-bold text-slate-800 mb-2 font-serif';
+            
+            // Icon Style for Warning/Confirm
+            icon.setAttribute('data-lucide', 'alert-circle');
+            iconBg.className = 'w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner';
+
+            // Show Two Buttons
+            cancelBtn.classList.remove('hidden');
+            okBtn.innerText = "Yes, Proceed";
+            
+            // Handle Click
+            okBtn.onclick = () => {
+                callback();
+                closeAlert();
+            };
+
+            lucide.createIcons();
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
+        }
+
+        function closeAlert() {
+            const modal = document.getElementById('custom-alert');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div.transform').classList.replace('scale-100', 'scale-95');
+            setTimeout(() => modal.classList.add('pointer-events-none'), 300);
+        }
+
+        // --- 4. SECURITY & AUTHENTICATION LOGIC ---
+        async function checkActiveSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session && session.user.user_metadata.role === 'admin') {
+                unlockSystem();
+            }
+        }
+
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline mr-2"></i> Verifying...`;
+            btn.disabled = true;
+            lucide.createIcons();
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+                if (error) throw error;
+                if (data.user.user_metadata.role !== 'admin') {
+                    await supabaseClient.auth.signOut();
+                    throw new Error("Access Denied: Not an Admin Account.");
+                }
+                unlockSystem();
+            } catch (err) {
+                showNotification("Login Failed", err.message, true);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function unlockSystem() {
+            const authContainer = document.getElementById('auth-container');
+            const dashboard = document.getElementById('main-dashboard');
+            authContainer.style.opacity = '0';
+            setTimeout(() => {
+                authContainer.classList.add('hidden-view');
+                dashboard.classList.remove('hidden-view');
+                refreshAllData();
+            }, 500);
+        }
+
+        async function handleLogout() {
+            showConfirm("Terminate Session?", "Are you sure you want to log out securely?", async () => {
+                await supabaseClient.auth.signOut();
+                location.reload();
+            });
+        }
+
+        // --- 5. NAVIGATION & INTERFACE LOGIC ---
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden-view'));
+            const target = document.getElementById('view-' + viewName);
+            if(target) {
+                target.classList.remove('hidden-view');
+                document.querySelector('main').scrollTop = 0;
+            }
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active-nav');
+                btn.classList.add('text-emerald-100', 'hover:bg-emerald-900/50');
+            });
+            const activeBtn = document.getElementById('nav-' + viewName);
+            if(activeBtn) {
+                activeBtn.classList.add('active-nav');
+                activeBtn.classList.remove('text-emerald-100', 'hover:bg-emerald-900/50');
+            }
+            if (window.innerWidth < 768) toggleSidebar();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function openModal(id) { 
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden'); 
+            lucide.createIcons();
+        }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function toggleContactInput(type) {
+            const input = document.getElementById('student-contact');
+            input.placeholder = (type === 'whatsapp') ? "WhatsApp No (e.g. 234...)" : "Secure Email Address";
+            input.focus();
+        }
+
+        function toggleAccessType(type) {
+            const sel = document.getElementById('teacher-access-value');
+            sel.innerHTML = '';
+            const opts = type === 'subject' ? ['Hifdh Section', 'Tajweed Rules', 'Arabic Language', 'Fiqh'] : ['Level 1 (Foundation)', 'Level 2 (Discovery)', 'Level 3 (Advanced)', 'Hifdh Intensive'];
+            opts.forEach(o => sel.innerHTML += `<option value="${o}">${o}</option>`);
+        }
+
+        // --- 6. DATA OPS ---
+        async function refreshAllData() {
+            await Promise.all([
+                fetchAndRenderTable('news_posts', 'news-table-body', renderNewsRow),
+                fetchAndRenderTable('teachers', 'teachers-table-body', renderTeacherRow),
+                fetchAndRenderTable('students', 'students-table-body', renderStudentRow),
+                calculateDashboardStats()
+            ]);
+        }
+
+        async function fetchAndRenderTable(table, tbodyId, rowFn) {
+            const tbody = document.getElementById(tbodyId);
+            if(!tbody) return;
+            const { data, error } = await supabaseClient.from(table).select('*').order('created_at', { ascending: false });
+            if (error) return;
+            tbody.innerHTML = '';
+            if (!data || data.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="px-10 py-10 text-center font-bold text-slate-300 italic uppercase tracking-widest">Null Record Set</td></tr>`; return; }
+            data.forEach(item => tbody.insertAdjacentHTML('beforeend', rowFn(item)));
+            lucide.createIcons();
+        }
+
+        function renderNewsRow(item) {
+            return `<tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0 group"><td class="px-10 py-8 font-black text-slate-800 text-sm">${item.title}</td><td class="px-10 py-8"><span class="uppercase font-black text-[9px] text-emerald-800 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full tracking-widest">${item.post_type}</span></td><td class="px-10 py-8 text-xs font-bold text-slate-400 tracking-tighter">${new Date(item.created_at).toDateString()}</td><td class="px-10 py-8 text-right"><button onclick="handleDelete('news_posts', ${item.id})" class="text-rose-400 hover:text-rose-600 font-black text-[10px] uppercase tracking-widest border border-transparent hover:border-rose-100 px-3 py-1 rounded-lg transition-all">Purge</button></td></tr>`;
+        }
+
+        function renderTeacherRow(item) {
+            const badge = item.access_type === 'class' ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-blue-100 text-blue-800 border-blue-200';
+            return `<tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0"><td class="px-10 py-8"><div class="font-black text-slate-800 text-sm">${item.name}</div><div class="text-[10px] text-slate-400 font-bold mt-1 font-mono">${item.email || '-'}</div></td><td class="px-10 py-8"><span class="${badge} px-4 py-1.5 rounded-full text-[9px] uppercase font-black tracking-widest border opacity-90">${item.access_type || 'System'}</span></td><td class="px-10 py-8 text-sm font-black text-slate-600">${item.access_value || item.subject || '-'}</td><td class="px-10 py-8 text-right"><button onclick="handleDelete('teachers', ${item.id})" class="bg-white border-2 border-slate-100 text-slate-400 px-5 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all shadow-sm">Revoke</button></td></tr>`;
+        }
+
+        function renderStudentRow(item) {
+            const contactIcon = item.identifier_type === 'whatsapp' ? 'phone' : 'mail';
+            return `<tr class="hover:bg-slate-50 transition border-b border-slate-100 last:border-0"><td class="px-10 py-8"><div class="font-black text-slate-800 text-sm">${item.name}</div><div class="text-[10px] text-emerald-600 font-bold flex items-center mt-1 uppercase tracking-tighter bg-emerald-50 inline-block px-2 py-0.5 rounded-md"><i data-lucide="${contactIcon}" class="w-3 h-3 mr-1.5"></i> ${item.whatsapp_number || item.email}</div></td><td class="px-10 py-8 text-[10px] text-slate-400 font-bold max-w-[150px] truncate italic">${item.home_address || 'No Address'}</td><td class="px-10 py-8 text-[10px] font-black uppercase text-slate-700 tracking-[0.2em]">${item.grade_level}</td><td class="px-10 py-8"><span class="text-emerald-800 bg-emerald-100 px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-tighter border border-emerald-200 shadow-sm"><i data-lucide="award" class="inline w-3 h-3 mr-1"></i> ${item.hifdh_status || 'Juz 1'}</span></td><td class="px-10 py-8 text-right space-x-3"><button onclick="manageProgress(${item.id}, '${item.grade_level}')" class="bg-slate-800 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-800 shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-0.5">Manage</button><button onclick="handleDelete('students', ${item.id})" class="text-slate-300 hover:text-rose-600 transition-colors p-2"><i data-lucide="trash-2" class="w-5 h-5"></i></button></td></tr>`;
+        }
+
+        document.getElementById('add-teacher-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-teacher-btn');
+            const originalText = btn.innerText; btn.innerText = "Provisioning..."; btn.disabled = true;
+            try {
+                const temp = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+                const { data: auth, error: aErr } = await temp.auth.signUp({ email: document.getElementById('teacher-email').value, password: document.getElementById('teacher-password').value, options: { data: { role: 'teacher', full_name: document.getElementById('teacher-name').value } } });
+                if (aErr) throw aErr;
+                await supabaseClient.from('teachers').insert([{ user_id: auth.user.id, name: document.getElementById('teacher-name').value, email: document.getElementById('teacher-email').value, access_type: document.querySelector('input[name="access_type"]:checked').value, access_value: document.getElementById('teacher-access-value').value, subject: document.getElementById('teacher-access-value').value, phone: 'FACULTY' }]);
+                showNotification("Success", "Teacher Account Created."); closeModal('add-teacher-modal'); refreshAllData(); e.target.reset();
+            } catch (err) { showNotification("Error", err.message, true); } finally { btn.innerText = originalText; btn.disabled = false; }
+        });
+
+        document.getElementById('add-student-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-student-btn');
+            const originalText = btn.innerText; btn.innerText = "Syncing..."; btn.disabled = true;
+            try {
+                const contact = document.getElementById('student-contact').value;
+                const idType = document.querySelector('input[name="identifier_type"]:checked').value;
+                const loginId = idType === 'whatsapp' ? `${contact.replace(/\D/g,'')}@annoor-academy.com` : contact;
+                const temp = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+                const { data: auth, error: aErr } = await temp.auth.signUp({ email: loginId, password: document.getElementById('student-password').value, options: { data: { role: 'student' } } });
+                if (aErr) throw aErr;
+                await supabaseClient.from('students').insert([{ user_id: auth.user.id, name: `${document.getElementById('student-surname').value}, ${document.getElementById('student-firstname').value}`, surname: document.getElementById('student-surname').value, first_name: document.getElementById('student-firstname').value, middle_name: document.getElementById('student-middlename').value, home_address: document.getElementById('student-address').value, identifier_type: idType, whatsapp_number: idType === 'whatsapp' ? contact : null, email: idType === 'email' ? contact : loginId, grade_level: document.getElementById('student-grade-level').value, hifdh_status: 'Juz 1', status: 'Active' }]);
+                showNotification("Success", "Student Enrolled Successfully."); closeModal('add-student-modal'); refreshAllData(); e.target.reset();
+            } catch (err) { showNotification("Error", err.message, true); } finally { btn.innerText = originalText; btn.disabled = false; }
+        });
+
+        document.getElementById('add-post-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-news-btn'); btn.innerText = "Broadcasting..."; btn.disabled = true;
+            const { error } = await supabaseClient.from('news_posts').insert([{ title: document.getElementById('post-title').value, post_type: document.querySelector('input[name="post-type"]:checked').value }]);
+            if(!error) { showNotification("Success", "Bulletin Published."); closeModal('add-post-modal'); refreshAllData(); e.target.reset(); } 
+            else { showNotification("Error", error.message, true); }
+            btn.innerText = "Publish Announcement"; btn.disabled = false;
+        });
+
+        async function manageProgress(id, current) {
+            const action = prompt(`Modify Progress for ${current}:\nType 'PROMOTE' for next level\nType 'REPEAT' for same level`);
+            if (!action) return;
+            let update = {};
+            if (action.toUpperCase() === 'PROMOTE') {
+                let next = current === 'Level 1' ? 'Level 2' : current === 'Level 2' ? 'Level 3' : 'Intensive';
+                update = { grade_level: next, status: 'Promoted' };
+            } else if (action.toUpperCase() === 'REPEAT') { update = { status: 'Repeat' }; } else { return; }
+            const { error } = await supabaseClient.from('students').update(update).eq('id', id);
+            if(!error) { refreshAllData(); showNotification("Success", "Academic Record Updated."); }
+        }
+
+        async function handleDelete(table, id) {
+            showConfirm("Confirm Deletion", "This record will be permanently removed. Continue?", async () => {
+                await supabaseClient.from(table).delete().eq('id', id); 
+                refreshAllData(); 
+                showNotification("Deleted", "Record removed from database.");
+            });
+        }
+
+        async function calculateDashboardStats() {
+            const { count: s } = await supabaseClient.from('students').select('*', { count: 'exact', head: true });
+            const { count: t } = await supabaseClient.from('teachers').select('*', { count: 'exact', head: true });
+            const { count: n } = await supabaseClient.from('news_posts').select('*', { count: 'exact', head: true });
+            document.getElementById('stat-students').innerText = s || 0;
+            document.getElementById('stat-teachers').innerText = t || 0;
+            document.getElementById('stat-posts').innerText = n || 0;
+        }
+    </script>
+</body>
+</html>
