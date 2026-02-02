@@ -4,19 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subulus Salaam Academy | Preserving the Qur’an</title>
+    <title>Subulus Salaam Academy | Center for Islamic Knowledge</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        /* Arabic Font Classes */
+        .font-arabic { font-family: 'Amiri', serif; }
+        .font-calligraphy { font-family: 'Amiri', serif; font-weight: 700; }
+        
         .islamic-pattern {
             background-color: #fdfbf7;
             background-image: url("https://www.transparenttextures.com/patterns/arabesque.png");
@@ -33,14 +37,15 @@
             <div class="flex justify-between h-20 items-center">
                 
                 <div class="flex-shrink-0 flex items-center">
-                    <span class="text-2xl font-bold text-emerald-800 tracking-tight">SUBULUS SALAAM <span class="text-emerald-600 font-light">ACADEMY</span></span>
+                    <span class="text-2xl md:text-3xl font-bold text-emerald-800 tracking-tight font-arabic">أكاديمية سبل السلام</span>
                 </div>
 
                 <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
                     <a href="#" class="hover:text-emerald-700 transition">Home</a>
                     <a href="#about" class="hover:text-emerald-700 transition">About</a>
+                    <a href="#faculty" class="hover:text-emerald-700 transition">Faculty</a>
                     <a href="#programs" class="hover:text-emerald-700 transition">Programs</a>
-                    <a href="#news" class="hover:text-emerald-700 transition">Academy Feed</a>
+                    <a href="#news" class="hover:text-emerald-700 transition">Feed</a>
                     <a href="#contact" class="hover:text-emerald-700 transition">Contact</a>
                 </div>
 
@@ -70,8 +75,9 @@
             <div class="px-4 pt-2 pb-6 space-y-1">
                 <a href="#" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Home</a>
                 <a href="#about" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">About</a>
+                <a href="#faculty" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Faculty</a>
                 <a href="#programs" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Programs</a>
-                <a href="#news" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Academy Feed</a>
+                <a href="#news" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Feed</a>
                 <a href="#contact" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Contact</a>
                 
                 <div class="border-t border-slate-100 pt-4 mt-2">
@@ -87,12 +93,18 @@
     <section class="relative py-20 lg:py-32 islamic-pattern overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-3xl mx-auto">
-                <span class="inline-block px-4 py-1.5 mb-6 text-xs font-semibold tracking-widest text-emerald-700 uppercase bg-emerald-100 rounded-full">Bismillahir Rahmanir Rahim</span>
+                
+                <div class="mb-8 select-none">
+                    <span class="text-4xl md:text-6xl text-emerald-800 font-calligraphy leading-relaxed drop-shadow-sm">
+                        بسم الله الرحمن الرحيم
+                    </span>
+                </div>
+                
                 <h1 class="text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-                    Preserving the Qur’an, <br><span class="text-emerald-700">One Heart at a Time</span>
+                    Preserving Knowledge, <br><span class="text-emerald-700">Building Character</span>
                 </h1>
                 <p class="text-lg text-slate-600 mb-10 leading-relaxed">
-                    Join a global community dedicated to the spiritual and technical mastery of Qur'anic recitation and memorization.
+                    A comprehensive institution dedicated to General Islamic Knowledge, combining the preservation of the Qur'an with deep understanding of Fiqh, Hadith, and Arabic.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="#contact" class="px-8 py-4 bg-emerald-700 text-white rounded-lg font-semibold hover:bg-emerald-800 transition shadow-lg shadow-emerald-200 flex items-center justify-center">
@@ -112,10 +124,10 @@
                 <div>
                     <h2 class="text-3xl font-bold mb-6 text-slate-900 border-l-4 border-emerald-600 pl-4">Our Sacred Mission</h2>
                     <p class="text-slate-600 mb-4 leading-relaxed">
-                        A Tahfeez school is more than just a place of learning; it is a sanctuary where the words of Allah are etched into the hearts of the next generation. Our approach balances traditional "Hifdh" techniques with modern educational psychology.
+                        Subulus Salaam Academy is a center for <strong>holistic Islamic education</strong>. We go beyond memorization to provide a deep understanding of the Deen, covering Jurisprudence (Fiqh), Prophetic Traditions (Hadith), Theology (Tauhid), and Arabic Linguistics.
                     </p>
                     <p class="text-slate-600 leading-relaxed">
-                        We welcome students from across the globe, offering a neutral, high-standard curriculum that focuses on correct Tajweed, spiritual connection, and character building (Akhlaq).
+                        Our curriculum is designed to mold well-rounded individuals who combine academic excellence with spiritual discipline. We aim to produce knowledgeable Muslims who understand the application of the Qur'an and Sunnah in their daily lives.
                     </p>
                 </div>
                 <div class="bg-emerald-50 rounded-2xl p-8 border border-emerald-100 aspect-video flex items-center justify-center text-emerald-400">
@@ -125,47 +137,140 @@
         </div>
     </section>
 
-    <section id="programs" class="py-20 bg-slate-50">
+    <section id="faculty" class="py-24 bg-slate-50 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Our Esteemed Faculty</h2>
+                <p class="text-slate-500">Expert educators committed to nurturing knowledge and character.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="h-48 w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Mall.+Bello" alt="Mall. Bello Abubakar" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Mall. Bello Abubakar S. Fawa</h3>
+                    <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest mt-1 mb-3">Principal</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Tafsir, Fiqhu, Sirah, Tarbiyya, Hausa</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="h-48 w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Mall.+Ukashatu" alt="Mall. Ukashatu Bello" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Mall. Ukashatu Bello</h3>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 mb-3">Senior Instructor</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Nahwu, Adab, Sarfu, Arabiyya, General Knowledge</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="h-48 w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Mall.+Usman" alt="Mall. Usman Abubakar" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Mall. Usman Abubakar</h3>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 mb-3">Instructor</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Hadith, Tauhid, Muda'li'ah</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="h-48 w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Mall.+Abubakar" alt="Mall. Abubakar Yusuf" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Mall. Abubakar Yusuf</h3>
+                    <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 2, 3, 4</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Insha'i, Huruf</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="h-48 w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Mall.+Yusuf" alt="Mall. Yusuf Haruna" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Mall. Yusuf Haruna</h3>
+                    <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 5</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Sira</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="h-48 w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Ustaz+Isah" alt="Ustaz Isah Zakari" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Ustaz Isah Zakari</h3>
+                    <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 1</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="h-48 w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Ustazah+Aisha" alt="Ustazah Aisha Rabo" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Ustazah Aisha Rabo</h3>
+                    <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 5</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="h-48 w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Ustazah+Zainab" alt="Ustazah Zainab" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Ustazah Zainab</h3>
+                    <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 4</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="programs" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-slate-900">Our Programs</h2>
-                <p class="mt-4 text-slate-500">Structured paths for every stage of your journey.</p>
+                <p class="mt-4 text-slate-500">Structured academic paths for every stage of your child's journey.</p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
-                    <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center mb-6">
-                        <i data-lucide="book" class="w-6 h-6"></i>
+                <div class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="sprout" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Full-Time Hifdh</h3>
-                    <p class="text-slate-600 text-sm mb-6">Comprehensive memorization with daily revision and focus on perfect retention.</p>
+                    <h3 class="text-xl font-bold mb-3">Nursery Category</h3>
+                    <p class="text-slate-600 text-sm mb-6">Nurturing the love of Allah in the youngest hearts. Focusing on oral Hifdh, Islamic ethics (Akhlaq), and Arabic alphabets.</p>
                     <ul class="text-xs space-y-2 text-slate-500">
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> 5 Days a week</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Personalized Tracking</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Ages 3 - 5</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Play-based Learning</li>
                     </ul>
                 </div>
 
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
-                    <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center mb-6">
-                        <i data-lucide="mic" class="w-6 h-6"></i>
+                <div class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Tajweed Essentials</h3>
-                    <p class="text-slate-600 text-sm mb-6">Focusing on the rules of articulation and phonetic precision for beautiful recitation.</p>
+                    <h3 class="text-xl font-bold mb-3">Primary Category</h3>
+                    <p class="text-slate-600 text-sm mb-6">Building a solid foundation. Systematic memorization of the Qur'an, Tajweed rules, and introduction to Fiqh and Hadith.</p>
                     <ul class="text-xs space-y-2 text-slate-500">
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Beginner to Advanced</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Theoretical & Practical</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Ages 6 - 11</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Structured Curriculum</li>
                     </ul>
                 </div>
 
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
+                <div class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
                     <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center mb-6">
-                        <i data-lucide="heart" class="w-6 h-6"></i>
+                        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Islamic Foundation</h3>
-                    <p class="text-slate-600 text-sm mb-6">Learning the core pillars, Fiqh of worship, and stories of the Prophets.</p>
+                    <h3 class="text-xl font-bold mb-3">Secondary Category</h3>
+                    <p class="text-slate-600 text-sm mb-6">Mastery and leadership. Advanced Hifdh completion, Tafsir, Arabic grammar (Nahwu/Sarf), and community service.</p>
                     <ul class="text-xs space-y-2 text-slate-500">
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Weekend Classes</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Youth Oriented</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Ages 12+</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Advanced Islamic Sciences</li>
                     </ul>
                 </div>
             </div>
@@ -208,7 +313,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-12 mb-12 border-b border-slate-800 pb-12">
                 <div class="col-span-2">
-                    <span class="text-white text-xl font-bold block mb-4">SUBULUS SALAAM ACADEMY</span>
+                    <span class="text-white text-xl font-bold block mb-4 font-arabic">أكاديمية سبل السلام</span>
                     <p class="text-sm max-w-sm">Dedicated to excellence in Qur'anic education and character development for Muslims worldwide.</p>
                 </div>
                 <div>
