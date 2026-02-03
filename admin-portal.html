@@ -120,6 +120,17 @@
 
     <div id="auth-container"
         class="fixed inset-0 z-[100] flex items-center justify-center p-4 admin-bg transition-all duration-700">
+
+        <a href="index.html" class="absolute top-6 left-6 z-20 flex items-center gap-2 group">
+            <div
+                class="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition-all">
+                <i data-lucide="arrow-left" class="w-5 h-5 text-white"></i>
+            </div>
+            <span
+                class="text-white/80 font-bold text-sm tracking-widest uppercase hidden sm:inline-block group-hover:text-white transition-colors">Go
+                Home</span>
+        </a>
+
         <div
             class="w-full max-w-5xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px] border border-white/10 relative z-10">
             <div
@@ -139,12 +150,24 @@
                         system for teacher oversight, student enrollment, and academic progress tracking.</p>
                 </div>
             </div>
-            <div class="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center relative">
+
+            <div class="w-full md:w-1/2 bg-white p-6 sm:p-8 md:p-12 flex flex-col justify-center relative">
                 <div class="max-w-sm mx-auto w-full">
+
+                    <div class="md:hidden text-center mb-8 mt-6">
+                        <div
+                            class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-700 shadow-sm">
+                            <i data-lucide="shield-check" class="w-8 h-8"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800 font-serif">Admin Portal</h2>
+                        <p class="text-slate-400 text-xs uppercase tracking-widest mt-1">Subulus Salaam Academy</p>
+                    </div>
+
                     <div class="mb-10 hidden md:block">
                         <h2 class="text-3xl font-bold text-slate-800">Admin Sign In</h2>
                         <p class="text-slate-400 mt-2 text-sm">Enter your master credentials.</p>
                     </div>
+
                     <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-6">
                         <div class="space-y-2">
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Email
@@ -221,12 +244,12 @@
                                 data-lucide="wallet"
                                 class="w-5 h-5 mr-4 group-hover:rotate-6 transition-transform"></i><span
                                 class="font-bold tracking-wide text-sm">Fees & Bursary</span></button></li>
-                    
-                    <li><button onclick="openComingSoon()"
-                        class="nav-btn w-full flex items-center px-6 py-5 text-emerald-100 hover:bg-emerald-900/50 rounded-2xl transition-all duration-300 group border border-transparent hover:border-emerald-800"><i
-                            data-lucide="printer"
-                            class="w-5 h-5 mr-4 group-hover:rotate-6 transition-transform"></i><span
-                            class="font-bold tracking-wide text-sm">Print Center</span></button></li>
+
+                    <li><button onclick="openComingSoon()" id="nav-print"
+                            class="nav-btn w-full flex items-center px-6 py-5 text-emerald-100 hover:bg-emerald-900/50 rounded-2xl transition-all duration-300 group border border-transparent hover:border-emerald-800"><i
+                                data-lucide="printer"
+                                class="w-5 h-5 mr-4 group-hover:rotate-6 transition-transform"></i><span
+                                class="font-bold tracking-wide text-sm">Print Center</span></button></li>
 
                     <li><button onclick="switchView('news')" id="nav-news"
                             class="nav-btn w-full flex items-center px-6 py-5 text-emerald-100 hover:bg-emerald-900/50 rounded-2xl transition-all duration-300 group border border-transparent hover:border-emerald-800"><i
@@ -268,7 +291,6 @@
             </header>
 
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-10 scroll-smooth">
-
                 <div id="view-dashboard" class="view-section">
                     <div class="mb-8">
                         <h2 class="text-3xl font-bold text-slate-900 tracking-tight">System Status</h2>
@@ -371,13 +393,12 @@
                         <p class="text-slate-500 mt-2 text-sm md:text-lg font-medium">Monitor tuition payments and
                             session balances.</p>
                     </div>
-                    <div class="relative mb-8">
-                        <span class="absolute inset-y-0 left-0 pl-6 flex items-center text-slate-400"><i
-                                data-lucide="search" class="w-5 h-5"></i></span>
-                        <input type="text" id="fee-search" onkeyup="filterFeeStudents()"
+                    <div class="relative mb-8"><span
+                            class="absolute inset-y-0 left-0 pl-6 flex items-center text-slate-400"><i
+                                data-lucide="search" class="w-5 h-5"></i></span><input type="text" id="fee-search"
+                            onkeyup="filterFeeStudents()"
                             class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-14 pr-6 text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
-                            placeholder="Search student in bursary records...">
-                    </div>
+                            placeholder="Search student in bursary records..."></div>
                     <div id="fees-container" class="space-y-8">
                         <div class="text-center py-20 text-slate-400 italic">Loading Financial Records...</div>
                     </div>
@@ -402,15 +423,17 @@
     </div>
 
     <div id="coming-soon-modal" class="fixed inset-0 z-[150] glass-overlay hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden p-8 text-center border-4 border-white/50 relative">
-            <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner">
+        <div
+            class="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden p-8 text-center border-4 border-white/50 relative">
+            <div
+                class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner">
                 <i data-lucide="printer" class="w-10 h-10"></i>
             </div>
             <h3 class="text-2xl font-bold text-slate-800 mb-2 font-serif">Coming Soon</h3>
             <p class="text-slate-500 text-sm font-medium mb-8 leading-relaxed">
                 The Attendance Sheet Printing feature is currently under development. Stay tuned for updates!
             </p>
-            <button onclick="closeModal('coming-soon-modal')" 
+            <button onclick="closeModal('coming-soon-modal')"
                 class="w-full py-4 bg-emerald-900 text-white rounded-2xl font-bold shadow-xl shadow-emerald-900/20 hover:bg-emerald-800 hover:-translate-y-1 transition-all active:scale-95">
                 Okay, Got it
             </button>
@@ -425,17 +448,15 @@
                 <div class="flex items-center gap-4 md:gap-6">
                     <div
                         class="w-14 h-14 md:w-20 md:h-20 bg-emerald-500 rounded-2xl flex items-center justify-center text-xl md:text-3xl font-black shadow-lg">
-                        <span id="manage-student-initials">S</span>
-                    </div>
+                        <span id="manage-student-initials">S</span></div>
                     <div>
                         <h3 id="manage-student-name"
                             class="font-bold text-xl md:text-3xl truncate max-w-[150px] md:max-w-none">Student</h3>
                         <p id="manage-student-id"
                             class="text-emerald-300 text-[10px] md:text-xs font-mono mt-1 uppercase">ID: ...</p>
-                        <div class="flex gap-2 mt-2 md:mt-3">
-                            <span id="manage-student-grade"
-                                class="bg-slate-800 px-2 py-1 md:px-3 md:py-1 rounded-lg text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-300">Class</span>
-                            <span id="manage-student-status"
+                        <div class="flex gap-2 mt-2 md:mt-3"><span id="manage-student-grade"
+                                class="bg-slate-800 px-2 py-1 md:px-3 md:py-1 rounded-lg text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-300">Class</span><span
+                                id="manage-student-status"
                                 class="bg-emerald-900/50 border border-emerald-500/30 px-2 py-1 md:px-3 md:py-1 rounded-lg text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-emerald-400">Active</span>
                         </div>
                     </div>
@@ -444,7 +465,6 @@
                     class="bg-white/10 p-2 rounded-full hover:bg-white/20"><i data-lucide="x"
                         class="w-5 h-5 md:w-6 md:h-6"></i></button>
             </div>
-
             <div class="p-4 md:p-8 overflow-y-auto flex-1 custom-scrollbar space-y-6">
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
                     <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
@@ -489,13 +509,11 @@
                     Zone</span>
                 <div class="flex gap-3 w-full md:w-auto">
                     <button id="release-result-btn" onclick="toggleResultRelease()"
-                        class="flex-1 md:flex-none bg-slate-700 text-white px-6 py-3 rounded-2xl font-bold uppercase text-[10px] md:text-xs tracking-widest shadow-xl hover:bg-slate-800 transition transform active:scale-95 flex items-center justify-center">
-                        <i data-lucide="send" class="w-4 h-4 mr-2"></i> Release Result
-                    </button>
+                        class="flex-1 md:flex-none bg-slate-700 text-white px-6 py-3 rounded-2xl font-bold uppercase text-[10px] md:text-xs tracking-widest shadow-xl hover:bg-slate-800 transition transform active:scale-95 flex items-center justify-center"><i
+                            data-lucide="send" class="w-4 h-4 mr-2"></i> Release Result</button>
                     <button id="btn-smart-promote" onclick="handleSmartPromotion()"
-                        class="hidden flex-1 md:flex-none bg-emerald-700 text-white px-6 py-3 rounded-2xl font-bold uppercase text-[10px] md:text-xs tracking-widest shadow-xl hover:bg-emerald-800 transition transform active:scale-95 items-center justify-center">
-                        <i data-lucide="chevrons-up" class="w-4 h-4 mr-2"></i> Promote
-                    </button>
+                        class="hidden flex-1 md:flex-none bg-emerald-700 text-white px-6 py-3 rounded-2xl font-bold uppercase text-[10px] md:text-xs tracking-widest shadow-xl hover:bg-emerald-800 transition transform active:scale-95 items-center justify-center"><i
+                            data-lucide="chevrons-up" class="w-4 h-4 mr-2"></i> Promote</button>
                 </div>
             </div>
         </div>
@@ -519,19 +537,15 @@
                             data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Record Transaction</h4>
                     <input type="hidden" id="fee-student-id">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Amount (₦)</label>
-                            <input type="number" id="pay-amount"
+                        <div><label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Amount
+                                (₦)</label><input type="number" id="pay-amount"
                                 class="w-full border-2 border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 focus:border-emerald-500 outline-none"
-                                placeholder="0.00" required>
-                        </div>
-                        <div>
-                            <label
-                                class="block text-[10px] font-black text-slate-400 uppercase mb-2">Term/Session</label>
-                            <input type="text" id="pay-term"
+                                placeholder="0.00" required></div>
+                        <div><label
+                                class="block text-[10px] font-black text-slate-400 uppercase mb-2">Term/Session</label><input
+                                type="text" id="pay-term"
                                 class="w-full border-2 border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 focus:border-emerald-500 outline-none"
-                                placeholder="2025/2026 - 3rd Term" required>
-                        </div>
+                                placeholder="2025/2026 - 3rd Term" required></div>
                     </div>
                     <div class="mb-4">
                         <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Update Status</label>
@@ -566,6 +580,44 @@
         </div>
     </div>
 
+    <div id="add-post-modal" class="fixed inset-0 z-[110] glass-overlay hidden flex items-center justify-center p-4">
+        <div
+            class="bg-white w-[95%] md:w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="bg-emerald-900 p-6 flex justify-between items-center text-white shrink-0">
+                <h3 class="font-bold text-xl md:text-2xl uppercase">New Post</h3>
+                <button onclick="closeModal('add-post-modal')"
+                    class="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"><i data-lucide="x"
+                        class="w-6 h-6"></i></button>
+            </div>
+            <form id="add-post-form" class="p-8 overflow-y-auto flex-1 custom-scrollbar space-y-4">
+                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-2">Title</label><input
+                        type="text" id="post-title"
+                        class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm focus:border-emerald-500 outline-none"
+                        required></div>
+                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-2">Content</label><textarea
+                        id="post-description" rows="3"
+                        class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm resize-none focus:border-emerald-500 outline-none"
+                        required></textarea></div>
+                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-3">Media</label><input
+                        type="file" id="post-file" class="block w-full text-xs text-slate-500" required></div>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="post-type"
+                            value="image" checked class="text-emerald-600 focus:ring-emerald-500"><span
+                            class="text-sm font-bold text-slate-600">Image</span></label>
+                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="post-type"
+                            value="video" class="text-emerald-600 focus:ring-emerald-500"><span
+                            class="text-sm font-bold text-slate-600">Video</span></label>
+                </div>
+            </form>
+            <div class="p-6 border-t bg-slate-50 shrink-0 flex gap-3">
+                <button type="button" onclick="closeModal('add-post-modal')"
+                    class="flex-1 py-3 border-2 border-slate-200 text-slate-500 rounded-xl font-bold uppercase text-xs hover:bg-slate-100 transition-colors">Cancel</button>
+                <button type="submit" form="add-post-form" id="submit-news-btn"
+                    class="flex-[2] py-3 bg-emerald-800 text-white rounded-xl font-bold uppercase text-xs hover:bg-emerald-900 shadow-lg transition-transform active:scale-95">Publish</button>
+            </div>
+        </div>
+    </div>
+
     <div id="trash-modal" class="fixed inset-0 z-[130] glass-overlay hidden flex items-center justify-center p-4">
         <div
             class="bg-white w-[95%] md:w-full max-w-3xl rounded-[2rem] md:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
@@ -573,9 +625,9 @@
                 <div>
                     <h3 class="font-bold text-xl md:text-2xl">Recycle Bin</h3>
                     <p class="text-[10px] text-rose-300 uppercase mt-1 tracking-widest font-black">Deleted Students</p>
-                </div>
-                <button onclick="closeModal('trash-modal')" class="bg-white/10 p-2 rounded-full hover:bg-white/20"><i
-                        data-lucide="x" class="w-6 h-6"></i></button>
+                </div><button onclick="closeModal('trash-modal')"
+                    class="bg-white/10 p-2 rounded-full hover:bg-white/20"><i data-lucide="x"
+                        class="w-6 h-6"></i></button>
             </div>
             <div class="p-0 overflow-y-auto flex-1 bg-slate-50">
                 <div class="overflow-x-auto">
@@ -600,8 +652,7 @@
             <div class="bg-emerald-900 p-6 md:p-10 flex justify-between items-center text-white shrink-0">
                 <div>
                     <h3 class="font-bold text-2xl md:text-3xl">Add Teacher</h3>
-                </div>
-                <button onclick="closeModal('add-teacher-modal')"
+                </div><button onclick="closeModal('add-teacher-modal')"
                     class="bg-white/10 p-2 rounded-full hover:bg-white/20"><i data-lucide="x"
                         class="w-6 h-6"></i></button>
             </div>
@@ -620,18 +671,16 @@
                 </div>
                 <div class="pt-2 border-t border-slate-100"><label
                         class="block text-[11px] font-black text-emerald-800 uppercase mb-2 text-center">Role</label>
-                    <div class="flex bg-slate-100 p-1 rounded-xl mb-4">
-                        <label class="flex-1 cursor-pointer"><input type="radio" name="access_type" value="class"
-                                class="hidden" checked onchange="toggleTeacherForm('class')">
+                    <div class="flex bg-slate-100 p-1 rounded-xl mb-4"><label class="flex-1 cursor-pointer"><input
+                                type="radio" name="access_type" value="class" class="hidden" checked
+                                onchange="toggleTeacherForm('class')">
                             <div
                                 class="text-center py-2 text-xs font-black rounded-lg text-slate-400 bg-white shadow-sm">
                                 Class</div>
-                        </label>
-                        <label class="flex-1 cursor-pointer"><input type="radio" name="access_type" value="subject"
-                                class="hidden" onchange="toggleTeacherForm('subject')">
+                        </label><label class="flex-1 cursor-pointer"><input type="radio" name="access_type"
+                                value="subject" class="hidden" onchange="toggleTeacherForm('subject')">
                             <div class="text-center py-2 text-xs font-black rounded-lg text-slate-400">Subject</div>
-                        </label>
-                    </div>
+                        </label></div>
                     <div id="teacher-dynamic-inputs" class="space-y-3"></div>
                 </div>
             </form>
@@ -648,8 +697,7 @@
             <div class="bg-emerald-900 p-6 flex justify-between items-center text-white shrink-0">
                 <div>
                     <h3 class="font-bold text-xl md:text-2xl">Register Student</h3>
-                </div>
-                <button onclick="closeModal('add-student-modal')"
+                </div><button onclick="closeModal('add-student-modal')"
                     class="bg-white/10 p-2 rounded-full hover:bg-white/20"><i data-lucide="x"
                         class="w-6 h-6"></i></button>
             </div>
@@ -679,8 +727,8 @@
                             class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm" required></div>
                 </div>
                 <div class="hidden"><input type="radio" name="identifier_type" value="whatsapp" checked></div>
-                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-2">Class</label>
-                    <select id="student-grade-level" class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm">
+                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-2">Class</label><select
+                        id="student-grade-level" class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm">
                         <option value="Nursery 4">Nursery 4</option>
                         <option value="Nursery 5">Nursery 5</option>
                         <option value="Primary 1">Primary 1</option>
@@ -690,38 +738,11 @@
                         <option value="Primary 5">Primary 5</option>
                         <option value="JSS 1">JSS 1</option>
                         <option value="JSS 2">JSS 2</option>
-                    </select>
-                </div>
+                    </select></div>
             </form>
             <div class="p-6 border-t bg-slate-50 shrink-0"><button type="submit" form="add-student-form"
                     id="submit-student-btn"
                     class="w-full py-3 bg-emerald-800 text-white rounded-xl font-bold uppercase text-xs">Enroll</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="add-post-modal" class="fixed inset-0 z-[110] glass-overlay hidden flex items-center justify-center p-4">
-        <div
-            class="bg-white w-[95%] md:w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-            <div class="bg-emerald-900 p-8 text-white text-center shrink-0">
-                <h3 class="font-bold text-xl md:text-2xl uppercase">New Post</h3>
-            </div>
-            <form id="add-post-form" class="p-8 overflow-y-auto flex-1 custom-scrollbar space-y-4">
-                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-2">Title</label><input
-                        type="text" id="post-title" class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm"
-                        required></div>
-                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-2">Content</label><textarea
-                        id="post-description" rows="3"
-                        class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm resize-none" required></textarea>
-                </div>
-                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-3">Media</label><input
-                        type="file" id="post-file" class="block w-full text-xs text-slate-500" required></div>
-                <div class="flex gap-4"><label><input type="radio" name="post-type" value="image" checked>
-                        Image</label><label><input type="radio" name="post-type" value="video"> Video</label></div>
-            </form>
-            <div class="p-6 border-t bg-slate-50 shrink-0"><button type="submit" form="add-post-form"
-                    id="submit-news-btn"
-                    class="w-full py-3 bg-emerald-800 text-white rounded-xl font-bold uppercase text-xs">Publish</button>
             </div>
         </div>
     </div>
@@ -770,6 +791,10 @@
 
         window.onload = function () {
             document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            // Populate Print Dropdown
+            populatePrintDropdowns();
+
             try { checkActiveSession(); } catch (error) { showNotification("System Failure", "Critical database connection error.", true); }
         };
 
@@ -1483,6 +1508,15 @@
         function openComingSoon() {
             document.getElementById('coming-soon-modal').classList.remove('hidden');
         }
+
+        // --- PRINTING UTILS (For future implementation, keeping helper here) ---
+        function populatePrintDropdowns() {
+            const select = document.getElementById('print-attendance-class');
+            if (select) {
+                select.innerHTML = CLASSES.map(c => `<option value="${c}">${c}</option>`).join('');
+            }
+        }
+        // No generateAttendanceSheet needed for now as it's coming soon.
 
         // Helpers
         function showNotification(t, m, e = false) { const md = document.getElementById('custom-alert'); document.getElementById('alert-title').innerText = t; document.getElementById('alert-message').innerText = m; document.getElementById('alert-cancel-btn').classList.add('hidden'); const btn = document.getElementById('alert-ok-btn'); btn.innerText = "Acknowledge"; btn.onclick = closeAlert; document.getElementById('alert-icon').setAttribute('data-lucide', e ? 'x-circle' : 'check-circle'); document.getElementById('alert-icon-bg').className = e ? 'w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600 shadow-inner' : 'w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner'; lucide.createIcons(); md.classList.remove('pointer-events-none', 'opacity-0'); md.querySelector('div.transform').classList.replace('scale-95', 'scale-100'); }
