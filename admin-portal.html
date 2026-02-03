@@ -129,7 +129,8 @@
                     <div class="flex items-center gap-3 mb-2">
                         <div
                             class="w-10 h-10 bg-amber-400 rounded-lg flex items-center justify-center text-emerald-900 shadow-lg shadow-amber-400/20">
-                            <i data-lucide="shield" class="w-6 h-6"></i></div>
+                            <i data-lucide="shield" class="w-6 h-6"></i>
+                        </div>
                         <span class="text-amber-400 font-bold tracking-widest uppercase text-xs">Secure Gateway</span>
                     </div>
                     <h1 class="text-5xl font-bold font-serif leading-tight mt-6">Subulus Salaam<br><span
@@ -935,11 +936,85 @@
 
         async function toggleResultRelease() {
             if (!currentStudentId) return;
-            const { data: current } = await supabaseClient.from('students').select('results_released').eq('id', currentStudentId).single();
-            const newStatus = !current.results_released;
-            const { error } = await supabaseClient.from('students').update({ results_released: newStatus }).eq('id', currentStudentId);
-            if (!error) { updateReleaseButtonUI(newStatus); showNotification("Success", newStatus ? "Result Released." : "Result Retracted."); }
+
+            // 1. Get current student data
+            const { data: student } = await supabaseClient
+                .from('students')
+                .select('results_released, grade_level, name')
+                .eq('id', currentStudentId)
+                .single();
+
+            // Only perform check if we are attempting to RELEASE results (currently false)
+            if (!student.results_released) {
+                const btn = document.getElementById('release-result-btn');
+                const origText = btn.innerHTML;
+                btn.innerText = "Verifying...";
+                btn.disabled = true;
+
+                try {
+                    // A. Get Curriculum
+                    const expectedSubjects = getSubjectsForClass(student.grade_level);
+                    const totalSubjects = expectedSubjects.length;
+
+                    if (totalSubjects === 0) {
+                        // Throw as simple string to ensure display
+                        throw `Curriculum not defined for ${student.grade_level}. Contact Admin.`;
+                    }
+
+                    // B. Count Valid Scores in Database
+                    const { count, error: gradeError } = await supabaseClient
+                        .from('grades')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('student_id', currentStudentId)
+                        .gt('total_score', 0); // Ensure score is actually entered
+
+                    if (gradeError) throw gradeError.message; // Throw DB error as string
+
+                    const validGrades = count || 0;
+                    const percentage = (validGrades / totalSubjects) * 100;
+
+                    // C. 50% Threshold Check
+                    if (percentage < 50) {
+                        // THIS IS THE MESSAGE THAT WILL NOW DISPLAY
+                        throw `The scores submitted by the teacher for ${student.name} cover only ${validGrades} out of ${totalSubjects} subjects (${Math.round(percentage)}%).\n\nAdmin Action Required: You cannot release results until at least 50% of the subjects have scores recorded.`;
+                    }
+
+                } catch (err) {
+                    // Simplified Error Handling to guarantee text display
+                    let displayMessage = err;
+
+                    // If it happens to be an object (like a weird DB error), try to extract text
+                    if (typeof err === 'object' && err !== null) {
+                        displayMessage = err.message || JSON.stringify(err);
+                    }
+
+                    showNotification("Action Blocked", displayMessage, true);
+
+                    btn.innerHTML = origText;
+                    btn.disabled = false;
+                    return; // Stop execution
+                }
+            }
+
+            // 2. Proceed to Toggle in Database (only if check passed or if retracting)
+            const newStatus = !student.results_released;
+            const { error } = await supabaseClient
+                .from('students')
+                .update({ results_released: newStatus })
+                .eq('id', currentStudentId);
+
+            if (!error) {
+                updateReleaseButtonUI(newStatus);
+                const msg = newStatus ? "Result Released successfully." : "Result Retracted.";
+                showNotification("Success", msg);
+            } else {
+                showNotification("System Error", "Database update failed.", true);
+            }
+
+            const btn = document.getElementById('release-result-btn');
+            btn.disabled = false;
         }
+
 
         function updateReleaseButtonUI(isReleased) {
             const btn = document.getElementById('release-result-btn');
@@ -989,10 +1064,100 @@
             });
         }
 
+
         async function releaseAllResults() {
-            showConfirm("Bulk Release", "Publish ALL results?", async () => {
-                await supabaseClient.from('students').update({ results_released: true }).neq('id', 0);
-                showNotification("Success", "Published.");
+            // 1. Confirm Intent
+            showConfirm("Bulk Release", "Publish results only for students with >50% completed scores?", async () => {
+
+                // UI Feedback (find the button to show loading state)
+                // We search by the onclick attribute since it doesn't have a unique ID in the main view
+                const btn = document.querySelector('button[onclick="releaseAllResults()"]');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = `Processing...`;
+                btn.disabled = true;
+
+                try {
+                    // 2. Fetch ALL Active Students
+                    const { data: students, error: sErr } = await supabaseClient
+                        .from('students')
+                        .select('id, grade_level, name')
+                        .neq('status', 'Deleted');
+
+                    if (sErr) throw "Could not fetch student list.";
+
+                    // 3. Fetch ALL Valid Grades (Score > 0)
+                    // We set a high limit (5000) to ensure we get all records for a typical school size
+                    const { data: grades, error: gErr } = await supabaseClient
+                        .from('grades')
+                        .select('student_id')
+                        .gt('total_score', 0)
+                        .limit(5000);
+
+                    if (gErr) throw "Could not fetch grade records.";
+
+                    // 4. Process Logic Locally
+                    // Count how many valid grades each student has
+                    const studentGradeCounts = {};
+                    grades.forEach(g => {
+                        studentGradeCounts[g.student_id] = (studentGradeCounts[g.student_id] || 0) + 1;
+                    });
+
+                    const eligibleIDs = [];
+                    let skippedCount = 0;
+
+                    // Check every student against their specific curriculum
+                    students.forEach(student => {
+                        const curriculum = getSubjectsForClass(student.grade_level);
+                        const totalSubjects = curriculum.length;
+
+                        // If class has no subjects defined, skip student to be safe
+                        if (totalSubjects === 0) {
+                            skippedCount++;
+                            return;
+                        }
+
+                        const actualScoreCount = studentGradeCounts[student.id] || 0;
+                        const percentage = (actualScoreCount / totalSubjects) * 100;
+
+                        // THE 50% RULE
+                        if (percentage >= 50) {
+                            eligibleIDs.push(student.id);
+                        } else {
+                            skippedCount++;
+                        }
+                    });
+
+                    if (eligibleIDs.length === 0) {
+                        throw "Action Aborted: No students met the 50% data requirement.";
+                    }
+
+                    // 5. Update ONLY Eligible Students
+                    const { error: updateErr } = await supabaseClient
+                        .from('students')
+                        .update({ results_released: true })
+                        .in('id', eligibleIDs); // This updates only the IDs in our list
+
+                    if (updateErr) throw "Database update failed.";
+
+                    // 6. Report Results
+                    showNotification(
+                        "Batch Process Complete",
+                        `Successfully Released: ${eligibleIDs.length} students.\nSkipped: ${skippedCount} students (insufficient scores).`
+                    );
+
+                    // Refresh UI to show new statuses
+                    refreshAllData();
+
+                } catch (err) {
+                    let msg = (typeof err === 'string') ? err : "Unknown error occurred.";
+                    showNotification("Action Blocked", msg, true);
+                } finally {
+                    // Restore Button
+                    if (btn) {
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                    }
+                }
             });
         }
 
