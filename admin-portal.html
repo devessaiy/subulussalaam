@@ -212,7 +212,7 @@
             class="fixed inset-y-0 left-0 z-30 w-80 bg-emerald-950 text-white transform -translate-x-full md:translate-x-0 md:relative sidebar-transition flex flex-col h-full shadow-2xl md:shadow-none border-r border-emerald-900">
             <div class="h-28 flex items-center justify-between px-8 border-b border-emerald-900 bg-emerald-950">
                 <div class="flex flex-col">
-                    <span class="text-3xl font-bold tracking-tighter text-white uppercase leading-none">An-Noor</span>
+                    <span class="text-3xl font-bold tracking-tighter text-white uppercase leading-none">Subulussalaam</span>
                     <div class="flex items-center gap-2 mt-2"><span
                             class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span
                             class="text-[10px] text-emerald-400 font-black uppercase tracking-[0.3em]">Admin
@@ -429,13 +429,14 @@
                 class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner">
                 <i data-lucide="printer" class="w-10 h-10"></i>
             </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-2 font-serif">Coming Soon</h3>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2 font-serif">Print Center</h3>
             <p class="text-slate-500 text-sm font-medium mb-8 leading-relaxed">
-                The Attendance Sheet Printing feature is currently under development. Stay tuned for updates!
+                We are currently upgrading the printing module to support bulk PDF generation. This feature will be
+                available in the next update.
             </p>
             <button onclick="closeModal('coming-soon-modal')"
                 class="w-full py-4 bg-emerald-900 text-white rounded-2xl font-bold shadow-xl shadow-emerald-900/20 hover:bg-emerald-800 hover:-translate-y-1 transition-all active:scale-95">
-                Okay, Got it
+                Okay, Understood
             </button>
         </div>
     </div>
@@ -448,15 +449,17 @@
                 <div class="flex items-center gap-4 md:gap-6">
                     <div
                         class="w-14 h-14 md:w-20 md:h-20 bg-emerald-500 rounded-2xl flex items-center justify-center text-xl md:text-3xl font-black shadow-lg">
-                        <span id="manage-student-initials">S</span></div>
+                        <span id="manage-student-initials">S</span>
+                    </div>
                     <div>
                         <h3 id="manage-student-name"
                             class="font-bold text-xl md:text-3xl truncate max-w-[150px] md:max-w-none">Student</h3>
                         <p id="manage-student-id"
                             class="text-emerald-300 text-[10px] md:text-xs font-mono mt-1 uppercase">ID: ...</p>
-                        <div class="flex gap-2 mt-2 md:mt-3"><span id="manage-student-grade"
-                                class="bg-slate-800 px-2 py-1 md:px-3 md:py-1 rounded-lg text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-300">Class</span><span
-                                id="manage-student-status"
+                        <div class="flex gap-2 mt-2 md:mt-3">
+                            <span id="manage-student-grade"
+                                class="bg-slate-800 px-2 py-1 md:px-3 md:py-1 rounded-lg text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-300">Class</span>
+                            <span id="manage-student-status"
                                 class="bg-emerald-900/50 border border-emerald-500/30 px-2 py-1 md:px-3 md:py-1 rounded-lg text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-emerald-400">Active</span>
                         </div>
                     </div>
@@ -652,7 +655,8 @@
             <div class="bg-emerald-900 p-6 md:p-10 flex justify-between items-center text-white shrink-0">
                 <div>
                     <h3 class="font-bold text-2xl md:text-3xl">Add Teacher</h3>
-                </div><button onclick="closeModal('add-teacher-modal')"
+                </div>
+                <button onclick="closeModal('add-teacher-modal')"
                     class="bg-white/10 p-2 rounded-full hover:bg-white/20"><i data-lucide="x"
                         class="w-6 h-6"></i></button>
             </div>
@@ -669,18 +673,20 @@
                             type="password" id="teacher-password"
                             class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm" required></div>
                 </div>
-                <div class="pt-2 border-t border-slate-100"><label
-                        class="block text-[11px] font-black text-emerald-800 uppercase mb-2 text-center">Role</label>
-                    <div class="flex bg-slate-100 p-1 rounded-xl mb-4"><label class="flex-1 cursor-pointer"><input
-                                type="radio" name="access_type" value="class" class="hidden" checked
-                                onchange="toggleTeacherForm('class')">
+                <div class="pt-2 border-t border-slate-100">
+                    <label class="block text-[11px] font-black text-emerald-800 uppercase mb-2 text-center">Role</label>
+                    <div class="flex bg-slate-100 p-1 rounded-xl mb-4">
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="access_type" value="class"
+                                class="hidden" checked onchange="toggleTeacherForm('class')">
                             <div
                                 class="text-center py-2 text-xs font-black rounded-lg text-slate-400 bg-white shadow-sm">
                                 Class</div>
-                        </label><label class="flex-1 cursor-pointer"><input type="radio" name="access_type"
-                                value="subject" class="hidden" onchange="toggleTeacherForm('subject')">
+                        </label>
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="access_type" value="subject"
+                                class="hidden" onchange="toggleTeacherForm('subject')">
                             <div class="text-center py-2 text-xs font-black rounded-lg text-slate-400">Subject</div>
-                        </label></div>
+                        </label>
+                    </div>
                     <div id="teacher-dynamic-inputs" class="space-y-3"></div>
                 </div>
             </form>
@@ -697,7 +703,8 @@
             <div class="bg-emerald-900 p-6 flex justify-between items-center text-white shrink-0">
                 <div>
                     <h3 class="font-bold text-xl md:text-2xl">Register Student</h3>
-                </div><button onclick="closeModal('add-student-modal')"
+                </div>
+                <button onclick="closeModal('add-student-modal')"
                     class="bg-white/10 p-2 rounded-full hover:bg-white/20"><i data-lucide="x"
                         class="w-6 h-6"></i></button>
             </div>
@@ -727,8 +734,8 @@
                             class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm" required></div>
                 </div>
                 <div class="hidden"><input type="radio" name="identifier_type" value="whatsapp" checked></div>
-                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-2">Class</label><select
-                        id="student-grade-level" class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm">
+                <div><label class="block text-[11px] font-black text-slate-400 uppercase mb-2">Class</label>
+                    <select id="student-grade-level" class="w-full border-2 border-slate-100 rounded-xl p-3 text-sm">
                         <option value="Nursery 4">Nursery 4</option>
                         <option value="Nursery 5">Nursery 5</option>
                         <option value="Primary 1">Primary 1</option>
@@ -738,7 +745,8 @@
                         <option value="Primary 5">Primary 5</option>
                         <option value="JSS 1">JSS 1</option>
                         <option value="JSS 2">JSS 2</option>
-                    </select></div>
+                    </select>
+                </div>
             </form>
             <div class="p-6 border-t bg-slate-50 shrink-0"><button type="submit" form="add-student-form"
                     id="submit-student-btn"
@@ -791,10 +799,6 @@
 
         window.onload = function () {
             document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-            // Populate Print Dropdown
-            populatePrintDropdowns();
-
             try { checkActiveSession(); } catch (error) { showNotification("System Failure", "Critical database connection error.", true); }
         };
 
@@ -843,6 +847,7 @@
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); lucide.createIcons(); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openComingSoon() { document.getElementById('coming-soon-modal').classList.remove('hidden'); }
         function toggleContactInput(type) { const input = document.getElementById('student-contact'); input.placeholder = (type === 'whatsapp') ? "WhatsApp No" : "Email"; document.getElementById('student-contact').focus(); }
 
         // --- DATA FETCHING ---
@@ -1005,7 +1010,6 @@
                     const totalSubjects = expectedSubjects.length;
 
                     if (totalSubjects === 0) {
-                        // Throw as simple string to ensure display
                         throw `Curriculum not defined for ${student.grade_level}. Contact Admin.`;
                     }
 
@@ -1016,35 +1020,29 @@
                         .eq('student_id', currentStudentId)
                         .gt('total_score', 0); // Ensure score is actually entered
 
-                    if (gradeError) throw gradeError.message; // Throw DB error as string
+                    if (gradeError) throw gradeError.message;
 
                     const validGrades = count || 0;
                     const percentage = (validGrades / totalSubjects) * 100;
 
                     // C. 50% Threshold Check
                     if (percentage < 50) {
-                        // THIS IS THE MESSAGE THAT WILL NOW DISPLAY
                         throw `The scores submitted by the teacher for ${student.name} cover only ${validGrades} out of ${totalSubjects} subjects (${Math.round(percentage)}%).\n\nAdmin Action Required: You cannot release results until at least 50% of the subjects have scores recorded.`;
                     }
 
                 } catch (err) {
-                    // Simplified Error Handling to guarantee text display
                     let displayMessage = err;
-
-                    // If it happens to be an object (like a weird DB error), try to extract text
                     if (typeof err === 'object' && err !== null) {
                         displayMessage = err.message || JSON.stringify(err);
                     }
-
                     showNotification("Action Blocked", displayMessage, true);
-
                     btn.innerHTML = origText;
                     btn.disabled = false;
                     return; // Stop execution
                 }
             }
 
-            // 2. Proceed to Toggle in Database (only if check passed or if retracting)
+            // 2. Proceed to Toggle in Database
             const newStatus = !student.results_released;
             const { error } = await supabaseClient
                 .from('students')
@@ -1086,7 +1084,6 @@
 
             let nextGrade = null;
 
-            // Logic: Move to next index, or Graduate if last
             if (currentIndex !== -1 && currentIndex < CLASSES.length - 1) {
                 nextGrade = CLASSES[currentIndex + 1];
             } else if (currentIndex === CLASSES.length - 1) {
@@ -1114,18 +1111,13 @@
 
 
         async function releaseAllResults() {
-            // 1. Confirm Intent
             showConfirm("Bulk Release", "Publish results only for students with >50% completed scores?", async () => {
-
-                // UI Feedback (find the button to show loading state)
-                // We search by the onclick attribute since it doesn't have a unique ID in the main view
                 const btn = document.querySelector('button[onclick="releaseAllResults()"]');
                 const originalContent = btn.innerHTML;
                 btn.innerHTML = `Processing...`;
                 btn.disabled = true;
 
                 try {
-                    // 2. Fetch ALL Active Students
                     const { data: students, error: sErr } = await supabaseClient
                         .from('students')
                         .select('id, grade_level, name')
@@ -1133,8 +1125,6 @@
 
                     if (sErr) throw "Could not fetch student list.";
 
-                    // 3. Fetch ALL Valid Grades (Score > 0)
-                    // We set a high limit (5000) to ensure we get all records for a typical school size
                     const { data: grades, error: gErr } = await supabaseClient
                         .from('grades')
                         .select('student_id')
@@ -1143,8 +1133,6 @@
 
                     if (gErr) throw "Could not fetch grade records.";
 
-                    // 4. Process Logic Locally
-                    // Count how many valid grades each student has
                     const studentGradeCounts = {};
                     grades.forEach(g => {
                         studentGradeCounts[g.student_id] = (studentGradeCounts[g.student_id] || 0) + 1;
@@ -1153,12 +1141,10 @@
                     const eligibleIDs = [];
                     let skippedCount = 0;
 
-                    // Check every student against their specific curriculum
                     students.forEach(student => {
                         const curriculum = getSubjectsForClass(student.grade_level);
                         const totalSubjects = curriculum.length;
 
-                        // If class has no subjects defined, skip student to be safe
                         if (totalSubjects === 0) {
                             skippedCount++;
                             return;
@@ -1167,7 +1153,6 @@
                         const actualScoreCount = studentGradeCounts[student.id] || 0;
                         const percentage = (actualScoreCount / totalSubjects) * 100;
 
-                        // THE 50% RULE
                         if (percentage >= 50) {
                             eligibleIDs.push(student.id);
                         } else {
@@ -1179,28 +1164,24 @@
                         throw "Action Aborted: No students met the 50% data requirement.";
                     }
 
-                    // 5. Update ONLY Eligible Students
                     const { error: updateErr } = await supabaseClient
                         .from('students')
                         .update({ results_released: true })
-                        .in('id', eligibleIDs); // This updates only the IDs in our list
+                        .in('id', eligibleIDs);
 
                     if (updateErr) throw "Database update failed.";
 
-                    // 6. Report Results
                     showNotification(
                         "Batch Process Complete",
                         `Successfully Released: ${eligibleIDs.length} students.\nSkipped: ${skippedCount} students (insufficient scores).`
                     );
 
-                    // Refresh UI to show new statuses
                     refreshAllData();
 
                 } catch (err) {
                     let msg = (typeof err === 'string') ? err : "Unknown error occurred.";
                     showNotification("Action Blocked", msg, true);
                 } finally {
-                    // Restore Button
                     if (btn) {
                         btn.innerHTML = originalContent;
                         btn.disabled = false;
@@ -1231,23 +1212,9 @@
                 const html = `
                     <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden mb-8">
                         <div class="px-8 py-6 bg-slate-50 border-b border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div>
-                                <h3 class="text-xl font-bold text-slate-800">${cls} Bursary List</h3>
-                                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
-                                    <span class="text-emerald-600">${paidCount} Paid</span> • <span class="text-rose-500">${owingCount} Owing</span>
-                                </p>
-                            </div>
+                            <div><h3 class="text-xl font-bold text-slate-800">${cls} Bursary List</h3><p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1"><span class="text-emerald-600">${paidCount} Paid</span> • <span class="text-rose-500">${owingCount} Owing</span></p></div>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-white text-slate-400 font-bold uppercase text-[10px] tracking-widest border-b border-slate-100">
-                                    <tr><th class="px-8 py-4">Student</th><th class="px-8 py-4 text-center">Current Status</th><th class="px-8 py-4 text-right">Management</th></tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    ${classStudents.length > 0 ? classStudents.map(s => renderFeeRow(s)).join('') : '<tr><td colspan="3" class="px-8 py-6 text-center text-slate-400 italic text-xs">No students in this class.</td></tr>'}
-                                </tbody>
-                            </table>
-                        </div>
+                        <div class="overflow-x-auto"><table class="w-full text-left text-sm whitespace-nowrap"><thead class="bg-white text-slate-400 font-bold uppercase text-[10px] tracking-widest border-b border-slate-100"><tr><th class="px-8 py-4">Student</th><th class="px-8 py-4 text-center">Current Status</th><th class="px-8 py-4 text-right">Management</th></tr></thead><tbody class="divide-y divide-slate-100">${classStudents.length > 0 ? classStudents.map(s => renderFeeRow(s)).join('') : '<tr><td colspan="3" class="px-8 py-6 text-center text-slate-400 italic text-xs">No students in this class.</td></tr>'}</tbody></table></div>
                     </div>`;
                 container.insertAdjacentHTML('beforeend', html);
             });
@@ -1467,14 +1434,72 @@
             }
         });
 
+        // *** FIXED STUDENT ENROLLMENT LOGIC ***
         document.getElementById('add-student-form').addEventListener('submit', async (e) => {
-            e.preventDefault(); const btn = document.getElementById('submit-student-btn'); const orig = btn.innerText; btn.innerText = "Syncing..."; btn.disabled = true;
+            e.preventDefault();
+            const btn = document.getElementById('submit-student-btn');
+            const orig = btn.innerText;
+            btn.innerText = "Enrolling...";
+            btn.disabled = true;
+
             try {
-                const contact = document.getElementById('student-contact').value, idType = document.querySelector('input[name="identifier_type"]:checked').value, loginId = idType === 'whatsapp' ? `${contact.replace(/\D/g, '')}@annoor-academy.com` : contact;
-                const { data: auth, error: aErr } = await supabaseClient.auth.signUp({ email: loginId, password: document.getElementById('student-password').value, options: { data: { role: 'student' } } }); if (aErr) throw aErr;
-                await supabaseClient.from('students').insert([{ user_id: auth.user.id, name: `${document.getElementById('student-surname').value}, ${document.getElementById('student-firstname').value}`, surname: document.getElementById('student-surname').value, first_name: document.getElementById('student-firstname').value, middle_name: document.getElementById('student-middlename').value, home_address: document.getElementById('student-address').value, identifier_type: idType, whatsapp_number: idType === 'whatsapp' ? contact : null, email: idType === 'email' ? contact : loginId, grade_level: document.getElementById('student-grade-level').value, hifdh_status: 'Juz 1', status: 'Active' }]);
-                showNotification("Success", "Student Enrolled."); closeModal('add-student-modal'); refreshAllData(); e.target.reset();
-            } catch (err) { showNotification("Error", err.message, true); } finally { btn.innerText = orig; btn.disabled = false; }
+                // 1. Get All Inputs
+                const surname = document.getElementById('student-surname').value;
+                const firstname = document.getElementById('student-firstname').value;
+                const middlename = document.getElementById('student-middlename').value;
+                const address = document.getElementById('student-address').value;
+                const contact = document.getElementById('student-contact').value;
+                const grade = document.getElementById('student-grade-level').value;
+                const password = document.getElementById('student-password').value;
+
+                // 2. Determine ID Type & Email
+                const idRadio = document.querySelector('input[name="identifier_type"]:checked');
+                const idType = idRadio ? idRadio.value : 'whatsapp';
+
+                const loginId = idType === 'whatsapp' ? `${contact.replace(/\D/g, '')}@annoor-academy.com` : contact;
+
+                // 3. Create Auth User
+                const { data: auth, error: authErr } = await supabaseClient.auth.signUp({
+                    email: loginId,
+                    password: password,
+                    options: { data: { role: 'student' } }
+                });
+                if (authErr) throw authErr;
+
+                // 4. Insert into Database (Hifdh Status Removed)
+                await supabaseClient.from('students').insert([{
+                    user_id: auth.user.id,
+                    name: `${surname}, ${firstname} ${middlename}`,
+                    surname: surname,
+                    first_name: firstname,
+                    middle_name: middlename,
+                    home_address: address,
+                    whatsapp_number: contact,
+                    email: loginId,
+                    grade_level: grade,
+                    identifier_type: idType,
+                    status: 'Active',      // Default
+                    fee_status: 'Owing'    // Default
+                }]);
+
+                showNotification("Success", "Student Enrolled Successfully.");
+                closeModal('add-student-modal');
+
+                // Refresh Logic
+                if (typeof refreshAllData === 'function') {
+                    refreshAllData();
+                } else {
+                    location.reload(); // Fallback if function missing
+                }
+
+                e.target.reset();
+
+            } catch (err) {
+                showNotification("Error", err.message, true);
+            } finally {
+                btn.innerText = orig;
+                btn.disabled = false;
+            }
         });
 
         document.getElementById('add-post-form').addEventListener('submit', async (e) => {
@@ -1504,20 +1529,6 @@
             document.getElementById('stat-posts').innerText = n || 0;
         }
 
-        // --- NEW COMING SOON MODAL LOGIC ---
-        function openComingSoon() {
-            document.getElementById('coming-soon-modal').classList.remove('hidden');
-        }
-
-        // --- PRINTING UTILS (For future implementation, keeping helper here) ---
-        function populatePrintDropdowns() {
-            const select = document.getElementById('print-attendance-class');
-            if (select) {
-                select.innerHTML = CLASSES.map(c => `<option value="${c}">${c}</option>`).join('');
-            }
-        }
-        // No generateAttendanceSheet needed for now as it's coming soon.
-
         // Helpers
         function showNotification(t, m, e = false) { const md = document.getElementById('custom-alert'); document.getElementById('alert-title').innerText = t; document.getElementById('alert-message').innerText = m; document.getElementById('alert-cancel-btn').classList.add('hidden'); const btn = document.getElementById('alert-ok-btn'); btn.innerText = "Acknowledge"; btn.onclick = closeAlert; document.getElementById('alert-icon').setAttribute('data-lucide', e ? 'x-circle' : 'check-circle'); document.getElementById('alert-icon-bg').className = e ? 'w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600 shadow-inner' : 'w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600 shadow-inner'; lucide.createIcons(); md.classList.remove('pointer-events-none', 'opacity-0'); md.querySelector('div.transform').classList.replace('scale-95', 'scale-100'); }
         function showConfirm(t, m, cb) { const md = document.getElementById('custom-alert'); document.getElementById('alert-title').innerText = t; document.getElementById('alert-message').innerText = m; document.getElementById('alert-cancel-btn').classList.remove('hidden'); const btn = document.getElementById('alert-ok-btn'); btn.innerText = "Yes, Proceed"; btn.onclick = () => { cb(); closeAlert(); }; document.getElementById('alert-icon').setAttribute('data-lucide', 'alert-circle'); document.getElementById('alert-icon-bg').className = 'w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner'; lucide.createIcons(); md.classList.remove('pointer-events-none', 'opacity-0'); md.querySelector('div.transform').classList.replace('scale-95', 'scale-100'); }
@@ -1528,6 +1539,3 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); } function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function toggleContactInput(type) { document.getElementById('student-contact').placeholder = (type === 'whatsapp') ? "WhatsApp No" : "Email"; document.getElementById('student-contact').focus(); }
     </script>
-</body>
-
-</html>
