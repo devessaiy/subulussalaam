@@ -4,29 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subulus Salaam Academy | Center for Islamic Knowledge</title>
-    
+    <title>Subulus Salaam Academy </title>
+    <link rel="icon" type="image/png" href="images/badge.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
-    
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@700&display=swap"
+        rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        
-        /* Arabic Font Classes */
-        .font-arabic { font-family: 'Amiri', serif; }
-        .font-calligraphy { font-family: 'Amiri', serif; font-weight: 700; }
-        
-        .islamic-pattern {
-            background-color: #fdfbf7;
-            background-image: url("https://www.transparenttextures.com/patterns/arabesque.png");
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
         }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Arabic Font Classes */
+        .font-arabic {
+            font-family: 'Amiri', serif;
+        }
+
+        .font-calligraphy {
+            font-family: 'Amiri', serif;
+            font-weight: 700;
+        }
+
         /* Hide scrollbar for cleaner look */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 
@@ -35,14 +50,16 @@
     <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-emerald-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                
-               <div class="flex items-center gap-2">
-                      <p style="font-family: 'Poppins', sans-serif;" class="text-2xl md:text-3xl font-bold text-emerald-800 tracking-tight">
-                            SUBULUS SALAAM
-                      </p>
-                      <span style="font-family: 'Poppins', sans-serif;" class="text-2xl md:text-3xl font-normal text-emerald-400 tracking-tight">
-                            ePortal
-                      </span>
+
+                <div class="flex items-center gap-2">
+                    <p style="font-family: 'Poppins', sans-serif;"
+                        class="text-2xl md:text-3xl font-bold text-emerald-800 tracking-tight">
+                        SUBULUS SALAAM
+                    </p>
+                    <span style="font-family: 'Poppins', sans-serif;"
+                        class="text-2xl md:text-3xl font-normal text-emerald-400 tracking-tight">
+                        ePortal
+                    </span>
                 </div>
 
                 <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
@@ -56,66 +73,97 @@
 
                 <div class="hidden md:flex items-center space-x-4">
                     <div class="relative group">
-                        <button class="bg-emerald-700 text-white px-5 py-2 rounded-full text-sm hover:bg-emerald-800 transition flex items-center shadow-lg shadow-emerald-700/20">
+                        <button
+                            class="bg-emerald-700 text-white px-5 py-2 rounded-full text-sm hover:bg-emerald-800 transition flex items-center shadow-lg shadow-emerald-700/20">
                             <i data-lucide="lock" class="w-4 h-4 mr-2"></i> Portals
                             <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto transform group-hover:translate-y-0 translate-y-2 transition-all">
-                            <a href="admin-portal.html" class="block px-4 py-3 text-sm hover:bg-emerald-50 text-slate-700 hover:text-emerald-700">Admin Portal</a>
-                            <a href="teacher-login.html" class="block px-4 py-3 text-sm hover:bg-emerald-50 text-slate-700 hover:text-emerald-700">Teacher Portal</a>
-                            <a href="student-login.html" class="block px-4 py-3 text-sm hover:bg-emerald-50 text-slate-700 hover:text-emerald-700">Student Portal</a>
+                        <div
+                            class="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto transform group-hover:translate-y-0 translate-y-2 transition-all">
+                            <a href="admin-portal.html"
+                                class="block px-4 py-3 text-sm hover:bg-emerald-50 text-slate-700 hover:text-emerald-700">Admin
+                                Portal</a>
+                            <a href="teacher-login.html"
+                                class="block px-4 py-3 text-sm hover:bg-emerald-50 text-slate-700 hover:text-emerald-700">Teacher
+                                Portal</a>
+                            <a href="student-login.html"
+                                class="block px-4 py-3 text-sm hover:bg-emerald-50 text-slate-700 hover:text-emerald-700">Student
+                                Portal</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="md:hidden flex items-center">
-                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-emerald-700 focus:outline-none p-2">
+                    <button onclick="toggleMobileMenu()"
+                        class="text-slate-600 hover:text-emerald-700 focus:outline-none p-2">
                         <i data-lucide="menu" class="w-8 h-8"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-emerald-100 absolute w-full left-0 top-20 shadow-xl overflow-hidden transition-all duration-300">
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-white border-b border-emerald-100 absolute w-full left-0 top-20 shadow-xl overflow-hidden transition-all duration-300">
             <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="#" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Home</a>
-                <a href="#about" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">About</a>
-                <a href="#faculty" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Faculty</a>
-                <a href="#programs" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Programs</a>
-                <a href="#news" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Feed</a>
-                <a href="#contact" onclick="toggleMobileMenu()" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Contact</a>
-                
+                <a href="#" onclick="toggleMobileMenu()"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Home</a>
+                <a href="#about" onclick="toggleMobileMenu()"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">About</a>
+                <a href="#faculty" onclick="toggleMobileMenu()"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Faculty</a>
+                <a href="#programs" onclick="toggleMobileMenu()"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Programs</a>
+                <a href="#news" onclick="toggleMobileMenu()"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Feed</a>
+                <a href="#contact" onclick="toggleMobileMenu()"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Contact</a>
+
                 <div class="border-t border-slate-100 pt-4 mt-2">
                     <p class="px-3 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Access Portals</p>
-                    <a href="admin-portal.html" onclick="toggleMobileMenu()" class="block px-3 py-2 text-sm text-emerald-700 font-bold">Admin Login</a>
-                    <a href="teacher-login.html" onclick="toggleMobileMenu()" class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Teacher Login</a>
-                    <a href="student-login.html" onclick="toggleMobileMenu()" class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Student Login</a>
+                    <a href="admin-portal.html" onclick="toggleMobileMenu()"
+                        class="block px-3 py-2 text-sm text-emerald-700 font-bold">Admin Login</a>
+                    <a href="teacher-login.html" onclick="toggleMobileMenu()"
+                        class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Teacher Login</a>
+                    <a href="student-login.html" onclick="toggleMobileMenu()"
+                        class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Student Login</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <section class="relative py-20 lg:py-32 islamic-pattern overflow-hidden">
+    <section class="relative py-20 lg:py-32 overflow-hidden">
+
+        <div class="absolute inset-0 z-0">
+            <img src="images/bg.jpeg" alt="School Background" class="w-full h-full object-cover">
+
+            <div class="absolute inset-0 bg-black/60"></div>
+        </div>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-3xl mx-auto">
-                
+
                 <div class="mb-8 select-none">
-                    <span class="text-4xl md:text-6xl text-emerald-800 font-calligraphy leading-relaxed drop-shadow-sm">
+                    <span class="text-4xl md:text-6xl text-emerald-300 font-calligraphy leading-relaxed drop-shadow-md">
                         بسم الله الرحمن الرحيم
                     </span>
                 </div>
-                
-                <h1 class="text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-                    Preserving Knowledge, <br><span class="text-emerald-700">Building Character</span>
+
+                <h1 class="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+                    Preserving Knowledge, <br><span class="text-emerald-400">Building Character</span>
                 </h1>
-                <p class="text-lg text-slate-600 mb-10 leading-relaxed">
-                    A comprehensive institution dedicated to General Islamic Knowledge, combining the preservation of the Qur'an with deep understanding of Fiqh, Hadith, and Arabic.
+
+                <p class="text-lg text-slate-200 mb-10 leading-relaxed drop-shadow-md">
+                    A comprehensive institution dedicated to General Islamic Knowledge, combining the preservation of
+                    the Qur'an with deep understanding of Fiqh, Hadith, and Arabic.
                 </p>
+
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="#contact" class="px-8 py-4 bg-emerald-700 text-white rounded-lg font-semibold hover:bg-emerald-800 transition shadow-lg shadow-emerald-200 flex items-center justify-center">
+                    <a href="#contact"
+                        class="px-8 py-4 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition shadow-lg shadow-emerald-900/50 flex items-center justify-center border border-emerald-500">
                         <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i> Enroll Now
                     </a>
-                    <a href="#programs" class="px-8 py-4 bg-white text-emerald-700 border border-emerald-200 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center">
+                    <a href="#programs"
+                        class="px-8 py-4 bg-white/10 text-white border border-white/30 rounded-lg font-semibold hover:bg-white/20 backdrop-blur-sm transition flex items-center justify-center">
                         Explore Programs
                     </a>
                 </div>
@@ -127,15 +175,21 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-16 items-center">
                 <div>
-                    <h2 class="text-3xl font-bold mb-6 text-slate-900 border-l-4 border-emerald-600 pl-4">Our Sacred Mission</h2>
+                    <h2 class="text-3xl font-bold mb-6 text-slate-900 border-l-4 border-emerald-600 pl-4">Our Sacred
+                        Mission</h2>
                     <p class="text-slate-600 mb-4 leading-relaxed">
-                        Subulus Salaam Academy is a center for <strong>holistic Islamic education</strong>. We go beyond memorization to provide a deep understanding of the Deen, covering Jurisprudence (Fiqh), Prophetic Traditions (Hadith), Theology (Tauhid), and Arabic Linguistics.
+                        Subulus Salaam Academy is a center for <strong>holistic Islamic education</strong>. We go beyond
+                        memorization to provide a deep understanding of the Deen, covering Jurisprudence (Fiqh),
+                        Prophetic Traditions (Hadith), Theology (Tauhid), and Arabic Linguistics.
                     </p>
                     <p class="text-slate-600 leading-relaxed">
-                        Our curriculum is designed to mold well-rounded individuals who combine academic excellence with spiritual discipline. We aim to produce knowledgeable Muslims who understand the application of the Qur'an and Sunnah in their daily lives.
+                        Our curriculum is designed to mold well-rounded individuals who combine academic excellence with
+                        spiritual discipline. We aim to produce knowledgeable Muslims who understand the application of
+                        the Qur'an and Sunnah in their daily lives.
                     </p>
                 </div>
-                <div class="bg-emerald-50 rounded-2xl p-8 border border-emerald-100 aspect-video flex items-center justify-center text-emerald-400">
+                <div
+                    class="bg-emerald-50 rounded-2xl p-8 border border-emerald-100 aspect-video flex items-center justify-center text-emerald-400">
                     <i data-lucide="book-open" class="w-20 h-20"></i>
                 </div>
             </div>
@@ -151,194 +205,278 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (3).png" alt="Mall. Bello Abubakar" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (3).png" alt="Mall. Bello Abubakar" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Mall. Bello Abubakar S. Fawa</h3>
                     <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest mt-1 mb-3">Principal</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Tafsir, Fiqhu, Sirah, Tarbiyya, Hausa</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Tafsir, Fiqhu, Sirah,
+                        Tarbiyya, Hausa</p>
                 </div>
 
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (1).png" alt="Mall. Ukashatu Bello" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (1).png" alt="Mall. Ukashatu Bello" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Mall. Ukashatu Bello</h3>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 mb-3">Senior Instructor</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 mb-3">Senior Instructor
+                    </p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Nahwu, Adab, Sarfu, Arabiyya, General Knowledge</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Nahwu, Adab, Sarfu,
+                        Arabiyya, General Knowledge</p>
                 </div>
 
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (2).png" alt="Mall. Usman Abubakar" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (2).png" alt="Mall. Usman Abubakar" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Mall. Usman Abubakar</h3>
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 mb-3">Instructor</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Hadith, Tauhid, Muda'li'ah</p>
-                </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (15).png" alt="Mall. Ahmad Abdullahi" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800">Mall. Ahmad Abdullahi</h3>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 mb-3">Headmaster, Primary 6 Teacher</p>
-                    <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong>Qur'an, Hadith, Tauhid, Tajwid, Fiqhu, Nahwu, Sarf, Arabic, Imlal'i</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Hadith, Tauhid,
+                        Muda'li'ah</p>
                 </div>
 
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (4).png" alt="Mall. Yusuf Haruna" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (4).png" alt="Mall. Abubakar Yusuf" class="w-full h-auto">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Mall. Abubakar Yusuf</h3>
+                    <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 2, 3, 4</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Insha'i, Huruf</p>
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Mall.+Yusuf" alt="Mall. Yusuf Haruna"
+                            class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Mall. Yusuf Haruna</h3>
                     <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 5</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Sira</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Sira</p>
                 </div>
 
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (6).png" alt="Mall. Abubakar Yusuf" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800">Mall. Abubakar Yusuf Muhammad</h3>
-                    <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 2, 3, 4</p>
-                    <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Insha'i, Huruf</p>
-                </div>
-
-
-
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (7).png" alt="Ustaz Isah Zakari" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Ustaz+Isah" alt="Ustaz Isah Zakari"
+                            class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustaz Isah Zakari</h3>
                     <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 1</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
 
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (5).png" alt="Ustazah Aisha Rabo" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Ustazah+Aisha" alt="Ustazah Aisha Rabo"
+                            class="w-full h-auto">
                     </div>
-                    <h3 class="text-lg font-bold text-slate-800">Ustazah Aisha Rabo Ibrahim</h3>
+                    <h3 class="text-lg font-bold text-slate-800">Ustazah Aisha Rabo</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 5</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
 
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (8).png" alt="Ustazah Zainab" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="https://via.placeholder.com/400x400?text=Ustazah+Zainab" alt="Ustazah Zainab"
+                            class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Zainab</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 4</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (13).png" alt="Ustaz Dayyabu Hussaini" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (15).png" alt="Mall. Ahmad Abdullahi" class="w-full h-auto">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Mall. Ahmad Abdullahi</h3>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 mb-3">Headmaster, Primary
+                        6 Teacher</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong>Qur'an, Hadith, Tauhid,
+                        Tajwid, Fiqhu, Nahwu, Sarf, Arabic, Imlal'i</p>
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (6).png" alt="Mall. Abubakar Yusuf" class="w-full h-auto">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Mall. Abubakar Yusuf Muhammad</h3>
+                    <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 2, 3, 4</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Insha'i, Huruf</p>
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (7).png" alt="Ustaz Isah Zakari" class="w-full h-auto">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Ustaz Isah Zakari</h3>
+                    <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1 mb-3">Primary 1</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (5).png" alt="Ustazah Aisha Rabo" class="w-full h-auto">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Ustazah Aisha Rabo Ibrahim</h3>
+                    <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 5</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (8).png" alt="Ustazah Zainab" class="w-full h-auto">
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Ustazah Zainab</h3>
+                    <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 4</p>
+                    <div class="h-px bg-slate-100 w-full mb-3"></div>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (13).png" alt="Ustaz Dayyabu Hussaini" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustaz Dayyabu Hussaini</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 3</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (11).png" alt="Ustazah Firdausi Dayyabu" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (11).png" alt="Ustazah Firdausi Dayyabu" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Firdausi Dayyabu</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 2C</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/dp (2).jpeg" alt="Ustazah Aisha Salisu" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/dp (2).jpeg" alt="Ustazah Aisha Salisu" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Aisha Salisiu</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 2B</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (10).png" alt="Ustazah Maryam" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (10).png" alt="Ustazah Maryam" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Maryam</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 2A</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/dp (1).jpeg" alt="Ustazah Ummi Abdullahi" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/dp (1).jpeg" alt="Ustazah Ummi Abdullahi" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Ummu Salma Abdullahi</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 1B</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (12).png" alt="Ustazah Zainab" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (12).png" alt="Ustazah Zainab" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Fatima Hussaini</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Nursery 1A</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid, Tajwid, Arabiyya, Huruf</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Subjects:</strong> Qur'an, Hadith, Tauhid,
+                        Tajwid, Arabiyya, Huruf</p>
                 </div>
-                
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/dp (3).jpeg" alt="Ustazah Zalihatu Abdullahi" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/dp (3).jpeg" alt="Ustazah Zalihatu Abdullahi" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Zalihatu Abdullahi</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Instructor</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
                     <p class="text-sm text-slate-500 leading-relaxed"><strong>Section: </strong> Tahfeez </p>
                 </div>
-                
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/dp (5).jpeg" alt="Ustazah Halima Muhammad Auwal" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/dp (5).jpeg" alt="Ustazah Halima Muhammad Auwal" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Halima Muhammad Auwal</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Instructor</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
                     <p class="text-sm text-slate-500 leading-relaxed"><strong>Section:</strong> Tahfeez</p>
                 </div>
-                
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/dp (4).jpeg" alt="Ustazah Zainab" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/dp (4).jpeg" alt="Ustazah Zainab" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Ustazah Aisha Bello Abubakar S. Fawa</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">Instructor</p>
                     <div class="h-px bg-slate-100 w-full mb-3"></div>
-                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Section/Class:</strong> Tahfeez Class 1A</p>
+                    <p class="text-sm text-slate-500 leading-relaxed"><strong>Section/Class:</strong> Tahfeez Class 1A
+                    </p>
                 </div>
-                
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
-                    <div class="aspect-[3/4] w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
-                        <img src="images/profile (9).png" alt="Ustazah Zainab" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500">
+
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <div class="w-full mb-4 overflow-hidden rounded-xl bg-slate-100 relative">
+                        <img src="images/profile (9).png" alt="Ustazah Zainab" class="w-full h-auto">
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">SCHOOL CLEANER</h3>
                     <p class="text-xs font-bold text-purple-600 uppercase tracking-widest mt-1 mb-3">STAFF</p>
@@ -357,39 +495,53 @@
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
-                    <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-lg flex items-center justify-center mb-6">
+                <div
+                    class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
+                    <div
+                        class="w-12 h-12 bg-purple-100 text-purple-700 rounded-lg flex items-center justify-center mb-6">
                         <i data-lucide="sprout" class="w-6 h-6"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Nursery Category</h3>
-                    <p class="text-slate-600 text-sm mb-6">Nurturing the love of Allah in the youngest hearts. Focusing on oral Hifdh, Islamic ethics (Akhlaq), and Arabic alphabets.</p>
+                    <p class="text-slate-600 text-sm mb-6">Nurturing the love of Allah in the youngest hearts. Focusing
+                        on oral Hifdh, Islamic ethics (Akhlaq), and Arabic alphabets.</p>
                     <ul class="text-xs space-y-2 text-slate-500">
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Ages 3 - 5</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Play-based Learning</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i>
+                            Ages 3 - 5</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i>
+                            Play-based Learning</li>
                     </ul>
                 </div>
 
-                <div class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
+                <div
+                    class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
                     <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center mb-6">
                         <i data-lucide="book-open" class="w-6 h-6"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Primary Category</h3>
-                    <p class="text-slate-600 text-sm mb-6">Building a solid foundation. Systematic memorization of the Qur'an, Tajweed rules, and introduction to Fiqh and Hadith.</p>
+                    <p class="text-slate-600 text-sm mb-6">Building a solid foundation. Systematic memorization of the
+                        Qur'an, Tajweed rules, and introduction to Fiqh and Hadith.</p>
                     <ul class="text-xs space-y-2 text-slate-500">
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Ages 6 - 11</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Structured Curriculum</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i>
+                            Ages 6 - 11</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i>
+                            Structured Curriculum</li>
                     </ul>
                 </div>
 
-                <div class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
-                    <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center mb-6">
+                <div
+                    class="bg-slate-50 p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition-colors">
+                    <div
+                        class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center mb-6">
                         <i data-lucide="graduation-cap" class="w-6 h-6"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Secondary Category</h3>
-                    <p class="text-slate-600 text-sm mb-6">Mastery and leadership. Advanced Hifdh completion, Tafsir, Arabic grammar (Nahwu/Sarf), and community service.</p>
+                    <p class="text-slate-600 text-sm mb-6">Mastery and leadership. Advanced Hifdh completion, Tafsir,
+                        Arabic grammar (Nahwu/Sarf), and community service.</p>
                     <ul class="text-xs space-y-2 text-slate-500">
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Ages 12+</li>
-                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i> Advanced Islamic Sciences</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i>
+                            Ages 12+</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-500"></i>
+                            Advanced Islamic Sciences</li>
                     </ul>
                 </div>
             </div>
@@ -400,8 +552,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-end mb-12">
                 <div class="max-w-2xl">
-                    <h2 class="text-4xl font-bold text-slate-900 leading-tight">Academy <span class="text-emerald-700">Feed</span></h2>
-                    <p class="mt-4 text-slate-500">The latest news, recitations, and sacred moments posted directly by our Administration.</p>
+                    <h2 class="text-4xl font-bold text-slate-900 leading-tight">Academy <span
+                            class="text-emerald-700">Feed</span></h2>
+                    <p class="mt-4 text-slate-500">The latest news, recitations, and sacred moments posted directly by
+                        our Administration.</p>
                 </div>
             </div>
 
@@ -417,11 +571,12 @@
     <section class="py-20 bg-slate-50">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h2 class="text-4xl font-bold mb-6">Begin Your Journey Today</h2>
-            <p class="text-slate-600 mb-10 text-lg">Inquiry is the first step toward knowledge. Contact us to learn more about our enrollment process or to schedule a placement test.</p>
+            <p class="text-slate-600 mb-10 text-lg">Inquiry is the first step toward knowledge. Contact us to learn more
+                about our enrollment process or to schedule a placement test.</p>
 
-            <a href="https://wa.me/2347031672522?text=Assalamu%20alaikum%2C%20I%20am%20contacting%20you%20from%20Subulus%20Salaam%20Academy%20website.%20I%20would%20like%20to%20make%20an%20enquiry." 
-               target="_blank" 
-               class="inline-flex items-center px-10 py-4 bg-[#25D366] text-white rounded-full font-bold hover:shadow-xl transition-all hover:-translate-y-1 shadow-green-200">
+            <a href="https://wa.me/2347031672522?text=Assalamu%20alaikum%2C%20I%20am%20contacting%20you%20from%20Subulus%20Salaam%20Academy%20website.%20I%20would%20like%20to%20make%20an%20enquiry."
+                target="_blank"
+                class="inline-flex items-center px-10 py-4 bg-[#25D366] text-white rounded-full font-bold hover:shadow-xl transition-all hover:-translate-y-1 shadow-green-200">
                 <i data-lucide="message-circle" class="w-6 h-6 mr-2"></i>
                 Chat on WhatsApp
             </a>
@@ -433,18 +588,23 @@
             <div class="grid md:grid-cols-4 gap-12 mb-12 border-b border-slate-800 pb-12">
                 <div class="col-span-2">
                     <span class="text-white text-xl font-bold block mb-4 font-arabic">أكاديمية سبل السلام</span>
-                    <p class="text-sm max-w-sm">Dedicated to excellence in Qur'anic education and character development for Muslims worldwide.</p>
+                    <p class="text-sm max-w-sm">Dedicated to excellence in Qur'anic education and character development
+                        for Muslims worldwide.</p>
                 </div>
                 <div>
                     <h4 class="text-white font-semibold mb-4">Contact Info</h4>
                     <ul class="text-sm space-y-2">
-                        <li class="flex items-center"><i data-lucide="mail" class="w-4 h-4 mr-2"></i> info@subulussalaam.com</li>
-                        <li class="flex items-center"><i data-lucide="phone" class="w-4 h-4 mr-2"></i> +234 703 167 2522</li>
+                        <li class="flex items-center"><i data-lucide="mail" class="w-4 h-4 mr-2"></i>
+                            info@subulussalaam.com</li>
+                        <li class="flex items-center"><i data-lucide="phone" class="w-4 h-4 mr-2"></i> +234 703 167 2522
+                        </li>
                     </ul>
                 </div>
             </div>
             <div>
-                <p class="text-sm max-w-sm">Sanarwa: Idan ya kasance mahaifi ko mai ɗaukar nauyin ɗalibi ya rasu yayin da ɗalibin yake karatu a wannan makaranta, makarantar za ta ba shi gurbin karatu kyauta (scholarship) har zuwa lokacin da zai kammala. Ba za a sake biyan kuɗin makaranta ba.</p>
+                <p class="text-sm max-w-sm">Sanarwa: Idan ya kasance mahaifi ko mai ɗaukar nauyin ɗalibi ya rasu yayin
+                    da ɗalibin yake karatu a wannan makaranta, makarantar za ta ba shi gurbin karatu kyauta
+                    (scholarship) har zuwa lokacin da zai kammala. Ba za a sake biyan kuɗin makaranta ba.</p>
             </div>
             <div class="text-center text-xs tracking-wider">
                 &copy; 2026 Subulus Salaam Academy. All rights reserved.
@@ -465,11 +625,11 @@
         // 3. Supabase Configuration (SAME AS ADMIN PORTAL)
         const SUPABASE_URL = 'https://yqzpfwkpnywkjhybhccb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxenBmd2twbnl3a2poeWJoY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4NTM0NDYsImV4cCI6MjA4NTQyOTQ0Nn0.xnTFS3cd1akIGQwXE_tOPz6cqtznzZP2eBB_dOZii7M';
-        
+
         let supabaseClient;
 
         // 4. Fetch Real News on Load
-        window.onload = async function() {
+        window.onload = async function () {
             try {
                 const { createClient } = supabase;
                 supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -481,7 +641,7 @@
 
         async function fetchPublicNews() {
             const grid = document.getElementById('public-news-grid');
-            
+
             // Fetch top 6 latest posts
             const { data, error } = await supabaseClient
                 .from('news_posts')
@@ -499,7 +659,7 @@
 
             data.forEach(item => {
                 let mediaElement = '';
-                if(item.post_type === 'video') {
+                if (item.post_type === 'video') {
                     // Playsinline attribute is CRITICAL for mobile video support
                     mediaElement = `<video src="${item.media_url}" controls playsinline preload="metadata" class="w-full h-56 object-cover bg-black"></video>`;
                 } else {
@@ -532,7 +692,7 @@
                 `;
                 grid.insertAdjacentHTML('beforeend', cardHTML);
             });
-            
+
             // Re-render icons for new elements
             lucide.createIcons();
         }
@@ -550,32 +710,17 @@
                 alert("Link copied to clipboard!");
             }
         }
-            // tailwind.config.js
-            module.exports = {
-              theme: {
+        // tailwind.config.js
+        module.exports = {
+            theme: {
                 extend: {
-                  fontFamily: {
-                    poppins: ['Poppins', 'sans-serif'],
-                  },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
                 },
-              },
-            }    
+            },
+        }    
     </script>
 </body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
