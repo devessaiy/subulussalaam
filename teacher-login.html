@@ -357,7 +357,7 @@
     </div>
 
 
- <script>
+<script>
         // 1. INITIALIZE SUPABASE
         const SUPABASE_URL = 'https://yqzpfwkpnywkjhybhccb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxenBmd2twbnl3a2poeWJoY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4NTM0NDYsImV4cCI6MjA4NTQyOTQ0Nn0.xnTFS3cd1akIGQwXE_tOPz6cqtznzZP2eBB_dOZii7M';
@@ -372,7 +372,6 @@
 
         let currentUser = null;
         let activeClass = null;
-        let currentSubjectStatus = 'draft';
         let html5QrcodeScanner = null;
 
         // 3. INITIALIZATION
@@ -382,8 +381,15 @@
             const sessionDisplay = document.getElementById('session-term-display');
             if (sessionDisplay) sessionDisplay.innerText = CURRENT_SESSION_TERM;
 
+            // *** FIXED DATE LOGIC (12 AM Issue) ***
             const attDateInput = document.getElementById('att-date');
-            if (attDateInput) attDateInput.valueAsDate = new Date();
+            if (attDateInput) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                attDateInput.value = `${year}-${month}-${day}`;
+            }
 
             checkActiveSession();
         };
@@ -400,7 +406,7 @@
         }
 
         async function checkActiveSession() {
-            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user.user_metadata.role === 'teacher') {
                 initPortal(session.user);
             } else if (session) {
@@ -525,13 +531,14 @@
             loadGradebook();
         }
 
-        // --- GRADING ---
+        // --- GRADING (GRANULAR LOCKING) ---
         async function loadGradebook() {
             const tbody = document.getElementById('gradebook-body');
             tbody.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-slate-400 italic">Loading...</td></tr>';
 
             const subject = document.getElementById('grading-subject-select').value;
 
+            // 1. Get Students
             const { data: students, error: sErr } = await supabaseClient
                 .from('students')
                 .select('*')
@@ -544,6 +551,7 @@
                 return;
             }
 
+            // 2. Get Grades
             const { data: grades } = await supabaseClient
                 .from('grades')
                 .select('*')
@@ -551,41 +559,53 @@
                 .eq('term', CURRENT_SESSION_TERM)
                 .in('student_id', students.map(s => s.id));
 
-            currentSubjectStatus = (grades && grades.length > 0 && grades[0].status) ? grades[0].status : 'draft';
-            updateSubmitButtonUI();
+            // Reset UI
+            updateSubmitButtonUI(); 
+            tbody.innerHTML = '';
 
+            // Map grades to student IDs for easy lookup
             const gradeMap = {};
             if (grades) grades.forEach(g => gradeMap[g.student_id] = g);
 
-            tbody.innerHTML = '';
-            const isLocked = currentSubjectStatus === 'submitted';
-            const disabledAttr = isLocked ? 'disabled' : '';
-            const bgClass = isLocked ? 'bg-slate-100' : 'bg-white';
-
+            // 3. Render Per Student
             students.forEach(s => {
-                const g = gradeMap[s.id] || { ca_score: '', exam_score: '' };
-                const ca = Number(g.ca_score) || 0;
-                const exam = Number(g.exam_score) || 0;
-                const total = (g.ca_score === '' && g.exam_score === '') ? '-' : (ca + exam);
+                const g = gradeMap[s.id] || { ca_score: null, exam_score: null, status: 'draft' };
+                
+                // *** GRANULAR LOCKING: Check lock per row ***
+                const isRowLocked = g.status === 'submitted';
+                const disabledAttr = isRowLocked ? 'disabled' : '';
+                const bgClass = isRowLocked ? 'bg-slate-100 cursor-not-allowed' : 'bg-white';
+
+                const ca = g.ca_score;
+                const exam = g.exam_score;
+                
+                // Logic: Only show total if at least one score is entered (not null)
+                const hasScore = (ca !== null && ca !== undefined) || (exam !== null && exam !== undefined);
+                // Convert to number for math, defaulting to 0 only for the math operation
+                const total = hasScore ? ((Number(ca) || 0) + (Number(exam) || 0)) : '-';
                 
                 let gradeChar = '-';
                 if (total !== '-') {
                     gradeChar = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 45 ? 'D' : total >= 40 ? 'E' : 'F';
                 }
 
+                // Handle Input Values: show empty string if null
+                const caVal = ca === null || ca === undefined ? '' : ca;
+                const examVal = exam === null || exam === undefined ? '' : exam;
+
                 const row = `
                 <tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 group">
                     <td class="px-4 py-3 font-bold text-slate-700 min-w-[150px]">${s.name}</td>
                     <td class="px-4 py-3 text-center">
-                        <input type="number" id="ca-${s.id}" value="${g.ca_score}" max="40" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-16 ${bgClass} border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition placeholder-slate-300">
+                        <input type="number" id="ca-${s.id}" value="${caVal}" max="40" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-16 ${bgClass} border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition placeholder-slate-300">
                     </td>
                     <td class="px-4 py-3 text-center">
-                        <input type="number" id="exam-${s.id}" value="${g.exam_score}" max="60" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-16 ${bgClass} border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition placeholder-slate-300">
+                        <input type="number" id="exam-${s.id}" value="${examVal}" max="60" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-16 ${bgClass} border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition placeholder-slate-300">
                     </td>
                     <td class="px-4 py-3 text-center font-black text-slate-800" id="total-${s.id}">${total}</td>
                     <td class="px-4 py-3 text-center"><span id="grade-${s.id}" class="px-2 py-1 rounded-lg text-xs font-black bg-slate-100 text-slate-500">${gradeChar}</span></td>
                     <td class="px-4 py-3 text-right">
-                        ${!isLocked ? `<button onclick="saveStudentGrade('${s.id}')" class="bg-slate-800 text-white p-2 rounded-lg hover:bg-teal-600 transition shadow-lg active:scale-90"><i data-lucide="save" class="w-4 h-4"></i></button>` : '<span class="text-xs text-slate-400 italic">Locked</span>'}
+                        ${!isRowLocked ? `<button onclick="saveStudentGrade('${s.id}')" class="bg-slate-800 text-white p-2 rounded-lg hover:bg-teal-600 transition shadow-lg active:scale-90"><i data-lucide="save" class="w-4 h-4"></i></button>` : `<span class="flex items-center justify-end text-xs text-teal-600 font-bold"><i data-lucide="lock" class="w-3 h-3 mr-1"></i> Locked</span>`}
                     </td>
                 </tr>`;
                 tbody.insertAdjacentHTML('beforeend', row);
@@ -596,77 +616,137 @@
         function updateRowTotal(id) {
             const caInput = document.getElementById(`ca-${id}`);
             const examInput = document.getElementById(`exam-${id}`);
-            let ca = Number(caInput.value);
-            let exam = Number(examInput.value);
+            
+            let caVal = caInput.value;
+            let examVal = examInput.value;
 
-            if (ca > 40) { ca = 40; caInput.value = 40; }
-            if (exam > 60) { exam = 60; examInput.value = 60; }
+            // Enforcement
+            if (Number(caVal) > 40) { caVal = 40; caInput.value = 40; }
+            if (Number(examVal) > 60) { examVal = 60; examInput.value = 60; }
 
-            const total = ca + exam;
+            // Logic: If both empty, total is '-'
+            if (caVal === '' && examVal === '') {
+                document.getElementById(`total-${id}`).innerText = '-';
+                document.getElementById(`grade-${id}`).innerText = '-';
+                return;
+            }
+
+            const total = (Number(caVal) || 0) + (Number(examVal) || 0);
             document.getElementById(`total-${id}`).innerText = total;
             document.getElementById(`grade-${id}`).innerText = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 45 ? 'D' : total >= 40 ? 'E' : 'F';
         }
 
+        // *** FIXED SAVE LOGIC (Prevents 'Ghost Zeros') ***
         async function saveStudentGrade(studentId) {
             const subject = document.getElementById('grading-subject-select').value;
             const ca = document.getElementById(`ca-${studentId}`).value;
             const exam = document.getElementById(`exam-${studentId}`).value;
-            const total = (Number(ca) || 0) + (Number(exam) || 0);
 
-            const { error } = await supabaseClient.from('grades').upsert({
-                student_id: studentId,
-                subject_text: subject,
-                term: CURRENT_SESSION_TERM,
-                ca_score: ca,
-                exam_score: exam,
-                total_score: total,
-                status: 'draft'
-            }, { onConflict: 'student_id, subject_text, term' });
+            // Treat empty string as NULL for DB
+            const finalCa = ca === '' ? null : ca;
+            const finalExam = exam === '' ? null : exam;
+            
+            // Calc total: If both are null, total is NULL (not 0)
+            let total = null;
+            if (finalCa !== null || finalExam !== null) {
+                total = (Number(finalCa) || 0) + (Number(finalExam) || 0);
+            }
 
-            if (error) showNotification("Error", "Failed to save grade.", true);
-            else showNotification("Saved", "Grade updated.");
+            // 1. Try to UPDATE first
+            const { data, error } = await supabaseClient
+                .from('grades')
+                .update({ 
+                    ca_score: finalCa, 
+                    exam_score: finalExam, 
+                    total_score: total, 
+                    status: 'draft' 
+                })
+                .eq('student_id', studentId)
+                .eq('subject_text', subject)
+                .eq('term', CURRENT_SESSION_TERM)
+                .select();
+
+            // 2. If update worked (found a row), we are done
+            if (!error && data.length > 0) {
+                showNotification("Saved", "Grade updated.");
+                return;
+            }
+
+            // 3. If no row found, we INSERT
+            const { error: insertError } = await supabaseClient
+                .from('grades')
+                .insert([{
+                    student_id: studentId,
+                    subject_text: subject,
+                    term: CURRENT_SESSION_TERM,
+                    ca_score: finalCa,
+                    exam_score: finalExam,
+                    total_score: total,
+                    status: 'draft'
+                }]);
+
+            if (insertError) {
+                console.error(insertError);
+                showNotification("Error", "Failed to save grade.", true);
+            } else {
+                showNotification("Saved", "New grade created.");
+            }
         }
 
+        // *** FIXED SUBMIT LOGIC (Strictly Locks ONLY Recorded Rows) ***
         async function submitToAdmin() {
-            showConfirm("Submit Grades?", "This will LOCK the grades. Proceed?", async () => {
-                const subject = document.getElementById('grading-subject-select').value;
-                const cls = document.getElementById('grade-class-title').innerText;
+            const subject = document.getElementById('grading-subject-select').value;
+            const cls = document.getElementById('grade-class-title').innerText;
+
+            // 1. Count VALID drafts (Score not null)
+            const { count } = await supabaseClient
+                .from('grades')
+                .select('*', { count: 'exact', head: true })
+                .eq('subject_text', subject)
+                .eq('term', CURRENT_SESSION_TERM)
+                .eq('status', 'draft')
+                .not('total_score', 'is', null); // IMPORTANT: Ignore ghost rows
+
+            if (count === 0) {
+                showNotification("Info", "No recorded drafts to submit.", true);
+                return;
+            }
+
+            showConfirm("Submit Grades?", `This will LOCK ${count} recorded grade(s). Unrecorded students will remain open. Proceed?`, async () => {
                 const { data: students } = await supabaseClient.from('students').select('id').eq('grade_level', cls);
+                
+                if (!students || students.length === 0) return;
+                const studentIds = students.map(s => s.id);
 
-                if (students && students.length > 0) {
-                    const studentIds = students.map(s => s.id);
-                    const { error } = await supabaseClient.from('grades')
-                        .update({ status: 'submitted' })
-                        .in('student_id', studentIds)
-                        .eq('subject_text', subject)
-                        .eq('term', CURRENT_SESSION_TERM);
+                // 2. Update ONLY the valid drafts
+                const { error } = await supabaseClient.from('grades')
+                    .update({ status: 'submitted' })
+                    .in('student_id', studentIds)
+                    .eq('subject_text', subject)
+                    .eq('term', CURRENT_SESSION_TERM)
+                    .eq('status', 'draft')
+                    .not('total_score', 'is', null); // IMPORTANT LOCK
 
-                    if (error) showNotification("Error", "Submission failed.", true);
-                    else {
-                        showNotification("Success", "Submitted to Admin.");
-                        loadGradebook();
-                    }
+                if (error) {
+                    showNotification("Error", "Submission failed.", true);
+                } else {
+                    showNotification("Success", "Grades Submitted.");
+                    loadGradebook(); 
                 }
             });
         }
 
         function updateSubmitButtonUI() {
             const btn = document.getElementById('btn-submit-admin');
-            if (currentSubjectStatus === 'submitted') {
-                btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Submitted`;
-                btn.disabled = true;
-                btn.classList.add('bg-slate-400');
-                btn.classList.remove('bg-teal-700');
-            } else {
-                btn.innerHTML = `<i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit to Admin`;
-                btn.disabled = false;
-                btn.classList.remove('bg-slate-400');
-                btn.classList.add('bg-teal-700');
-            }
+            // Always active to allow batch submissions
+            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit Drafts`;
+            btn.disabled = false;
+            btn.classList.remove('bg-slate-400');
+            btn.classList.add('bg-teal-700');
             lucide.createIcons();
         }
 
-        // --- ATTENDANCE (FIXED: CHECK BEFORE WRITE) ---
+        // --- ATTENDANCE ---
         async function loadAttendance() {
             const cls = document.getElementById('att-class-select').value;
             const dateStr = document.getElementById('att-date').value;
@@ -692,7 +772,6 @@
                 const time = record ? new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
                 const statusText = isMarked ? (isPresent ? 'Present' : 'Absent') : 'Absent';
 
-                // If already marked, disable the manual checkbox to prevent accidental overwrites
                 const disabledAttr = isMarked ? 'disabled' : '';
                 const cursorClass = isMarked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer';
 
@@ -716,19 +795,16 @@
             checkbox.parentNode.querySelector('.status-label').innerText = checkbox.checked ? 'Present' : 'Absent';
         }
 
-        // *** STRICT: SCANNER - CHECK IF EXISTS FIRST ***
         async function onScanSuccess(t) {
             const c = document.getElementById('att-class-select').value;
             const dateStr = document.getElementById('att-date').value;
             
-            // 1. Check if student is in this class
             const { data: s } = await supabaseClient.from('students').select('*').eq('id', t).eq('grade_level', c).single();
             if (!s) { 
                 alert("Error: Student not found in this class."); 
                 return; 
             }
 
-            // 2. CHECK: Has this student been recorded today?
             const { data: existing } = await supabaseClient
                 .from('attendance')
                 .select('id')
@@ -737,12 +813,10 @@
                 .single();
 
             if (existing) {
-                // STOP: Already recorded
                 showNotification("Info", "Student already marked for today.", true);
                 return; 
             }
 
-            // 3. INSERT: Only if not exists
             const { error } = await supabaseClient.from('attendance').insert({
                 student_id: t, class_name: c, date: dateStr, status: 'Present', marked_by: currentUser.user_id
             });
@@ -758,7 +832,6 @@
             const dateStr = document.getElementById('att-date').value;
             const cls = document.getElementById('att-class-select').value;
             
-            // Only select checkboxes that are NOT disabled (meaning not yet saved in DB)
             const checkboxes = Array.from(document.querySelectorAll('.att-row input[type="checkbox"]:not(:disabled)'));
 
             if (checkboxes.length === 0) {
@@ -777,12 +850,10 @@
                 };
             });
 
-            // Use insert (not upsert) to prevent overwriting accidentally
             const { error } = await supabaseClient.from('attendance').insert(newRecords);
             
             if (error) {
-                // If unique violation (already exists), user tried to save duplicates
-                if(error.code === '23505') showNotification("Error", "Some students already recorded.", true);
+                if(error.code === '23505') showNotification("Error", "Duplicate entries detected.", true);
                 else showNotification("Error", "Save failed.", true);
             } else {
                 showNotification("Success", "Attendance Saved.");
@@ -790,7 +861,60 @@
             }
         }
 
-        // --- UTILS ---
+        // --- UTILS (NOTIFICATION FIX) ---
+        function getFreshButton() {
+            const oldBtn = document.getElementById('alert-ok-btn');
+            const newBtn = oldBtn.cloneNode(true);
+            oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+            return newBtn;
+        }
+
+        function showNotification(t, m, e = false) {
+            const md = document.getElementById('custom-alert');
+            document.getElementById('alert-title').innerText = t;
+            document.getElementById('alert-message').innerText = m;
+            document.getElementById('alert-cancel-btn').classList.add('hidden');
+            
+            const btn = getFreshButton();
+            btn.innerText = "Acknowledge";
+            btn.onclick = closeAlert;
+            
+            document.getElementById('alert-icon').setAttribute('data-lucide', e ? 'x-circle' : 'check-circle');
+            document.getElementById('alert-icon-bg').className = e ? 'w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600 shadow-inner' : 'w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 text-teal-700 shadow-inner';
+            
+            lucide.createIcons();
+            md.classList.remove('pointer-events-none', 'opacity-0');
+            md.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
+        }
+
+        function showConfirm(t, m, cb) {
+            const md = document.getElementById('custom-alert');
+            document.getElementById('alert-title').innerText = t;
+            document.getElementById('alert-message').innerText = m;
+            document.getElementById('alert-cancel-btn').classList.remove('hidden');
+            
+            const btn = getFreshButton();
+            btn.innerText = "Yes, Proceed";
+            btn.onclick = () => { 
+                closeAlert();
+                cb(); 
+            };
+            
+            document.getElementById('alert-icon').setAttribute('data-lucide', 'alert-circle');
+            document.getElementById('alert-icon-bg').className = 'w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner';
+            
+            lucide.createIcons();
+            md.classList.remove('pointer-events-none', 'opacity-0');
+            md.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
+        }
+
+        function closeAlert() {
+            const md = document.getElementById('custom-alert');
+            md.classList.add('opacity-0');
+            md.querySelector('div.transform').classList.replace('scale-100', 'scale-95');
+            setTimeout(() => md.classList.add('pointer-events-none'), 300);
+        }
+
         function switchView(v) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden-view'));
             document.getElementById('view-' + v).classList.remove('hidden-view');
@@ -843,33 +967,6 @@
             win.document.write(`<h3>Attendance: ${cls} (${dateStr})</h3><table style="width:100%;border-collapse:collapse">${rows}</table><script>window.print()<\/script>`);
         }
 
-        function showNotification(t, m, e = false) {
-            const md = document.getElementById('custom-alert');
-            document.getElementById('alert-title').innerText = t;
-            document.getElementById('alert-message').innerText = m;
-            document.getElementById('alert-cancel-btn').classList.add('hidden');
-            md.classList.remove('pointer-events-none', 'opacity-0');
-            md.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
-        }
-
-        function showConfirm(t, m, cb) {
-            const md = document.getElementById('custom-alert');
-            document.getElementById('alert-title').innerText = t;
-            document.getElementById('alert-message').innerText = m;
-            document.getElementById('alert-cancel-btn').classList.remove('hidden');
-            const btn = document.getElementById('alert-ok-btn');
-            btn.onclick = () => { cb(); closeAlert(); };
-            md.classList.remove('pointer-events-none', 'opacity-0');
-            md.querySelector('div.transform').classList.replace('scale-95', 'scale-100');
-        }
-
-        function closeAlert() {
-            const md = document.getElementById('custom-alert');
-            md.classList.add('opacity-0');
-            md.querySelector('div.transform').classList.replace('scale-100', 'scale-95');
-            setTimeout(() => md.classList.add('pointer-events-none'), 300);
-        }
-
         function handleLogout() {
             showConfirm("Log Out?", "End your session?", async () => {
                 await supabaseClient.auth.signOut();
@@ -877,7 +974,6 @@
             });
         }
     </script>
-
 </body>
 
 </html>
