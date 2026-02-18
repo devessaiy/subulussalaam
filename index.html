@@ -538,7 +538,7 @@
             menu.classList.toggle('hidden');
         }
 
-        // 3. Supabase Configuration (SAME AS ADMIN PORTAL)
+        // 3. Supabase Configuration
         const SUPABASE_URL = 'https://yqzpfwkpnywkjhybhccb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxenBmd2twbnl3a2poeWJoY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4NTM0NDYsImV4cCI6MjA4NTQyOTQ0Nn0.xnTFS3cd1akIGQwXE_tOPz6cqtznzZP2eBB_dOZii7M';
 
@@ -554,6 +554,12 @@
                 console.error("News Feed Error:", error);
             }
         };
+
+        // Helper to prevent quotes from breaking the HTML generation
+        function escapeHtml(text) {
+            if (!text) return "";
+            return text.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+        }
 
         async function fetchPublicNews() {
             const grid = document.getElementById('public-news-grid');
@@ -582,6 +588,11 @@
                     mediaElement = `<img src="${item.media_url || 'https://via.placeholder.com/600x400'}" class="w-full h-56 object-cover transition duration-500 hover:scale-105">`;
                 }
 
+                // Prepare safe strings for the share function
+                const safeTitle = escapeHtml(item.title);
+                const safeDesc = escapeHtml(item.description);
+                const safeUrl = item.media_url;
+
                 const cardHTML = `
                     <div class="flex flex-col bg-white border border-slate-100 rounded-3xl overflow-hidden hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300 group">
                         <div class="relative overflow-hidden bg-slate-100">
@@ -599,7 +610,7 @@
                             <p class="text-slate-500 text-sm line-clamp-3 mb-6">${item.description || 'View details...'}</p>
                             
                             <div class="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
-                                <button onclick="sharePost('${item.title}', '${item.media_url}')" class="text-emerald-600 text-sm font-bold flex items-center hover:text-emerald-800 transition">
+                                <button onclick="sharePost('${safeTitle}', '${safeDesc}', '${safeUrl}')" class="text-emerald-600 text-sm font-bold flex items-center hover:text-emerald-800 transition">
                                     <i data-lucide="share-2" class="w-4 h-4 mr-2"></i> Share
                                 </button>
                             </div>
@@ -613,33 +624,52 @@
             lucide.createIcons();
         }
 
-        // Web Share API
-        function sharePost(title, url) {
+        // Web Share API - Upgraded to share Rich Content
+        function sharePost(title, description, mediaUrl) {
+            // Clean up entities for the text display
+            const cleanTitle = title.replace(/&apos;/g, "'").replace(/&quot;/g, '"');
+            const cleanDesc = description.replace(/&apos;/g, "'").replace(/&quot;/g, '"');
+            
+            // Generate a link back to your specific news section
+            const websiteUrl = window.location.href.split('#')[0] + '#news';
+
+            const shareData = {
+                title: 'Subulus Salaam Academy Update',
+                // This format creates a nice social card effect in text apps like WhatsApp
+                text: `📢 *${cleanTitle}*\n\n${cleanDesc}\n\n👇 Read more:`,
+                url: websiteUrl
+            };
+
             if (navigator.share) {
-                navigator.share({
-                    title: 'Subulus Salaam Update',
-                    text: title,
-                    url: url
-                });
+                navigator.share(shareData)
+                    .catch((err) => console.log('Share canceled', err));
             } else {
-                navigator.clipboard.writeText(url);
+                // Fallback: Copy the content + link for desktop users
+                const copyText = `${cleanTitle} - ${websiteUrl}`;
+                navigator.clipboard.writeText(copyText);
                 alert("Link copied to clipboard!");
             }
         }
-        // tailwind.config.js
-        module.exports = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        poppins: ['Poppins', 'sans-serif'],
+
+        // Tailwind Config (Optional/If needed for CDN runtime)
+        // Note: Usually not needed inside the script tag unless using specific CDN setup, 
+        // but keeping it here as per your request.
+        if (typeof module !== 'undefined') {
+            module.exports = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            poppins: ['Poppins', 'sans-serif'],
+                        },
                     },
                 },
-            },
-        }    
+            }
+        }
     </script>
-</body>
+    </body>
 
 </html>
+
 
 
 
