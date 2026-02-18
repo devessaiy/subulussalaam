@@ -378,12 +378,19 @@
         window.onload = function () {
             lucide.createIcons();
             
-            // Inject Mobile Scanner Fix Styles
+            // *** MOBILE SCANNER FIX: Force Video Visibility ***
             const style = document.createElement('style');
             style.innerHTML = `
-                #qr-reader video { object-fit: cover; width: 100% !important; border-radius: 0.75rem; }
-                #qr-reader { border: none !important; }
-                #qr-reader__scan_region { img { display: none; } } 
+                #qr-reader { border: none !important; width: 100%; }
+                #qr-reader video { 
+                    object-fit: cover; 
+                    width: 100% !important; 
+                    height: 100% !important;
+                    border-radius: 12px;
+                }
+                #qr-reader__scan_region {
+                    background: transparent !important;
+                }
             `;
             document.head.appendChild(style);
 
@@ -518,7 +525,7 @@
             lucide.createIcons();
         }
 
-        // *** UPDATED OPEN CLASS (Multi-Subject Logic) ***
+        // *** MULTI-SUBJECT LOGIC ***
         async function openClass(className) {
             activeClass = className;
             switchView('grading');
@@ -556,14 +563,13 @@
             loadGradebook();
         }
 
-        // --- GRADING (GRANULAR LOCKING) ---
+        // --- GRADING ---
         async function loadGradebook() {
             const tbody = document.getElementById('gradebook-body');
             tbody.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-slate-400 italic">Loading...</td></tr>';
 
             const subject = document.getElementById('grading-subject-select').value;
 
-            // 1. Get Students
             const { data: students, error: sErr } = await supabaseClient
                 .from('students')
                 .select('*')
@@ -576,7 +582,6 @@
                 return;
             }
 
-            // 2. Get Grades
             const { data: grades } = await supabaseClient
                 .from('grades')
                 .select('*')
@@ -590,17 +595,14 @@
             const gradeMap = {};
             if (grades) grades.forEach(g => gradeMap[g.student_id] = g);
 
-            // 3. Render Per Student
             students.forEach(s => {
                 const g = gradeMap[s.id] || { ca_score: null, exam_score: null, status: 'draft' };
-                
                 const isRowLocked = g.status === 'submitted';
                 const disabledAttr = isRowLocked ? 'disabled' : '';
                 const bgClass = isRowLocked ? 'bg-slate-100 cursor-not-allowed' : 'bg-white';
 
                 const ca = g.ca_score;
                 const exam = g.exam_score;
-                
                 const hasScore = (ca !== null && ca !== undefined) || (exam !== null && exam !== undefined);
                 const total = hasScore ? ((Number(ca) || 0) + (Number(exam) || 0)) : '-';
                 
@@ -635,7 +637,6 @@
         function updateRowTotal(id) {
             const caInput = document.getElementById(`ca-${id}`);
             const examInput = document.getElementById(`exam-${id}`);
-            
             let caVal = caInput.value;
             let examVal = examInput.value;
 
@@ -660,87 +661,40 @@
 
             const finalCa = ca === '' ? null : ca;
             const finalExam = exam === '' ? null : exam;
-            
             let total = null;
-            if (finalCa !== null || finalExam !== null) {
-                total = (Number(finalCa) || 0) + (Number(finalExam) || 0);
-            }
+            if (finalCa !== null || finalExam !== null) total = (Number(finalCa) || 0) + (Number(finalExam) || 0);
 
             const { data, error } = await supabaseClient
                 .from('grades')
-                .update({ 
-                    ca_score: finalCa, 
-                    exam_score: finalExam, 
-                    total_score: total, 
-                    status: 'draft' 
-                })
+                .update({ ca_score: finalCa, exam_score: finalExam, total_score: total, status: 'draft' })
                 .eq('student_id', studentId)
                 .eq('subject_text', subject)
                 .eq('term', CURRENT_SESSION_TERM)
                 .select();
 
-            if (!error && data.length > 0) {
-                showNotification("Saved", "Grade updated.");
-                return;
-            }
+            if (!error && data.length > 0) { showNotification("Saved", "Grade updated."); return; }
 
-            const { error: insertError } = await supabaseClient
-                .from('grades')
-                .insert([{
-                    student_id: studentId,
-                    subject_text: subject,
-                    term: CURRENT_SESSION_TERM,
-                    ca_score: finalCa,
-                    exam_score: finalExam,
-                    total_score: total,
-                    status: 'draft'
-                }]);
-
-            if (insertError) {
-                console.error(insertError);
-                showNotification("Error", "Failed to save grade.", true);
-            } else {
-                showNotification("Saved", "New grade created.");
-            }
+            const { error: insertError } = await supabaseClient.from('grades').insert([{ student_id: studentId, subject_text: subject, term: CURRENT_SESSION_TERM, ca_score: finalCa, exam_score: finalExam, total_score: total, status: 'draft' }]);
+            if (insertError) { showNotification("Error", "Failed to save.", true); } else { showNotification("Saved", "Grade created."); }
         }
 
         async function submitToAdmin() {
             const subject = document.getElementById('grading-subject-select').value;
             const cls = document.getElementById('grade-class-title').innerText;
 
-            const { count } = await supabaseClient
-                .from('grades')
-                .select('*', { count: 'exact', head: true })
-                .eq('subject_text', subject)
-                .eq('term', CURRENT_SESSION_TERM)
-                .eq('status', 'draft')
-                .not('total_score', 'is', null);
+            const { count } = await supabaseClient.from('grades').select('*', { count: 'exact', head: true }).eq('subject_text', subject).eq('term', CURRENT_SESSION_TERM).eq('status', 'draft').not('total_score', 'is', null);
 
-            if (count === 0) {
-                showNotification("Info", "No recorded drafts to submit.", true);
-                return;
-            }
+            if (count === 0) { showNotification("Info", "No drafts to submit.", true); return; }
 
-            showConfirm("Submit Grades?", `This will LOCK ${count} recorded grade(s). Unrecorded students will remain open. Proceed?`, async () => {
+            showConfirm("Submit Grades?", `Lock ${count} records?`, async () => {
                 const { data: students } = await supabaseClient.from('students').select('id').eq('grade_level', cls);
-                
-                if (!students || students.length === 0) return;
+                if (!students || !students.length) return;
                 const studentIds = students.map(s => s.id);
 
-                const { error } = await supabaseClient.from('grades')
-                    .update({ status: 'submitted' })
-                    .in('student_id', studentIds)
-                    .eq('subject_text', subject)
-                    .eq('term', CURRENT_SESSION_TERM)
-                    .eq('status', 'draft')
-                    .not('total_score', 'is', null);
+                const { error } = await supabaseClient.from('grades').update({ status: 'submitted' }).in('student_id', studentIds).eq('subject_text', subject).eq('term', CURRENT_SESSION_TERM).eq('status', 'draft').not('total_score', 'is', null);
 
-                if (error) {
-                    showNotification("Error", "Submission failed.", true);
-                } else {
-                    showNotification("Success", "Grades Submitted.");
-                    loadGradebook(); 
-                }
+                if (error) showNotification("Error", "Failed.", true);
+                else { showNotification("Success", "Submitted."); loadGradebook(); }
             });
         }
 
@@ -767,10 +721,7 @@
             if (attendance) attendance.forEach(a => attMap[a.student_id] = a);
 
             tbody.innerHTML = '';
-            if (!students || !students.length) {
-                tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 italic">No students.</td></tr>';
-                return;
-            }
+            if (!students || !students.length) { tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 italic">No students.</td></tr>'; return; }
 
             students.forEach(s => {
                 const record = attMap[s.id];
@@ -778,7 +729,6 @@
                 const isPresent = record && record.status === 'Present';
                 const time = record ? new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
                 const statusText = isMarked ? (isPresent ? 'Present' : 'Absent') : 'Absent';
-
                 const disabledAttr = isMarked ? 'disabled' : '';
                 const cursorClass = isMarked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer';
 
@@ -802,92 +752,29 @@
             checkbox.parentNode.querySelector('.status-label').innerText = checkbox.checked ? 'Present' : 'Absent';
         }
 
-        async function onScanSuccess(t) {
-            const c = document.getElementById('att-class-select').value;
-            const dateStr = document.getElementById('att-date').value;
-            
-            const { data: s } = await supabaseClient.from('students').select('*').eq('id', t).eq('grade_level', c).single();
-            if (!s) { 
-                alert("Error: Student not found in this class."); 
-                return; 
-            }
-
-            const { data: existing } = await supabaseClient
-                .from('attendance')
-                .select('id')
-                .eq('student_id', t)
-                .eq('date', dateStr)
-                .single();
-
-            if (existing) {
-                showNotification("Info", "Student already marked for today.", true);
-                return; 
-            }
-
-            const { error } = await supabaseClient.from('attendance').insert({
-                student_id: t, class_name: c, date: dateStr, status: 'Present', marked_by: currentUser.user_id
-            });
-
-            if(!error) {
-                new Audio('https://actions.google.com/sounds/v1/science_fiction/beep_short.ogg').play().catch(e => console.log(e));
-                loadAttendance();
-                showNotification("Scanned", `${s.name} marked Present.`);
-            }
-        }
-
-        async function saveBulkAttendance() {
-            const dateStr = document.getElementById('att-date').value;
-            const cls = document.getElementById('att-class-select').value;
-            
-            const checkboxes = Array.from(document.querySelectorAll('.att-row input[type="checkbox"]:not(:disabled)'));
-
-            if (checkboxes.length === 0) {
-                showNotification("Info", "No new changes to save.", true);
-                return;
-            }
-
-            const newRecords = checkboxes.map(cb => {
-                const row = cb.closest('tr');
-                return {
-                    student_id: row.getAttribute('data-id'),
-                    class_name: cls,
-                    date: dateStr,
-                    status: cb.checked ? 'Present' : 'Absent',
-                    marked_by: currentUser.user_id
-                };
-            });
-
-            const { error } = await supabaseClient.from('attendance').insert(newRecords);
-            
-            if (error) {
-                if(error.code === '23505') showNotification("Error", "Duplicate entries detected.", true);
-                else showNotification("Error", "Save failed.", true);
-            } else {
-                showNotification("Success", "Attendance Saved.");
-                loadAttendance();
-            }
-        }
-
-        // *** FIX: MOBILE SCANNER VISIBILITY ***
+        // *** FIX: MOBILE SCANNER VISIBILITY + BACK CAMERA ***
         async function toggleScanner() {
             const c = document.getElementById('scanner-container');
             if (c.classList.contains('hidden')) {
                 c.classList.remove('hidden');
                 
-                // Add tiny delay to let DOM render
+                // Allow DOM to render
                 setTimeout(() => {
                     if (typeof Html5QrcodeScanner !== 'undefined') {
-                        // Responsive Width Calculation
-                        const width = Math.min(window.innerWidth - 60, 300);
+                        // Calc width based on mobile screen
+                        const width = Math.min(window.innerWidth - 40, 300);
                         
                         html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { 
                             fps: 10, 
                             qrbox: width,
-                            aspectRatio: 1.0 
+                            aspectRatio: 1.0,
+                            videoConstraints: {
+                                facingMode: "environment" // Attempt to force back camera
+                            }
                         });
                         html5QrcodeScanner.render(onScanSuccess);
                     } else {
-                        alert("Scanner library not loaded. Check internet.");
+                        alert("Scanner library not loaded.");
                     }
                 }, 100);
             } else {
@@ -897,6 +784,39 @@
                     html5QrcodeScanner = null;
                 }
             }
+        }
+
+        async function onScanSuccess(t) {
+            const c = document.getElementById('att-class-select').value;
+            const dateStr = document.getElementById('att-date').value;
+            const { data: s } = await supabaseClient.from('students').select('*').eq('id', t).eq('grade_level', c).single();
+            if (!s) { alert("Student not in this class."); return; }
+
+            const { data: existing } = await supabaseClient.from('attendance').select('id').eq('student_id', t).eq('date', dateStr).single();
+            if (existing) { showNotification("Info", "Already marked.", true); return; }
+
+            const { error } = await supabaseClient.from('attendance').insert({ student_id: t, class_name: c, date: dateStr, status: 'Present', marked_by: currentUser.user_id });
+            if(!error) {
+                new Audio('https://actions.google.com/sounds/v1/science_fiction/beep_short.ogg').play().catch(e => console.log(e));
+                loadAttendance();
+                showNotification("Scanned", `${s.name} marked.`);
+            }
+        }
+
+        async function saveBulkAttendance() {
+            const dateStr = document.getElementById('att-date').value;
+            const cls = document.getElementById('att-class-select').value;
+            const checkboxes = Array.from(document.querySelectorAll('.att-row input[type="checkbox"]:not(:disabled)'));
+            if (checkboxes.length === 0) { showNotification("Info", "No new changes.", true); return; }
+
+            const newRecords = checkboxes.map(cb => {
+                const row = cb.closest('tr');
+                return { student_id: row.getAttribute('data-id'), class_name: cls, date: dateStr, status: cb.checked ? 'Present' : 'Absent', marked_by: currentUser.user_id };
+            });
+
+            const { error } = await supabaseClient.from('attendance').insert(newRecords);
+            if (error) showNotification("Error", "Save failed (Duplicates?)", true);
+            else { showNotification("Success", "Saved."); loadAttendance(); }
         }
 
         // --- UTILS ---
