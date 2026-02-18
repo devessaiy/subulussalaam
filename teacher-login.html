@@ -378,19 +378,24 @@
         window.onload = function () {
             lucide.createIcons();
             
-            // *** MOBILE SCANNER FIX: Force Video Visibility ***
+            // *** FULL SCREEN SCANNER STYLES ***
             const style = document.createElement('style');
             style.innerHTML = `
-                #qr-reader { border: none !important; width: 100%; }
-                #qr-reader video { 
-                    object-fit: cover; 
-                    width: 100% !important; 
-                    height: 100% !important;
-                    border-radius: 12px;
+                /* Force scanner to be fixed full screen overlay */
+                #scanner-container { 
+                    position: fixed !important; 
+                    top: 0; left: 0; width: 100vw; height: 100vh; 
+                    background: #000; z-index: 9999; 
+                    display: flex; flex-direction: column; justify-content: center; 
                 }
-                #qr-reader__scan_region {
-                    background: transparent !important;
-                }
+                /* Hide the container when 'hidden' class is present */
+                #scanner-container.hidden { display: none !important; }
+                
+                /* Make video fill the space */
+                #qr-reader { width: 100% !important; border: none !important; }
+                #qr-reader video { object-fit: cover; height: 60vh !important; border-radius: 1rem; }
+                #qr-reader__scan_region { background: transparent !important; }
+                #qr-reader__dashboard_section_csr span { color: white !important; }
             `;
             document.head.appendChild(style);
 
@@ -525,7 +530,6 @@
             lucide.createIcons();
         }
 
-        // *** MULTI-SUBJECT LOGIC ***
         async function openClass(className) {
             activeClass = className;
             switchView('grading');
@@ -752,27 +756,42 @@
             checkbox.parentNode.querySelector('.status-label').innerText = checkbox.checked ? 'Present' : 'Absent';
         }
 
-        // *** FIX: MOBILE SCANNER VISIBILITY + BACK CAMERA ***
+        // *** UPDATED: VALIDATED FULL SCREEN SCANNER ***
         async function toggleScanner() {
+            // 1. VALIDATION: Check if Class/Date are selected
+            const cls = document.getElementById('att-class-select').value;
+            const dateStr = document.getElementById('att-date').value;
+
+            if (!cls || !dateStr) {
+                showNotification("Action Required", "Please select a Class and Date before scanning.", true);
+                return;
+            }
+
             const c = document.getElementById('scanner-container');
             if (c.classList.contains('hidden')) {
                 c.classList.remove('hidden');
                 
-                // Allow DOM to render
+                // Allow DOM to render then launch
                 setTimeout(() => {
                     if (typeof Html5QrcodeScanner !== 'undefined') {
-                        // Calc width based on mobile screen
-                        const width = Math.min(window.innerWidth - 40, 300);
+                        // Use window dimensions for robust mobile sizing
+                        const width = Math.min(window.innerWidth - 40, 400); 
                         
                         html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { 
                             fps: 10, 
                             qrbox: width,
                             aspectRatio: 1.0,
                             videoConstraints: {
-                                facingMode: "environment" // Attempt to force back camera
+                                facingMode: { exact: "environment" } // Force back camera
                             }
                         });
-                        html5QrcodeScanner.render(onScanSuccess);
+                        
+                        // Fallback if 'exact' fails (some devices dont support strict constraints)
+                        html5QrcodeScanner.render(onScanSuccess, (err) => {
+                             // If exact back camera fails, try basic config
+                             html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: width });
+                             html5QrcodeScanner.render(onScanSuccess);
+                        });
                     } else {
                         alert("Scanner library not loaded.");
                     }
@@ -790,16 +809,27 @@
             const c = document.getElementById('att-class-select').value;
             const dateStr = document.getElementById('att-date').value;
             const { data: s } = await supabaseClient.from('students').select('*').eq('id', t).eq('grade_level', c).single();
-            if (!s) { alert("Student not in this class."); return; }
+            
+            if (!s) { 
+                // Play Error Sound
+                new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play().catch(e=>{});
+                showNotification("Error", "Student not in this class!", true); 
+                return; 
+            }
 
             const { data: existing } = await supabaseClient.from('attendance').select('id').eq('student_id', t).eq('date', dateStr).single();
-            if (existing) { showNotification("Info", "Already marked.", true); return; }
+            if (existing) { 
+                showNotification("Info", `${s.name} is already marked.`, true); 
+                return; 
+            }
 
             const { error } = await supabaseClient.from('attendance').insert({ student_id: t, class_name: c, date: dateStr, status: 'Present', marked_by: currentUser.user_id });
             if(!error) {
                 new Audio('https://actions.google.com/sounds/v1/science_fiction/beep_short.ogg').play().catch(e => console.log(e));
                 loadAttendance();
-                showNotification("Scanned", `${s.name} marked.`);
+                // Show brief success alert that doesn't block flow too much
+                const alertTitle = document.getElementById('alert-title');
+                if(alertTitle) alertTitle.innerText = "Scanned: " + s.name;
             }
         }
 
