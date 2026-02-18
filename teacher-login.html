@@ -372,30 +372,55 @@
 
         let currentUser = null;
         let activeClass = null;
-        let html5QrcodeScanner = null;
+        
+        // Use the Core Engine instead of the Widget
+        let html5QrCode = null; 
 
         // 3. INITIALIZATION
         window.onload = function () {
             lucide.createIcons();
             
-            // *** FULL SCREEN SCANNER STYLES ***
+            // *** CSS INJECTION FOR FULLSCREEN CAMERA ***
             const style = document.createElement('style');
             style.innerHTML = `
-                /* Force scanner to be fixed full screen overlay */
+                /* Fullscreen Overlay */
                 #scanner-container { 
                     position: fixed !important; 
                     top: 0; left: 0; width: 100vw; height: 100vh; 
-                    background: #000; z-index: 9999; 
-                    display: flex; flex-direction: column; justify-content: center; 
+                    background: #000; z-index: 99999; 
+                    display: flex; flex-direction: column; 
                 }
-                /* Hide the container when 'hidden' class is present */
                 #scanner-container.hidden { display: none !important; }
                 
-                /* Make video fill the space */
-                #qr-reader { width: 100% !important; border: none !important; }
-                #qr-reader video { object-fit: cover; height: 60vh !important; border-radius: 1rem; }
-                #qr-reader__scan_region { background: transparent !important; }
-                #qr-reader__dashboard_section_csr span { color: white !important; }
+                /* Video Area */
+                #qr-reader { 
+                    flex: 1; 
+                    width: 100% !important; 
+                    height: 100% !important; 
+                    overflow: hidden; 
+                    position: relative;
+                }
+                
+                /* Force Video to Cover Screen */
+                #qr-reader video { 
+                    object-fit: cover !important; 
+                    width: 100% !important; 
+                    height: 100% !important; 
+                }
+                
+                /* Overlay Controls */
+                .scan-overlay-ui {
+                    position: absolute; bottom: 40px; left: 0; right: 0;
+                    display: flex; justify-content: center; z-index: 100000;
+                }
+                .scan-guide-box {
+                    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                    width: 250px; height: 250px;
+                    border: 2px solid rgba(255,255,255,0.7);
+                    border-radius: 20px;
+                    box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); /* Dim background */
+                    pointer-events: none;
+                }
             `;
             document.head.appendChild(style);
 
@@ -462,22 +487,12 @@
 
         async function initPortal(user) {
             try {
-                const { data: teacher, error } = await supabaseClient
-                    .from('teachers')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .single();
-
-                if (error || !teacher) {
-                    showNotification("Error", "Teacher profile not found.", true);
-                    return;
-                }
+                const { data: teacher, error } = await supabaseClient.from('teachers').select('*').eq('user_id', user.id).single();
+                if (error || !teacher) { showNotification("Error", "Teacher profile not found.", true); return; }
 
                 currentUser = teacher;
-
                 document.getElementById('auth-container').classList.add('hidden-view');
                 document.getElementById('main-dashboard').classList.remove('hidden-view');
-
                 document.getElementById('profile-name').innerText = teacher.name;
                 document.getElementById('profile-role').innerText = teacher.access_type === 'class' ? "Class Teacher" : "Subject Teacher";
 
@@ -485,46 +500,23 @@
                 if (select && teacher.access_value) {
                     select.innerHTML = '';
                     const assignedClasses = teacher.access_value.split(',').map(s => s.trim());
-                    assignedClasses.forEach(c => {
-                        select.innerHTML += `<option value="${c}">${c}</option>`;
-                    });
+                    assignedClasses.forEach(c => { select.innerHTML += `<option value="${c}">${c}</option>`; });
                 }
-
                 renderDashboard();
-            } catch (err) {
-                console.error(err);
-                showNotification("Error", "Failed to load portal.", true);
-            }
+            } catch (err) { console.error(err); showNotification("Error", "Failed to load portal.", true); }
         }
 
         function renderDashboard() {
             const grid = document.getElementById('class-grid');
             grid.innerHTML = '';
-
-            if (!currentUser.access_value) {
-                grid.innerHTML = '<div class="col-span-full text-center py-20 text-slate-400">No classes assigned.</div>';
-                return;
-            }
-
+            if (!currentUser.access_value) { grid.innerHTML = '<div class="col-span-full text-center py-20 text-slate-400">No classes assigned.</div>'; return; }
             const assignedClasses = currentUser.access_value.split(',').map(s => s.trim());
-
             assignedClasses.forEach(cls => {
                 const isClassTeacher = currentUser.access_type === 'class';
                 const subText = isClassTeacher ? "Full Management" : `${currentUser.subject} Teacher`;
                 const icon = isClassTeacher ? 'users' : 'book';
                 const color = isClassTeacher ? 'teal' : 'slate';
-
-                const card = `
-                <div onclick="openClass('${cls}')" class="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-lg hover:-translate-y-1 transition-all cursor-pointer group">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-10 h-10 bg-${color}-50 text-${color}-600 rounded-xl flex items-center justify-center">
-                            <i data-lucide="${icon}" class="w-5 h-5"></i>
-                        </div>
-                        <span class="bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest group-hover:bg-${color}-600 group-hover:text-white transition">Open</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800">${cls}</h3>
-                    <p class="text-xs text-slate-400 font-medium mt-1 truncate" title="${subText}">${subText}</p>
-                </div>`;
+                const card = `<div onclick="openClass('${cls}')" class="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-lg hover:-translate-y-1 transition-all cursor-pointer group"><div class="flex justify-between items-start mb-4"><div class="w-10 h-10 bg-${color}-50 text-${color}-600 rounded-xl flex items-center justify-center"><i data-lucide="${icon}" class="w-5 h-5"></i></div><span class="bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest group-hover:bg-${color}-600 group-hover:text-white transition">Open</span></div><h3 class="text-xl font-bold text-slate-800">${cls}</h3><p class="text-xs text-slate-400 font-medium mt-1 truncate" title="${subText}">${subText}</p></div>`;
                 grid.insertAdjacentHTML('beforeend', card);
             });
             lucide.createIcons();
@@ -534,35 +526,20 @@
             activeClass = className;
             switchView('grading');
             document.getElementById('grade-class-title').innerText = className;
-
             const select = document.getElementById('grading-subject-select');
             select.innerHTML = '';
 
             if (currentUser.access_type === 'subject') {
                 const assignedSubjects = currentUser.subject ? currentUser.subject.split(',').map(s => s.trim()) : [];
-
                 if (assignedSubjects.length > 0) {
-                    assignedSubjects.forEach(sub => {
-                        select.innerHTML += `<option value="${sub}">${sub}</option>`;
-                    });
-
-                    if (assignedSubjects.length > 1) {
-                        select.disabled = false; 
-                        document.getElementById('grade-role-badge').innerText = "Multi-Subject Teacher";
-                    } else {
-                        select.disabled = true;
-                        document.getElementById('grade-role-badge').innerText = `Subject: ${assignedSubjects[0]}`;
-                    }
-                } else {
-                    select.innerHTML = '<option>No subjects assigned</option>';
-                    select.disabled = true;
-                }
-
+                    assignedSubjects.forEach(sub => { select.innerHTML += `<option value="${sub}">${sub}</option>`; });
+                    if (assignedSubjects.length > 1) { select.disabled = false; document.getElementById('grade-role-badge').innerText = "Multi-Subject Teacher"; }
+                    else { select.disabled = true; document.getElementById('grade-role-badge').innerText = `Subject: ${assignedSubjects[0]}`; }
+                } else { select.innerHTML = '<option>No subjects</option>'; select.disabled = true; }
             } else {
                 const subjects = getSubjectsForClass(className);
                 subjects.forEach(sub => select.innerHTML += `<option value="${sub}">${sub}</option>`);
-                select.disabled = false;
-                document.getElementById('grade-role-badge').innerText = "Class Teacher";
+                select.disabled = false; document.getElementById('grade-role-badge').innerText = "Class Teacher";
             }
             loadGradebook();
         }
@@ -571,88 +548,35 @@
         async function loadGradebook() {
             const tbody = document.getElementById('gradebook-body');
             tbody.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-slate-400 italic">Loading...</td></tr>';
-
             const subject = document.getElementById('grading-subject-select').value;
-
-            const { data: students, error: sErr } = await supabaseClient
-                .from('students')
-                .select('*')
-                .eq('grade_level', activeClass)
-                .neq('status', 'Deleted')
-                .order('name');
-
-            if (sErr || !students || students.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-slate-400 italic">No students found.</td></tr>';
-                return;
-            }
-
-            const { data: grades } = await supabaseClient
-                .from('grades')
-                .select('*')
-                .eq('subject_text', subject)
-                .eq('term', CURRENT_SESSION_TERM)
-                .in('student_id', students.map(s => s.id));
-
-            updateSubmitButtonUI(); 
-            tbody.innerHTML = '';
-
+            const { data: students, error: sErr } = await supabaseClient.from('students').select('*').eq('grade_level', activeClass).neq('status', 'Deleted').order('name');
+            if (sErr || !students || students.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-slate-400 italic">No students found.</td></tr>'; return; }
+            const { data: grades } = await supabaseClient.from('grades').select('*').eq('subject_text', subject).eq('term', CURRENT_SESSION_TERM).in('student_id', students.map(s => s.id));
+            updateSubmitButtonUI(); tbody.innerHTML = '';
             const gradeMap = {};
             if (grades) grades.forEach(g => gradeMap[g.student_id] = g);
-
             students.forEach(s => {
                 const g = gradeMap[s.id] || { ca_score: null, exam_score: null, status: 'draft' };
                 const isRowLocked = g.status === 'submitted';
                 const disabledAttr = isRowLocked ? 'disabled' : '';
                 const bgClass = isRowLocked ? 'bg-slate-100 cursor-not-allowed' : 'bg-white';
-
-                const ca = g.ca_score;
-                const exam = g.exam_score;
+                const ca = g.ca_score; const exam = g.exam_score;
                 const hasScore = (ca !== null && ca !== undefined) || (exam !== null && exam !== undefined);
                 const total = hasScore ? ((Number(ca) || 0) + (Number(exam) || 0)) : '-';
-                
-                let gradeChar = '-';
-                if (total !== '-') {
-                    gradeChar = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 45 ? 'D' : total >= 40 ? 'E' : 'F';
-                }
-
-                const caVal = ca === null || ca === undefined ? '' : ca;
-                const examVal = exam === null || exam === undefined ? '' : exam;
-
-                const row = `
-                <tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 group">
-                    <td class="px-4 py-3 font-bold text-slate-700 min-w-[150px]">${s.name}</td>
-                    <td class="px-4 py-3 text-center">
-                        <input type="number" id="ca-${s.id}" value="${caVal}" max="40" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-16 ${bgClass} border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition placeholder-slate-300">
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                        <input type="number" id="exam-${s.id}" value="${examVal}" max="60" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-16 ${bgClass} border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition placeholder-slate-300">
-                    </td>
-                    <td class="px-4 py-3 text-center font-black text-slate-800" id="total-${s.id}">${total}</td>
-                    <td class="px-4 py-3 text-center"><span id="grade-${s.id}" class="px-2 py-1 rounded-lg text-xs font-black bg-slate-100 text-slate-500">${gradeChar}</span></td>
-                    <td class="px-4 py-3 text-right">
-                        ${!isRowLocked ? `<button onclick="saveStudentGrade('${s.id}')" class="bg-slate-800 text-white p-2 rounded-lg hover:bg-teal-600 transition shadow-lg active:scale-90"><i data-lucide="save" class="w-4 h-4"></i></button>` : `<span class="flex items-center justify-end text-xs text-teal-600 font-bold"><i data-lucide="lock" class="w-3 h-3 mr-1"></i> Locked</span>`}
-                    </td>
-                </tr>`;
+                let gradeChar = '-'; if (total !== '-') gradeChar = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 45 ? 'D' : total >= 40 ? 'E' : 'F';
+                const caVal = ca === null || ca === undefined ? '' : ca; const examVal = exam === null || exam === undefined ? '' : exam;
+                const row = `<tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 group"><td class="px-4 py-3 font-bold text-slate-700 min-w-[150px]">${s.name}</td><td class="px-4 py-3 text-center"><input type="number" id="ca-${s.id}" value="${caVal}" max="40" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-16 ${bgClass} border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition placeholder-slate-300"></td><td class="px-4 py-3 text-center"><input type="number" id="exam-${s.id}" value="${examVal}" max="60" oninput="updateRowTotal('${s.id}')" ${disabledAttr} class="w-16 ${bgClass} border border-slate-200 rounded-lg py-2 text-center font-bold outline-none focus:border-teal-500 transition placeholder-slate-300"></td><td class="px-4 py-3 text-center font-black text-slate-800" id="total-${s.id}">${total}</td><td class="px-4 py-3 text-center"><span id="grade-${s.id}" class="px-2 py-1 rounded-lg text-xs font-black bg-slate-100 text-slate-500">${gradeChar}</span></td><td class="px-4 py-3 text-right">${!isRowLocked ? `<button onclick="saveStudentGrade('${s.id}')" class="bg-slate-800 text-white p-2 rounded-lg hover:bg-teal-600 transition shadow-lg active:scale-90"><i data-lucide="save" class="w-4 h-4"></i></button>` : `<span class="flex items-center justify-end text-xs text-teal-600 font-bold"><i data-lucide="lock" class="w-3 h-3 mr-1"></i> Locked</span>`}</td></tr>`;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
             lucide.createIcons();
         }
 
         function updateRowTotal(id) {
-            const caInput = document.getElementById(`ca-${id}`);
-            const examInput = document.getElementById(`exam-${id}`);
-            let caVal = caInput.value;
-            let examVal = examInput.value;
-
+            const caInput = document.getElementById(`ca-${id}`); const examInput = document.getElementById(`exam-${id}`);
+            let caVal = caInput.value; let examVal = examInput.value;
             if (Number(caVal) > 40) { caVal = 40; caInput.value = 40; }
             if (Number(examVal) > 60) { examVal = 60; examInput.value = 60; }
-
-            if (caVal === '' && examVal === '') {
-                document.getElementById(`total-${id}`).innerText = '-';
-                document.getElementById(`grade-${id}`).innerText = '-';
-                return;
-            }
-
+            if (caVal === '' && examVal === '') { document.getElementById(`total-${id}`).innerText = '-'; document.getElementById(`grade-${id}`).innerText = '-'; return; }
             const total = (Number(caVal) || 0) + (Number(examVal) || 0);
             document.getElementById(`total-${id}`).innerText = total;
             document.getElementById(`grade-${id}`).innerText = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 45 ? 'D' : total >= 40 ? 'E' : 'F';
@@ -662,53 +586,32 @@
             const subject = document.getElementById('grading-subject-select').value;
             const ca = document.getElementById(`ca-${studentId}`).value;
             const exam = document.getElementById(`exam-${studentId}`).value;
-
             const finalCa = ca === '' ? null : ca;
             const finalExam = exam === '' ? null : exam;
-            let total = null;
-            if (finalCa !== null || finalExam !== null) total = (Number(finalCa) || 0) + (Number(finalExam) || 0);
-
-            const { data, error } = await supabaseClient
-                .from('grades')
-                .update({ ca_score: finalCa, exam_score: finalExam, total_score: total, status: 'draft' })
-                .eq('student_id', studentId)
-                .eq('subject_text', subject)
-                .eq('term', CURRENT_SESSION_TERM)
-                .select();
-
+            let total = null; if (finalCa !== null || finalExam !== null) total = (Number(finalCa) || 0) + (Number(finalExam) || 0);
+            const { data, error } = await supabaseClient.from('grades').update({ ca_score: finalCa, exam_score: finalExam, total_score: total, status: 'draft' }).eq('student_id', studentId).eq('subject_text', subject).eq('term', CURRENT_SESSION_TERM).select();
             if (!error && data.length > 0) { showNotification("Saved", "Grade updated."); return; }
-
             const { error: insertError } = await supabaseClient.from('grades').insert([{ student_id: studentId, subject_text: subject, term: CURRENT_SESSION_TERM, ca_score: finalCa, exam_score: finalExam, total_score: total, status: 'draft' }]);
-            if (insertError) { showNotification("Error", "Failed to save.", true); } else { showNotification("Saved", "Grade created."); }
+            if (insertError) { showNotification("Error", "Failed to save grade.", true); } else { showNotification("Saved", "New grade created."); }
         }
 
         async function submitToAdmin() {
             const subject = document.getElementById('grading-subject-select').value;
             const cls = document.getElementById('grade-class-title').innerText;
-
             const { count } = await supabaseClient.from('grades').select('*', { count: 'exact', head: true }).eq('subject_text', subject).eq('term', CURRENT_SESSION_TERM).eq('status', 'draft').not('total_score', 'is', null);
-
-            if (count === 0) { showNotification("Info", "No drafts to submit.", true); return; }
-
+            if (count === 0) { showNotification("Info", "No recorded drafts to submit.", true); return; }
             showConfirm("Submit Grades?", `Lock ${count} records?`, async () => {
                 const { data: students } = await supabaseClient.from('students').select('id').eq('grade_level', cls);
                 if (!students || !students.length) return;
                 const studentIds = students.map(s => s.id);
-
                 const { error } = await supabaseClient.from('grades').update({ status: 'submitted' }).in('student_id', studentIds).eq('subject_text', subject).eq('term', CURRENT_SESSION_TERM).eq('status', 'draft').not('total_score', 'is', null);
-
-                if (error) showNotification("Error", "Failed.", true);
-                else { showNotification("Success", "Submitted."); loadGradebook(); }
+                if (error) showNotification("Error", "Submission failed.", true); else { showNotification("Success", "Grades Submitted."); loadGradebook(); }
             });
         }
 
         function updateSubmitButtonUI() {
             const btn = document.getElementById('btn-submit-admin');
-            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit Drafts`;
-            btn.disabled = false;
-            btn.classList.remove('bg-slate-400');
-            btn.classList.add('bg-teal-700');
-            lucide.createIcons();
+            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4 mr-2"></i> Submit Drafts`; btn.disabled = false; btn.classList.remove('bg-slate-400'); btn.classList.add('bg-teal-700'); lucide.createIcons();
         }
 
         // --- ATTENDANCE ---
@@ -717,48 +620,26 @@
             const dateStr = document.getElementById('att-date').value;
             const tbody = document.getElementById('attendance-body');
             tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 italic">Loading...</td></tr>';
-
             const { data: students } = await supabaseClient.from('students').select('*').eq('grade_level', cls).neq('status', 'Deleted').order('name');
             const { data: attendance } = await supabaseClient.from('attendance').select('*').eq('date', dateStr).eq('class_name', cls);
-
-            const attMap = {};
-            if (attendance) attendance.forEach(a => attMap[a.student_id] = a);
-
+            const attMap = {}; if (attendance) attendance.forEach(a => attMap[a.student_id] = a);
             tbody.innerHTML = '';
             if (!students || !students.length) { tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-400 italic">No students.</td></tr>'; return; }
-
             students.forEach(s => {
-                const record = attMap[s.id];
-                const isMarked = !!record;
-                const isPresent = record && record.status === 'Present';
+                const record = attMap[s.id]; const isMarked = !!record; const isPresent = record && record.status === 'Present';
                 const time = record ? new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
                 const statusText = isMarked ? (isPresent ? 'Present' : 'Absent') : 'Absent';
                 const disabledAttr = isMarked ? 'disabled' : '';
                 const cursorClass = isMarked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer';
-
-                const row = `
-                <tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 att-row" data-id="${s.id}">
-                    <td class="px-4 py-3 font-bold text-slate-700">${s.name}</td>
-                    <td class="px-4 py-3 text-center">
-                        <label class="relative inline-flex items-center ${cursorClass}">
-                            <input type="checkbox" class="sr-only peer" ${isPresent ? 'checked' : ''} ${disabledAttr} onchange="toggleAttendanceStatus(this)">
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
-                            <span class="ml-3 text-xs font-medium text-slate-600 status-label">${statusText}</span>
-                        </label>
-                    </td>
-                    <td class="px-4 py-3 text-right text-xs text-slate-400 font-mono">${time}</td>
-                </tr>`;
+                const row = `<tr class="hover:bg-slate-50 border-b border-slate-100 last:border-0 att-row" data-id="${s.id}"><td class="px-4 py-3 font-bold text-slate-700">${s.name}</td><td class="px-4 py-3 text-center"><label class="relative inline-flex items-center ${cursorClass}"><input type="checkbox" class="sr-only peer" ${isPresent ? 'checked' : ''} ${disabledAttr} onchange="toggleAttendanceStatus(this)"><div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div><span class="ml-3 text-xs font-medium text-slate-600 status-label">${statusText}</span></label></td><td class="px-4 py-3 text-right text-xs text-slate-400 font-mono">${time}</td></tr>`;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
         }
 
-        function toggleAttendanceStatus(checkbox) {
-            checkbox.parentNode.querySelector('.status-label').innerText = checkbox.checked ? 'Present' : 'Absent';
-        }
+        function toggleAttendanceStatus(checkbox) { checkbox.parentNode.querySelector('.status-label').innerText = checkbox.checked ? 'Present' : 'Absent'; }
 
-        // *** UPDATED: VALIDATED FULL SCREEN SCANNER ***
+        // *** ROBUST SCANNER IMPLEMENTATION (Fixes "Overconstrained" & "Blind") ***
         async function toggleScanner() {
-            // 1. VALIDATION: Check if Class/Date are selected
             const cls = document.getElementById('att-class-select').value;
             const dateStr = document.getElementById('att-date').value;
 
@@ -767,69 +648,133 @@
                 return;
             }
 
-            const c = document.getElementById('scanner-container');
-            if (c.classList.contains('hidden')) {
-                c.classList.remove('hidden');
+            const container = document.getElementById('scanner-container');
+            const readerDiv = document.getElementById('qr-reader');
+
+            if (container.classList.contains('hidden')) {
+                // OPEN SCANNER
+                container.classList.remove('hidden');
                 
-                // Allow DOM to render then launch
-                setTimeout(() => {
-                    if (typeof Html5QrcodeScanner !== 'undefined') {
-                        // Use window dimensions for robust mobile sizing
-                        const width = Math.min(window.innerWidth - 40, 400); 
-                        
-                        html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { 
-                            fps: 10, 
-                            qrbox: width,
-                            aspectRatio: 1.0,
-                            videoConstraints: {
-                                facingMode: { exact: "environment" } // Force back camera
-                            }
-                        });
-                        
-                        // Fallback if 'exact' fails (some devices dont support strict constraints)
-                        html5QrcodeScanner.render(onScanSuccess, (err) => {
-                             // If exact back camera fails, try basic config
-                             html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: width });
-                             html5QrcodeScanner.render(onScanSuccess);
-                        });
-                    } else {
-                        alert("Scanner library not loaded.");
-                    }
-                }, 100);
-            } else {
-                c.classList.add('hidden');
-                if (html5QrcodeScanner) {
-                    await html5QrcodeScanner.clear();
-                    html5QrcodeScanner = null;
+                // Add Overlay HTML if not present
+                if (!document.querySelector('.scan-guide-box')) {
+                    readerDiv.insertAdjacentHTML('beforeend', `
+                        <div class="scan-guide-box"></div>
+                        <div class="scan-overlay-ui">
+                            <button onclick="toggleScanner()" class="bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-full font-bold border border-white/30 shadow-2xl hover:bg-white/30 transition">Stop Scanning</button>
+                        </div>
+                    `);
                 }
+
+                try {
+                    // 1. Init Core Class (Not Scanner Widget)
+                    html5QrCode = new Html5Qrcode("qr-reader");
+
+                    // 2. Get Camera List
+                    const devices = await Html5Qrcode.getCameras();
+                    
+                    if (devices && devices.length) {
+                        // 3. Smart Select: Try to find "back" or "environment" camera
+                        let cameraId = devices[0].id; // Default to first
+                        
+                        // Look for back camera
+                        const backCam = devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment'));
+                        if (backCam) cameraId = backCam.id;
+
+                        // 4. Start Scanning (Specific ID avoids "Overconstrained")
+                        await html5QrCode.start(
+                            cameraId, 
+                            {
+                                fps: 10,
+                                qrbox: { width: 250, height: 250 }, // Square box
+                                aspectRatio: 1.0
+                            },
+                            onScanSuccess
+                        );
+                    } else {
+                        // Fallback if permission issues or no ID returned (Desktop fallback)
+                        await html5QrCode.start(
+                            { facingMode: "environment" }, // Generic request
+                            { fps: 10, qrbox: 250 },
+                            onScanSuccess
+                        );
+                    }
+
+                } catch (err) {
+                    console.error("Camera Error: ", err);
+                    
+                    // Fallback for Desktop/Laptop "Overconstrained" issue
+                    // If "environment" failed, try "user" (Webcam)
+                    try {
+                        await html5QrCode.start(
+                            { facingMode: "user" }, 
+                            { fps: 10, qrbox: 250 },
+                            onScanSuccess
+                        );
+                    } catch (retryErr) {
+                        alert("Camera failed to start. Check permissions.");
+                        toggleScanner(); // Close
+                    }
+                }
+
+            } else {
+                // CLOSE SCANNER
+                if (html5QrCode) {
+                    try {
+                        await html5QrCode.stop();
+                        await html5QrCode.clear();
+                    } catch(e) { console.log(e); }
+                    html5QrCode = null;
+                }
+                container.classList.add('hidden');
             }
         }
 
-        async function onScanSuccess(t) {
+        async function onScanSuccess(decodedText, decodedResult) {
+            // Rate limiter or debounce could go here, but pausing scanner is safer
+            if(html5QrCode && html5QrCode.isScanning) {
+                await html5QrCode.pause(); // Pause to prevent double scan
+            }
+
             const c = document.getElementById('att-class-select').value;
             const dateStr = document.getElementById('att-date').value;
-            const { data: s } = await supabaseClient.from('students').select('*').eq('id', t).eq('grade_level', c).single();
+            
+            // Logic
+            const { data: s } = await supabaseClient.from('students').select('*').eq('id', decodedText).eq('grade_level', c).single();
             
             if (!s) { 
-                // Play Error Sound
-                new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play().catch(e=>{});
-                showNotification("Error", "Student not in this class!", true); 
+                showNotification("Error", "Student not in this class!", true);
+                setTimeout(() => html5QrCode.resume(), 2000); // Resume after alert
                 return; 
             }
 
-            const { data: existing } = await supabaseClient.from('attendance').select('id').eq('student_id', t).eq('date', dateStr).single();
+            const { data: existing } = await supabaseClient.from('attendance').select('id').eq('student_id', decodedText).eq('date', dateStr).single();
             if (existing) { 
-                showNotification("Info", `${s.name} is already marked.`, true); 
+                showNotification("Info", `${s.name} already marked.`, true);
+                setTimeout(() => html5QrCode.resume(), 2000);
                 return; 
             }
 
-            const { error } = await supabaseClient.from('attendance').insert({ student_id: t, class_name: c, date: dateStr, status: 'Present', marked_by: currentUser.user_id });
+            const { error } = await supabaseClient.from('attendance').insert({ student_id: decodedText, class_name: c, date: dateStr, status: 'Present', marked_by: currentUser.user_id });
+            
             if(!error) {
                 new Audio('https://actions.google.com/sounds/v1/science_fiction/beep_short.ogg').play().catch(e => console.log(e));
                 loadAttendance();
-                // Show brief success alert that doesn't block flow too much
-                const alertTitle = document.getElementById('alert-title');
-                if(alertTitle) alertTitle.innerText = "Scanned: " + s.name;
+                // Custom Scanner Success UI
+                const guideBox = document.querySelector('.scan-guide-box');
+                if(guideBox) {
+                    guideBox.style.borderColor = '#10b981'; // Green
+                    guideBox.style.boxShadow = '0 0 0 9999px rgba(16, 185, 129, 0.2)';
+                    setTimeout(() => {
+                        guideBox.style.borderColor = 'rgba(255,255,255,0.7)';
+                        guideBox.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.5)';
+                        html5QrCode.resume();
+                    }, 1500);
+                } else {
+                    showNotification("Scanned", `${s.name} marked.`);
+                    setTimeout(() => html5QrCode.resume(), 1500);
+                }
+            } else {
+                setTimeout(() => html5QrCode.resume(), 1000);
             }
         }
 
@@ -838,15 +783,12 @@
             const cls = document.getElementById('att-class-select').value;
             const checkboxes = Array.from(document.querySelectorAll('.att-row input[type="checkbox"]:not(:disabled)'));
             if (checkboxes.length === 0) { showNotification("Info", "No new changes.", true); return; }
-
             const newRecords = checkboxes.map(cb => {
                 const row = cb.closest('tr');
                 return { student_id: row.getAttribute('data-id'), class_name: cls, date: dateStr, status: cb.checked ? 'Present' : 'Absent', marked_by: currentUser.user_id };
             });
-
             const { error } = await supabaseClient.from('attendance').insert(newRecords);
-            if (error) showNotification("Error", "Save failed (Duplicates?)", true);
-            else { showNotification("Success", "Saved."); loadAttendance(); }
+            if (error) showNotification("Error", "Save failed.", true); else { showNotification("Success", "Saved."); loadAttendance(); }
         }
 
         // --- UTILS ---
