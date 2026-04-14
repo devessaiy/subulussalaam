@@ -71,28 +71,28 @@
                     <a href="#contact" class="hover:text-emerald-700 transition">Contact</a>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-4">
-                    <div class="relative group">
-                        <button
-                            class="bg-emerald-700 text-white px-5 py-2 rounded-full text-sm hover:bg-emerald-800 transition flex items-center shadow-lg shadow-emerald-700/20">
-                            <i data-lucide="lock" class="w-4 h-4 mr-2"></i> Portals
-                            <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
-                        </button>
-                        <div class="border-t border-slate-100 pt-4 mt-2">
-                            <p class="px-3 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Access Portals</p>
-                            
-                            <a href="https://trideta-web.vercel.app" onclick="toggleMobileMenu()"
-                                class="block px-3 py-2 text-sm text-emerald-700 font-bold">Admin Login</a>
+                    <div class="hidden md:flex items-center space-x-4">
+                        <div class="relative group">
+                            <button class="bg-emerald-700 text-white px-5 py-2 rounded-full text-sm hover:bg-emerald-800 transition flex items-center shadow-lg shadow-emerald-700/20">
+                                <i data-lucide="lock" class="w-4 h-4 mr-2"></i> Portals
+                                <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
+                            </button>
+                    
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2">
                                 
-                            <a href="https://trideta-web.vercel.app" onclick="toggleMobileMenu()"
-                                class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Teacher Login</a>
+                                <p class="px-4 pt-2 pb-1 text-xs font-bold text-slate-400 uppercase tracking-widest">Access Portals</p>
                                 
-                            <a href="https://trideta-web.vercel.app" onclick="toggleMobileMenu()"
-                                class="block px-3 py-2 text-sm text-slate-600 hover:text-emerald-700">Student Login</a>
+                                <a href="https://trideta-web.vercel.app" target="_blank" 
+                                    class="block px-4 py-2 text-sm text-emerald-700 font-bold hover:bg-emerald-50 transition">Admin Login</a>
+                                    
+                                <a href="https://trideta-web.vercel.app" target="_blank" 
+                                    class="block px-4 py-2 text-sm text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition">Teacher Login</a>
+                                    
+                                <a href="https://trideta-web.vercel.app" target="_blank" 
+                                    class="block px-4 py-2 text-sm text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition">Student Login</a>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
-
                 <div class="md:hidden flex items-center">
                     <button onclick="toggleMobileMenu()"
                         class="text-slate-600 hover:text-emerald-700 focus:outline-none p-2">
